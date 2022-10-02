@@ -1,0 +1,16 @@
+.map-body{
+   
+}
+.map-wapper{
+    width: 70vw;
+    height: 75vh;
+    overflow: hidden;
+}
+.map-container {
+    border-radius: 9px;
+    width:inherit;
+    height: inherit;
+}
+
+
+

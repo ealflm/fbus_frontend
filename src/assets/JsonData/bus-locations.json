@@ -1,0 +1,83 @@
+{
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 1",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.80988009369115,10.841184239095131],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 2",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.8305588307437,10.836639417833368],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 3",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.83303722921367,10.837526004803886],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 4",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.83496380925504,10.838227753760506],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 5",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.83499889597559,10.838459581175174],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 6",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.83302766011889,10.837751567143522],
+          "type": "Point"
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "title": "Trạm 7",
+          "description": "aaaaa"
+        },
+        "geometry": {
+          "coordinates": [106.83211450420357,10.837405725499096],
+          "type": "Point"
+        }
+      }          
+    ],
+    "type": "FeatureCollection"
+  }
+  
