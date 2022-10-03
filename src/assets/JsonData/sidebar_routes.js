@@ -37,13 +37,13 @@ const sidebarNav = [
   },
   {
     text: 'discount',
-    link: '/discount',
+    link: '/discounts',
     icon: <i className='bx bx-gift'></i>,
     section: 'discounts',
   },
   {
     text: 'inventory',
-    link: '/inventory',
+    link: '/inventorys',
     icon: <i className='bx bx-store-alt'></i>,
     section: '',
   },
