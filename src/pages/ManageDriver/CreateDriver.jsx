@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Form, Row, Col, FormGroup, Label, Input, Button } from 'reactstrap';
 
-import '../components/createdriver/createdriver.css';
+import '../../components/createdriver/createdriver.css';
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Createdriver = (props) => {
+const CreateDriver = (props) => {
   return (
     <div>
       <h2 className='page-header'>Thêm tài xế</h2>
@@ -131,4 +131,4 @@ const Createdriver = (props) => {
   );
 };
 
-export default Createdriver;
+export default CreateDriver;

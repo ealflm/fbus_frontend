@@ -1,18 +1,9 @@
 import './assets/boxicons-2.0.7/css/boxicons.min.css';
 
 // import './scss/App.scss'
-import Blank from './pages/Blank';
-import MainLayout from './components/layout/MainLayout';
-
-import Dashboard from './pages/Dashboard';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Customers from './pages/Customers';
-import Drivers from './pages/Drivers';
-import Buses from './pages/Buses';
-import Reports from './pages/Reports';
-import Createdriver from './pages/Createdriver';
-import Trips from './pages/Trips';
-import Createbus from './pages/Createbus';
+//
+import MainLayout from './components/layout/MainLayout';
 import { RenderRouter } from './routes/RenderRouter';
 function App() {
   return (

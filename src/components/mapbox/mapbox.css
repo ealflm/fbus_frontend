@@ -2,7 +2,7 @@
    
 }
 .map-wapper{
-    width: 70vw;
+    width: inherit;
     height: 75vh;
     overflow: hidden;
 }

@@ -1,13 +1,10 @@
 import React from 'react';
-
-import Table from '../components/table/Table';
-
-import busList from '../assets/JsonData/buses-list.json';
-
 import { Link } from 'react-router-dom';
 
-import Badge from '../components/badge/Badge';
+import Table from '../../components/table/Table';
+import Badge from '../../components/badge/Badge';
 
+import busList from '../../assets/JsonData/buses-list.json';
 const busTableHead = ['', 'Tuyến', 'Biển số', 'Màu', 'Trạng Thái', 'Hành động'];
 
 const busStatus = {
@@ -30,10 +27,10 @@ const renderBody = (item, index) => (
     <td>
       <div className='action__item'>
         <Link to='/edit'>
-          <i class='bx bx-edit'></i>
+          <i className='bx bx-edit'></i>
         </Link>
         <Link to='/disabledriver'>
-          <i class='bx bx-user-x'></i>
+          <i className='bx bx-user-x'></i>
         </Link>
       </div>
     </td>

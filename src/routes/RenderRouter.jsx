@@ -1,13 +1,13 @@
 import { Navigate, Route } from 'react-router-dom';
 import Blank from '../pages/Blank';
-import Buses from '../pages/Buses';
-import Createbus from '../pages/Createbus';
-import Createdriver from '../pages/Createdriver';
-import Customers from '../pages/Customers';
-import Dashboard from '../pages/Dashboard';
-import Drivers from '../pages/Drivers';
-import Reports from '../pages/Reports';
-import Trips from '../pages/Trips';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import Customers from '../pages/ManageCustomer/Customers';
+import Drivers from '../pages/ManageDriver/Drivers';
+import CreateDriver from '../pages/ManageDriver/CreateDriver';
+import Trips from '../pages/ManageTrip/Trips';
+import Reports from '../pages/Reports/Reports';
+import Buses from '../pages/ManageBus/Buses';
+import CreateBus from '../pages/ManageBus/CreateBus';
 
 const RouterList = [
   {
@@ -34,12 +34,12 @@ const RouterList = [
   {
     exact: true,
     path: '/drivers/:id',
-    element: <Createdriver type='EDIT' />,
+    element: <CreateDriver type='EDIT' />,
   },
   {
     exact: true,
     path: '/drivers/create',
-    element: <Createdriver type='CREATE' />,
+    element: <CreateDriver type='CREATE' />,
   },
   // BUSES
   {
@@ -50,12 +50,12 @@ const RouterList = [
   {
     exact: true,
     path: '/buses/:id',
-    element: <Createbus type='EDIT' />,
+    element: <CreateBus type='EDIT' />,
   },
   {
     exact: true,
     path: '/buses/create',
-    element: <Createbus type='CREATE' />,
+    element: <CreateBus type='CREATE' />,
   },
   // TRIPS
   {
@@ -78,13 +78,13 @@ const RouterList = [
   // INVENTORY
   {
     exact: true,
-    path: '/inventory',
+    path: '/inventorys',
     element: <Blank />,
   },
   // SETTING
   {
     exact: true,
-    path: '/setting',
+    path: '/settings',
     element: <Blank />,
   },
 ];

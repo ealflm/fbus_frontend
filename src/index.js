@@ -5,6 +5,10 @@ import './assets/boxicons-2.0.7/css/boxicons.min.css';
 import './assets/css/grid.css';
 import './assets/css/index.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 document.title = 'Fbus Admin';
 const root = ReactDOM.createRoot(document.getElementById('root'));
