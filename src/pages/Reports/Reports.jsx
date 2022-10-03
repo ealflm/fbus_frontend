@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Table from '../../components/table/Table';
+import Table from '../../components/Table/Table';
 
 import reportList from '../../assets/JsonData/reports-list.json';
 

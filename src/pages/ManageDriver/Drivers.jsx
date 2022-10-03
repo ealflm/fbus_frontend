@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Table from '../../components/table/Table';
+import Table from '../../components/Table/Table';
 import Badge from '../../components/badge/Badge';
 
 import Loading from '../../components/Loading/Loading';
 
 import driverList from '../../assets/JsonData/drivers-list.json';
+
 const driverTableHead = [
   '',
   'Họ và tên',
@@ -29,7 +30,7 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 
 const renderBody = (item, index) => (
   <tr key={index}>
-    <td>{item.id}</td>
+    <td>{index}</td>
     <td>{item.name}</td>
     <td>{item.rate}</td>
     <td>{item.birth}</td>
@@ -53,7 +54,39 @@ const renderBody = (item, index) => (
 );
 
 const Drivers = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [drivers, setDriverList] = useState(driverList);
+  const [dataShow, setDataShow] = useState(driverList);
+  const [refreshData, setRefreshData] = useState(false);
+
+  const limit = 10;
+  let pages = 1;
+
+  let range = [];
+  // sort FE
+
+  useEffect(() => {
+    setTimeout(() => {
+      const initDataShow =
+        limit && drivers ? drivers.slice(0, Number(limit)) : drivers;
+      if (limit !== undefined) {
+        let page = Math.floor(drivers.length / Number(limit));
+        pages = drivers.length & (Number(limit) === 0) ? page : page + 1;
+        range = [...Array(pages).keys()];
+      }
+      setDriverList(initDataShow);
+      setDataShow(initDataShow);
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+
+  const handleFetchData = (data) => {
+    console.log(dataShow);
+    const start = Number(limit) * (data.currentPage - 1);
+    const end = start + Number(limit);
+    setDataShow(driverList.slice(start, end));
+    console.log(data);
+  };
   return (
     <>
       <Loading isLoading={isLoading} />
@@ -80,11 +113,12 @@ const Drivers = () => {
                   </Link>
                 </div>
                 <Table
-                  limit='10'
                   headData={driverTableHead}
                   renderHead={(item, index) => renderHead(item, index)}
-                  bodyData={driverList}
+                  bodyData={dataShow}
                   renderBody={(item, index) => renderBody(item, index)}
+                  handleRequest={handleFetchData}
+                  refreshData={refreshData}
                 />
               </div>
             </div>

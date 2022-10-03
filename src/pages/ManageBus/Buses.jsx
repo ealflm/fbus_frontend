@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Table from '../../components/table/Table';
+import Table from '../../components/Table/Table';
 import Badge from '../../components/badge/Badge';
 
 import busList from '../../assets/JsonData/buses-list.json';
@@ -49,7 +49,7 @@ const Buses = () => {
           <div className='card'>
             <div className='card__body'>
               <div className='header__table'>
-                <Link to='/createbus'>
+                <Link to='/buses/create'>
                   <button className='btn-add'>
                     <div className='btn-add__icon'>
                       <i className='bx bx-plus'></i>
@@ -60,13 +60,13 @@ const Buses = () => {
                   </button>
                 </Link>
               </div>
-              <Table
+              {/* <Table
                 limit='10'
                 headData={busTableHead}
                 renderHead={(item, index) => renderHead(item, index)}
                 bodyData={busList}
                 renderBody={(item, index) => renderBody(item, index)}
-              />
+              /> */}
             </div>
           </div>
         </div>
