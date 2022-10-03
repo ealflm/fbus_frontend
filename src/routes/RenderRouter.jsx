@@ -1,14 +1,13 @@
 import { Navigate, Route } from 'react-router-dom';
-import Blank from '../pages/Blank';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Customers from '../pages/ManageCustomer/Customers';
 import Drivers from '../pages/ManageDriver/Drivers';
-import CreateDriver from '../pages/ManageDriver/CreateDriver';
 import Trips from '../pages/ManageTrip/Trips';
 import Reports from '../pages/Reports/Reports';
 import Buses from '../pages/ManageBus/Buses';
 import CreateBus from '../pages/ManageBus/CreateBus';
-
+import PageNotFound from '../pages/PageNotFound/PageNotFound';
+import DriverForm from '../pages/ManageDriver/DriverForm';
 const RouterList = [
   {
     exact: true,
@@ -34,12 +33,12 @@ const RouterList = [
   {
     exact: true,
     path: '/drivers/:id',
-    element: <CreateDriver type='EDIT' />,
+    element: <DriverForm type='EDIT' />,
   },
   {
     exact: true,
     path: '/drivers/create',
-    element: <CreateDriver type='CREATE' />,
+    element: <DriverForm type='CREATE' />,
   },
   // BUSES
   {
@@ -73,19 +72,19 @@ const RouterList = [
   {
     exact: true,
     path: '/discounts',
-    element: <Blank />,
+    element: <PageNotFound />,
   },
   // INVENTORY
   {
     exact: true,
     path: '/inventorys',
-    element: <Blank />,
+    element: <PageNotFound />,
   },
   // SETTING
   {
     exact: true,
     path: '/settings',
-    element: <Blank />,
+    element: <PageNotFound />,
   },
 ];
 

@@ -10,7 +10,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-document.title = 'Fbus Admin';
+document.title = 'FBUS';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Table from '../../components/table/Table';
+import Table from '../../components/Table/Table';
 import Badge from '../../components/badge/Badge';
 
 import customerList from '../../assets/JsonData/customers-list.json';
@@ -27,7 +27,7 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 
 const renderBody = (item, index) => (
   <tr key={index}>
-    <td>{item.id}</td>
+    <td>{index}</td>
     <td>{item.name}</td>
     <td>{item.email}</td>
     <td>{item.phone}</td>
@@ -54,13 +54,13 @@ const Customers = () => {
         <div className='col-12'>
           <div className='card'>
             <div className='card__body'>
-              <Table
+              {/* <Table
                 limit='10'
                 headData={customerTableHead}
                 renderHead={(item, index) => renderHead(item, index)}
                 bodyData={customerList}
                 renderBody={(item, index) => renderBody(item, index)}
-              />
+              /> */}
             </div>
           </div>
         </div>
