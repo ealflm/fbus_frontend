@@ -98,8 +98,7 @@ export const RenderRouter = () => {
           element={<Navigate to='/dashboard' replace />}
         />
       );
-    } else {
-      return <Route key={index} path={item.path} element={item.element} />;
     }
+    return <Route key={index} path={item.path} element={item.element} />;
   });
 };

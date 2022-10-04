@@ -1,1 +1,9 @@
-[{"id":1,"routeName":"LVV_01","busNumber":"59D-999.99","busColor":"white","status":"Hoạt động"}]
+[
+  {
+    "id": 1,
+    "routeName": "LVV_01",
+    "busNumber": "59D-999.99",
+    "busColor": "white",
+    "status": "Hoạt động"
+  }
+]

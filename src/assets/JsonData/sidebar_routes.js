@@ -53,11 +53,11 @@ const sidebarNav = [
     icon: <i className='bx bx-cog'></i>,
     section: '',
   },
-  {
-    text: 'logout',
-    link: '/logout',
-    icon: <i className='bx bx-log-out'></i>,
-    section: 'logout',
-  },
+  // {
+  //   text: 'logout',
+  //   link: '/logout',
+  //   icon: <i className='bx bx-log-out'></i>,
+  //   section: 'logout',
+  // },
 ];
 export default sidebarNav;

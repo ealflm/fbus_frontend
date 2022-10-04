@@ -9,12 +9,20 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import * as APIInterceptor from './interceptor/Interceptor';
+import { AuthProvider } from './auth/useAuth';
+import { BrowserRouter } from 'react-router-dom';
 
 document.title = 'FBUS';
-const root = ReactDOM.createRoot(document.getElementById('root'));
+APIInterceptor.interceptor();
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
