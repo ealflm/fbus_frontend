@@ -21,7 +21,7 @@ const Table = (props) => {
   const [searchFiled, setSearchFiled] = useState('');
   //
   useEffect(() => {
-    console.log('run again');
+    // console.log('run again');
     handleSearch();
   }, [currPage, pageSize, searchFiled]);
   //

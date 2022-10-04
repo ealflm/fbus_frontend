@@ -43,13 +43,13 @@ const Reports = () => {
         <div className='col-12'>
           <div className='card'>
             <div className='card__body'>
-              <Table
+              {/* <Table
                 limit='10'
                 headData={reportTableHead}
                 renderHead={(item, index) => renderHead(item, index)}
                 bodyData={reportList}
                 renderBody={(item, index) => renderBody(item, index)}
-              />
+              /> */}
             </div>
           </div>
         </div>

@@ -6,6 +6,8 @@ import StatusCard from '../../components/status-card/StatusCard';
 
 import statusCards from '../../assets/JsonData/status-card-data.json';
 import { redirect, useParams } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { TablePrime } from './../../components/TablePrime/TablePrime';
 
 const chartOptions = {
   series: [
@@ -87,14 +89,14 @@ const Dashboard = () => {
           </div>
         </div>
         <div className='col-12'>
-          <div className='card'>
-            <div className='card__header'>
-              <h3>Bảng ....</h3>
-            </div>
-            <div className='card__body'>
-              {/* bang thong ke cai gi do nua */}
-            </div>
-          </div>
+          <TablePrime></TablePrime>
+          {/* <div className='card'> */}
+          {/* <div className='card__header'><h3>Bảng ....</h3></div> */}
+          {/* <div className='card__body'> */}
+          {/* bang thong ke cai gi do nua */}
+
+          {/* </div> */}
+          {/* </div> */}
         </div>
       </div>
     </div>

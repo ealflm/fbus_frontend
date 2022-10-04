@@ -61,7 +61,6 @@ const Drivers = () => {
 
   const limit = 10;
   let pages = 1;
-
   let range = [];
   // sort FE
 
@@ -81,21 +80,19 @@ const Drivers = () => {
   }, []);
 
   const handleFetchData = (data) => {
-    console.log(dataShow);
+    // console.log(dataShow);
     const start = Number(limit) * (data.currentPage - 1);
     const end = start + Number(limit);
     setDataShow(driverList.slice(start, end));
-    console.log(data);
+    // console.log(data);
   };
   return (
     <>
       <Loading isLoading={isLoading} />
-
       <div>
         <div className='page-header'>
           <h2>Tài xế</h2>
         </div>
-
         <div className='row'>
           <div className='col-12'>
             <div className='card'>
