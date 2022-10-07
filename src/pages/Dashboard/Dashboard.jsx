@@ -89,7 +89,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className='col-12'>
-          <TablePrime></TablePrime>
+          {/* <TablePrime></TablePrime> */}
           {/* <div className='card'> */}
           {/* <div className='card__header'><h3>Bảng ....</h3></div> */}
           {/* <div className='card__body'> */}

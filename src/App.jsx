@@ -1,8 +1,4 @@
 // import './scss/App.scss'
-import './assets/boxicons-2.0.7/css/boxicons.min.css';
-import 'primereact/resources/themes/bootstrap4-light-blue/theme.css'; //theme
-import 'primereact/resources/primereact.min.css'; //core css
-import 'primeicons/primeicons.css';
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 //
