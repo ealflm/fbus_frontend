@@ -6,10 +6,10 @@ import { Navigate, Outlet, useOutlet } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 
 const MainLayout = () => {
-  const { user } = useAuth();
+  const { token } = useAuth();
   const outlet = useOutlet();
 
-  if (!user) {
+  if (!token) {
     return <Navigate to='/login' />;
   }
   return (

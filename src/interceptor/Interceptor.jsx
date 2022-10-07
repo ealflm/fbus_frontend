@@ -1,11 +1,11 @@
-import axios from 'axios';
+import * as axios from 'axios';
 import { LOCAL_STORAGE_KEY } from '../configs/baseURL';
 import { getLocalStorageItem } from '../utils/helper';
 export const interceptor = () => {
   axios.interceptors.request.use(
     (config) => {
       const token = getLocalStorageItem(LOCAL_STORAGE_KEY.TOKEN);
-      if (token.length > 0) {
+      if (token && token.length > 0) {
         config.headers = {
           Authorization: `Bearer ${token}`,
         };
@@ -22,7 +22,7 @@ export const interceptor = () => {
     },
     (error) => {
       const errRes = error.response;
-      console.log(errRes);
+      console.log('Interceptor:', errRes);
       // if (errRes) {
       // 	if (errRes.status === 401) {
       // 		const { data: { errors } } = errRes;

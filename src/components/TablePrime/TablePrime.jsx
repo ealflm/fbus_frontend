@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
-import { Button } from 'primereact/button';
-import { ProgressBar } from 'primereact/progressbar';
+import { Column } from 'primereact/column';
 import { Calendar } from 'primereact/calendar';
 import { MultiSelect } from 'primereact/multiselect';
 import { Slider } from 'primereact/slider';
 import { CustomerService } from '../../services/CustomerServices';
-import Customers from '../../assets/JsonData/customers-large.json';
+import { Button } from 'primereact/button';
+import { ProgressBar } from 'primereact/progressbar';
 import { ButtonExportExcel } from '../../components/ButtonExportExcel/ButtonExportExcel';
 import './TablePrime.css';
-export const TablePrime = () => {
-  const [customers, setCustomers] = useState(null);
+export const TablePrime = (props) => {
+  const { dataList, headerColumns } = props;
+  const { showButtonExportExcel } = props;
+  // const [customers, setCustomers] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: {
@@ -73,7 +74,7 @@ export const TablePrime = () => {
     //   setCustomers(getCustomers(data));
     //   setLoading(false);
     // });
-    setCustomers(Customers);
+    // setCustomers(dataList);
     setLoading(false);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -81,22 +82,6 @@ export const TablePrime = () => {
     return [...(data || [])].map((d) => {
       d.date = new Date(d.date);
       return d;
-    });
-  };
-
-  const formatDate = (value) => {
-    const date = new Date(value);
-    return date.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
-
-  const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
     });
   };
 
@@ -114,10 +99,12 @@ export const TablePrime = () => {
       <div className='flex justify-content-between align-items-center'>
         <h5 className='m-0'>Customers</h5>
         <div>
-          <ButtonExportExcel
-            dataToExcel={Customers}
-            fileName={`Thông tin`}
-          ></ButtonExportExcel>
+          {showButtonExportExcel && (
+            <ButtonExportExcel
+              dataToExcel={dataList}
+              fileName={`Thông tin`}
+            ></ButtonExportExcel>
+          )}
           <span className='p-input-icon-left ml-2'>
             <i className='pi pi-search' />
             <InputText
@@ -129,6 +116,21 @@ export const TablePrime = () => {
         </div>
       </div>
     );
+  };
+  const formatDate = (value) => {
+    const date = new Date(value);
+    return date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const formatCurrency = (value) => {
+    return value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
   };
 
   const countryBodyTemplate = (rowData) => {
@@ -316,7 +318,7 @@ export const TablePrime = () => {
       <div className='card'>
         <DataTable
           header={renderHeader}
-          value={customers}
+          value={dataList}
           paginator
           className='p-datatable-customers'
           rows={10}
@@ -340,87 +342,31 @@ export const TablePrime = () => {
           emptyMessage='Không tìm thấy dữ liệu.'
           currentPageReportTemplate='Đang xem {first} đến {last} của {totalRecords} thư mục'
         >
-          {/* <Column
-            selectionMode='multiple'
-            selectionAriaLabel='name'
-            headerStyle={{ width: '3em' }}
-          ></Column> */}
-          <Column
-            field='name'
-            header='Name'
-            sortable
-            // filter
-            // filterPlaceholder='Search by name'
-            style={{ minWidth: '14rem' }}
-          />
-          <Column
-            field='country.name'
-            header='Country'
-            sortable
-            filterField='country.name'
-            style={{ minWidth: '14rem' }}
-            body={countryBodyTemplate}
-            // filter
-            // filterPlaceholder='Search by country'
-          />
-          <Column
-            header='Agent'
-            sortable
-            sortField='representative.name'
-            filterField='representative'
-            showFilterMatchModes={false}
-            filterMenuStyle={{ width: '14rem' }}
-            style={{ minWidth: '14rem' }}
-            body={representativeBodyTemplate}
-            // filter
-            // filterElement={representativeFilterTemplate}
-          />
-          <Column
-            field='date'
-            header='Date'
-            sortable
-            filterField='date'
-            dataType='date'
-            style={{ minWidth: '8rem' }}
-            body={dateBodyTemplate}
-            // filter
-            // filterElement={dateFilterTemplate}
-          />
-          <Column
-            field='balance'
-            header='Balance'
-            sortable
-            dataType='numeric'
-            style={{ minWidth: '8rem' }}
-            body={balanceBodyTemplate}
-            // filter
-            // filterElement={balanceFilterTemplate}
-          />
-          <Column
-            field='status'
-            header='Status'
-            sortable
-            filterMenuStyle={{ width: '14rem' }}
-            style={{ minWidth: '10rem' }}
-            body={statusBodyTemplate}
-            // filter
-            // filterElement={statusFilterTemplate}
-          />
-          <Column
-            field='activity'
-            header='Activity'
-            sortable
-            showFilterMatchModes={false}
-            style={{ minWidth: '10rem' }}
-            body={activityBodyTemplate}
-            // filter
-            // filterElement={activityFilterTemplate}
-          />
-          <Column
-            headerStyle={{ width: '4rem', textAlign: 'center' }}
-            bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
-            body={actionBodyTemplate}
-          />
+          {headerColumns.map((item, index) => {
+            if (item.action) {
+              return (
+                <Column
+                  headerStyle={{ width: '4rem', textAlign: 'center' }}
+                  bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
+                  style={{ minWidth: `${item.style}` }}
+                  header={item.header}
+                />
+              );
+            } else {
+              return (
+                <Column
+                  key={index}
+                  field={item.field}
+                  header={item.header}
+                  sortable
+                  style={{ minWidth: `${item.style}` }}
+                  filterField={item.filterField}
+                  dataType={item.dataType}
+                  // body={item.body}
+                />
+              );
+            }
+          })}
         </DataTable>
       </div>
     </div>
