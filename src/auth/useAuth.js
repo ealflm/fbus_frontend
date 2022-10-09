@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useLocalStorage(LOCAL_STORAGE_KEY.TOKEN, null);
   const navigate = useNavigate();
 
-  const login = async (data) => {
+  const setLocalStoragelogin = async (data) => {
     setToken(data);
     navigate('/dashboard', { replace: true });
   };
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       token,
-      login,
+      setLocalStoragelogin,
       logout,
     }),
     [token]
