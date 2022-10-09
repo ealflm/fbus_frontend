@@ -12,30 +12,49 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { authService } from '../services/Authorization';
 import Loading from '../components/Loading/Loading';
-
+import CustomAlertError from '../components/CustomAlert/CustomAlertError';
+import { Alert } from 'reactstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useForm } from 'react-hook-form';
 export const Login = () => {
-  const { login } = useAuth();
+  const { setLocalStoragelogin } = useAuth();
   const [isLoading, setLoading] = useState(false);
-  const handleSubmit = (event) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
+    username: '',
+    password: '',
+  });
+  const onSubmit = handleSubmit((data) => {
     setLoading(true);
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
     authService
-      .login(data.get('username'), data.get('password'))
+      .login(data.username, data.password)
       .then((res) => {
-        console.log(res.status === 200);
-        login(res.data.body);
+        console.log(res);
+        if (res.data.body) {
+          setLocalStoragelogin(res.data.body);
+        } else {
+          toast.error(res.data.message);
+        }
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        toast.error(error.response.data.message);
         setLoading(false);
       });
-  };
+  });
 
   return (
     <>
       <Loading isLoading={isLoading}></Loading>
+      <ToastContainer />
       <Container component='main' maxWidth='xs'>
         <Box
           sx={{
@@ -51,37 +70,49 @@ export const Login = () => {
           <Typography component='h1' variant='h5'>
             Đăng nhập
           </Typography>
-          <Box
-            component='form'
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box noValidate sx={{ mt: 1 }}>
             <TextField
               margin='normal'
-              required
+              name='username'
+              {...register('username', { required: true, maxLength: 20 })}
               fullWidth
               id='username'
               label='Tài khoản'
-              name='username'
               autoComplete='username'
               autoFocus
             />
+            {errors.username?.type === 'required' && (
+              <small style={{ color: 'red' }}>Tài khoản không được trống</small>
+            )}
+            {errors.username?.type === 'maxLength' && (
+              <small style={{ color: 'red' }}>
+                Tài khoản không được quá 20 kí tự
+              </small>
+            )}
             <TextField
               margin='normal'
               required
               fullWidth
               name='password'
+              {...register('password', { required: true, maxLength: 20 })}
               label='Mật khẩu'
               type='password'
               id='password'
               autoComplete='current-password'
             />
+            {errors.password?.type === 'required' && (
+              <small style={{ color: 'red' }}>Tài khoản không được trống</small>
+            )}
+            {errors.password?.type === 'maxLength' && (
+              <small style={{ color: 'red' }}>
+                Mật khẩu không được quá 20 kí tự
+              </small>
+            )}
             <Button
-              type='submit'
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
+              onClick={() => onSubmit()}
             >
               Đăng nhập
             </Button>
