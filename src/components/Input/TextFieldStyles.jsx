@@ -28,14 +28,14 @@ export const textFieldSyles = makeStyles(() =>
       '&:before, &:after': {
         borderBottom: 'none !important',
       },
-      '&:hover': {
-        border: `1px solid #0287FF`,
-      },
+      // '&:hover': {
+      //   border: `1px solid #0287FF`,
+      // },
     },
     inputRootError: {
       background: '#ffffff!important',
-      border: '1px solid red',
-      borderRadius: '5px !important',
+      // border: '1px solid red',
+      // borderRadius: '5px !important',
 
       '& input:disabled': {
         background: '#e4e4e4!important',
@@ -47,9 +47,6 @@ export const textFieldSyles = makeStyles(() =>
       },
       '&:before, &:after': {
         borderBottom: 'none !important',
-      },
-      '&:hover': {
-        border: `1px solid #0287FF`,
       },
     },
     focusedLabel: {

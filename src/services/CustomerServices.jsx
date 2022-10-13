@@ -1,38 +1,12 @@
-export class CustomerService {
-  getCustomersSmall() {
-    return fetch('JsonData/customers-small.json')
-      .then((res) => res.json())
-      .then((d) => d.data);
-  }
+import * as axios from 'axios';
+import { API_URL } from '../configs/baseURL';
 
-  getCustomersMedium() {
-    return fetch('JsonData/customers-medium.json')
-      .then((res) => res.json())
-      .then((d) => d.data);
-  }
-
-  getCustomersLarge() {
-    return fetch('JsonData/customers-large.json')
-      .then((res) => res.json())
-      .then((d) => d.data);
-  }
-
-  getCustomersXLarge() {
-    return fetch('JsonData/customers-large.json')
-      .then((res) => res.json())
-      .then((d) => d.data);
-  }
-
-  getCustomers(params) {
-    const queryParams = params
-      ? Object.keys(params)
-          .map(
-            (k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
-          )
-          .join('&')
-      : '';
-    return fetch(
-      'https://www.primefaces.org/data/customers?' + queryParams
-    ).then((res) => res.json());
-  }
+class CustomerService {
+  getListCustomers = () => {
+    return axios({
+      url: `${API_URL.BASE_URL}/student/list`,
+      method: 'GET',
+    });
+  };
 }
+export const customerService = new CustomerService();

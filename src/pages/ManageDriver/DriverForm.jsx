@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Form, Row, Col, FormGroup, Label, Input } from 'reactstrap';
 
-import '../../components/createdriver/createdriver.css';
 import InputTextField from '../../components/Input/InputTextFiled';
 
 // REACT HOOK FORM

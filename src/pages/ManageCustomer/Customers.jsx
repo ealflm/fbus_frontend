@@ -12,6 +12,7 @@ import { ProgressBar } from 'primereact/progressbar';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { ButtonExportExcel } from '../../components/ButtonExportExcel/ButtonExportExcel';
+import { customerService } from '../../services/CustomerServices';
 
 const Customers = () => {
   const [customers, setCustomers] = useState();
@@ -43,9 +44,16 @@ const Customers = () => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    customerService.getListCustomers().then(
+      (res) => {
+        console.log(res);
+      },
+      (error) => {}
+    );
     setCustomers(CustomersList);
     setLoading(false);
   }, []);
+
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };

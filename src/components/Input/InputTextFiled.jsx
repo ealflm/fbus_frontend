@@ -106,7 +106,7 @@ const InputTextField = ({
       />
       {errorMessage && (
         <Box className='err-mess'>
-          <span>{errorMessage}</span>
+          <small>{errorMessage}</small>
         </Box>
       )}
     </>
