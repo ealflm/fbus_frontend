@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Form, Row, Col, FormGroup, Label, Input, Button } from 'reactstrap';
 
-import '../../components/createdriver/createdriver.css';
-
 const CreateBus = (props) => {
   // console.log(props);
   return (

@@ -53,7 +53,7 @@ const Mapbox = () => {
           // Add a symbol layer
 
           map.addLayer({
-            id: 'points',
+            id: 'places',
             type: 'symbol',
             source: 'points',
             layout: {
@@ -67,7 +67,58 @@ const Mapbox = () => {
           });
         }
       );
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+      });
+
+      map.on('click', 'places', (e) => {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+
+        // Copy coordinates array.
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const description = e.features[0].properties.description;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(coordinates).setHTML(description).addTo(map);
+        var features = map.queryRenderedFeatures(e.point, {
+          layers: ['places'],
+        });
+
+        if (!features.length) {
+          return;
+        }
+        console.log(features[0]);
+        // map.loadImage(
+        //   'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+        //   function (error, image) {
+        //     if (error) throw error;
+        //     map.setLayoutProperty('places', 'icon-image', [
+        //       'match',
+        //       ['id'], // get the feature id (make sure your data has an id set or use generateIds for GeoJSON sources
+        //       e.features[0].id,
+        //       'image-selected', //image when id is the clicked feature id
+        //       image, // default
+        //     ]);
+        //   }
+        // );
+      });
+
+      map.on('mouseleave', 'places', () => {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
     });
+
     // });
 
     // const geocoder = new MapboxGeocoder({
