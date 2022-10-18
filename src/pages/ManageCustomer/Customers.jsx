@@ -13,7 +13,22 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { ButtonExportExcel } from '../../components/ButtonExportExcel/ButtonExportExcel';
 import { customerService } from '../../services/CustomerServices';
-
+import { Chip } from 'primereact/chip';
+import { Tag } from 'primereact/tag';
+import {
+  STUDENT_STATUS,
+  STUDENT_STATUS_DROPDOWN,
+} from './../../constants/StudentStatus';
+import Loading from '../../components/Loading/Loading';
+import { useForm } from 'react-hook-form';
+import { Dialog } from 'primereact/dialog';
+import { Grid } from '@mui/material';
+import InputTextField from '../../components/Input/InputTextFiled';
+import { useCustomerStyles } from './CustomerStyles';
+import { setValueToForm } from '../../utils/helper';
+import SelectForm from '../../components/SelectForm/SelectForm';
+import { toast, ToastContainer } from 'react-toastify';
+import DefaultAvatar from '../../assets/images/default-avatar.png';
 const Customers = () => {
   const [customers, setCustomers] = useState();
   const [filters, setFilters] = useState({
@@ -41,19 +56,51 @@ const Customers = () => {
     },
     activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
   });
+
+  const [student, setStudent] = useState({});
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [loading, setLoading] = useState(true);
+  //
+  const classes = useCustomerStyles();
+
+  //
+
+  const initStudent = {
+    studentId: '',
+    fullName: '',
+    phone: '',
+    email: '',
+    address: '',
+    photoUrl: '',
+    automaticScheduling: '',
+    status: '',
+  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm(initStudent);
+  // popup modal
+  const [studentDialog, setStudentDialog] = useState(false);
+
   useEffect(() => {
+    getListStudent();
+  }, []);
+  const getListStudent = () => {
+    setLoading(true);
     customerService.getListCustomers().then(
       (res) => {
-        console.log(res);
+        setCustomers(res.data.body);
+        setLoading(false);
       },
-      (error) => {}
+      (error) => {
+        setLoading(false);
+      }
     );
-    setCustomers(CustomersList);
-    setLoading(false);
-  }, []);
-
+  };
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -66,7 +113,7 @@ const Customers = () => {
   const renderHeader = () => {
     return (
       <div className='flex justify-content-between align-items-center'>
-        <h5 className='m-0'>Customers</h5>
+        <h2 className='m-0'>Quản lý sinh viên</h2>
         <div>
           <ButtonExportExcel
             dataToExcel={customers}
@@ -77,210 +124,124 @@ const Customers = () => {
             <InputText
               value={globalFilterValue}
               onChange={onGlobalFilterChange}
-              placeholder='Keyword Search'
+              placeholder='Tìm kiếm...'
             />
           </span>
         </div>
       </div>
     );
   };
-  const formatDate = (value) => {
-    const date = new Date(value);
-    return date.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
 
-  const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
-  };
-
-  const countryBodyTemplate = (rowData) => {
+  const phoneBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        {/* <img
-          alt='flag'
-          src='images/flag/flag_placeholder.png'
-          onError={(e) =>
-            (e.target.src =
-              'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')
-          }
-          className={`flag flag-${rowData.country.code}`}
-          width={30}
-        /> */}
-        <span className='image-text'>{rowData.country.name}</span>
+        <span className='image-text'>{rowData?.phone}</span>
       </React.Fragment>
     );
   };
 
-  const representativeBodyTemplate = (rowData) => {
-    const representative = rowData.representative;
+  const emailBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className='image-text'>{representative.name}</span>
+        <span className='image-text'>{rowData?.email}</span>
       </React.Fragment>
     );
   };
 
-  const dateBodyTemplate = (rowData) => {
-    return formatDate(rowData.date);
+  const addressBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className='image-text'>{rowData?.address}</span>
+      </React.Fragment>
+    );
   };
 
-  const balanceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.balance);
+  const nameBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <Chip label={rowData?.fullName} image={rowData?.photoUrl} />
+      </React.Fragment>
+    );
   };
 
   const statusBodyTemplate = (rowData) => {
     return (
-      <span className={`customer-badge status-${rowData.status}`}>
-        {rowData.status}
-      </span>
+      <Tag severity={STUDENT_STATUS[rowData?.status]?.severity}>
+        {STUDENT_STATUS[rowData?.status]?.label}
+      </Tag>
     );
   };
 
-  const activityBodyTemplate = (rowData) => {
+  const actionBodyTemplate = (rowData) => {
     return (
-      <ProgressBar value={rowData.activity} showValue={false}></ProgressBar>
+      <React.Fragment>
+        <Button
+          icon='pi pi-pencil'
+          className='p-button-rounded p-button-success mr-2'
+          style={{ width: '30px', height: '30px' }}
+          onClick={() => showEditStudent(rowData)}
+        />
+        {/* <Button
+          icon='pi pi-trash'
+          className='p-button-rounded p-button-warning'
+          style={{ width: '30px', height: '30px' }}
+          onClick={() => showConfirmDeleteBus(rowData)}
+        /> */}
+      </React.Fragment>
     );
   };
-
-  const actionBodyTemplate = () => {
-    return <Button type='button' icon='pi pi-cog'></Button>;
+  const showEditStudent = (student) => {
+    setStudentDialog(true);
+    setStudent(student);
+    setValueToForm(student, setValue);
   };
-  // const customHeaderColumns = [
-  //   {
-  //     field: 'name',
-  //     header: 'Name',
-  //     sortable: true,
-  //     style: '14rem',
-  //   },
-  //   {
-  //     field: 'country.name',
-  //     header: 'Country',
-  //     sortable: true,
-  //     filterField: 'country.name',
-  //     style: '14rem',
-  //     body: {
-  //       countryBodyTemplate: (rowData) => {
-  //         return (
-  //           <React.Fragment>
-  //             <span className='image-text'>{rowData.country.name}</span>
-  //           </React.Fragment>
-  //         );
-  //       },
-  //     },
-  //   },
-  //   {
-  //     header: 'Agent',
-  //     sortable: true,
-  //     sortField: 'representative.name',
-  //     filterField: 'representative',
-  //     style: '14rem',
-  //     body: {
-  //       representativeBodyTemplate: (rowData) => {
-  //         const representative = rowData.representative;
-  //         return (
-  //           <React.Fragment>
-  //             <span className='image-text'>{representative.name}</span>
-  //           </React.Fragment>
-  //         );
-  //       },
-  //     },
-  //   },
-  //   {
-  //     field: 'date',
-  //     header: 'Date',
-  //     sortable: true,
-  //     filterField: 'date',
-  //     dataType: 'date',
-  //     style: '14rem',
-  //     body: {
-  //       dateBodyTemplate: (rowData) => {
-  //         const date = new Date(rowData.date);
-  //         return date.toLocaleDateString('en-US', {
-  //           day: '2-digit',
-  //           month: '2-digit',
-  //           year: 'numeric',
-  //         });
-  //       },
-  //     },
-  //   },
-  //   {
-  //     field: 'balance',
-  //     header: 'Balance',
-  //     sortable: true,
-  //     dataType: 'numeric',
-  //     style: '8rem',
-  //     body: {
-  //       balanceBodyTemplate: (rowData) => {
-  //         return rowData.balance.toLocaleString('en-US', {
-  //           style: 'currency',
-  //           currency: 'USD',
-  //         });
-  //       },
-  //     },
-  //   },
-  //   {
-  //     field: 'status',
-  //     header: 'Status',
-  //     sortable: true,
-  //     filterMenuStyle: '14rem',
-  //     style: '10rem',
-  //     body: {
-  //       statusBodyTemplate: (rowData) => {
-  //         return (
-  //           <React.Fragment>
-  //             <span className={`customer-badge status-${rowData.status}`}>
-  //               {rowData.status}
-  //             </span>
-  //           </React.Fragment>
-  //         );
-  //       },
-  //     },
-  //   },
-  //   {
-  //     field: 'activity',
-  //     header: 'Activity',
-  //     sortable: true,
-  //     style: '10rem',
-  //     body: {
-  //       activityBodyTemplate: (rowData) => {
-  //         return (
-  //           <React.Fragment>
-  //             <ProgressBar
-  //               value={rowData.activity}
-  //               showValue={false}
-  //             ></ProgressBar>
-  //           </React.Fragment>
-  //         );
-  //       },
-  //     },
-  //   },
-  //   {
-  //     header: 'Action',
-  //     action: true,
-  //     style: '8rem',
-  //     body: {
-  //       actionBodyTemplate: (rowData) => {
-  //         return (
-  //           <React.Fragment>
-  //             <Button type='button' icon='pi pi-cog'></Button>
-  //           </React.Fragment>
-  //         );
-  //       },
-  //     },
-  //   },
-  // ];
+  const onSaveStudent = handleSubmit((data) => {
+    if (data.studentId) {
+      const formData = new FormData();
+      formData.append('FullName', data.fullName);
+      formData.append('Phone', data.phone);
+      formData.append('address', data.address);
+      formData.append('Status', data.status);
+      formData.append('PhotoUrl', data.photoUrl);
+      customerService
+        .updateCustomer(formData, data.studentId)
+        .then((res) => {
+          hideStudentDialog();
+          toast.success(res.data.message);
+          getListStudent();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+          setLoading(false);
+        });
+    }
+  });
+  const hideStudentDialog = () => {
+    setStudentDialog(false);
+  };
+
+  const studentDialogFooter = (
+    <React.Fragment>
+      <Button
+        label='Hủy'
+        icon='pi pi-times'
+        className='p-button-text'
+        onClick={hideStudentDialog}
+      />
+      <Button
+        label='Lưu'
+        icon='pi pi-check'
+        className='p-button-text'
+        onClick={onSaveStudent}
+      />
+    </React.Fragment>
+  );
   return (
     <div>
+      <ToastContainer />
+      <Loading isLoading={loading}></Loading>
       <div className='row'>
         <div className='col-12'>
-          {/* <div className='datatable-doc-demo'> */}
           <div className='card'>
             <DataTable
               header={renderHeader}
@@ -295,56 +256,41 @@ const Customers = () => {
               rowHover
               filters={filters}
               filterDisplay='menu'
-              loading={loading}
               responsiveLayout='scroll'
-              globalFilterFields={[
-                'name',
-                'country.name',
-                'representative.name',
-                'balance',
-                'status',
-              ]}
+              globalFilterFields={['fullName', 'phone', 'email']}
               emptyMessage='Không tìm thấy dữ liệu.'
               currentPageReportTemplate='Đang xem {first} đến {last} của {totalRecords} thư mục'
             >
               <Column
                 field='name'
-                header='Name'
+                header='Họ và tên'
                 sortable
                 style={{ minWidth: '14rem' }}
+                body={nameBodyTemplate}
               />
               <Column
-                field='country.name'
-                header='Country'
+                field='phone'
+                header='Số điện thoại'
                 sortable
-                filterField='country.name'
+                filterField='phone'
                 style={{ minWidth: '14rem' }}
-                body={countryBodyTemplate}
+                body={phoneBodyTemplate}
               />
               <Column
-                header='Agent'
+                field='email'
+                header='Email'
                 sortable
-                sortField='representative.name'
-                filterField='representative'
+                sortField='email'
                 style={{ minWidth: '14rem' }}
-                body={representativeBodyTemplate}
+                body={emailBodyTemplate}
               />
               <Column
-                field='date'
-                header='Date'
+                field='address'
+                header='Địa chỉ'
                 sortable
-                filterField='date'
-                dataType='date'
-                style={{ minWidth: '8rem' }}
-                body={dateBodyTemplate}
-              />
-              <Column
-                field='balance'
-                header='Balance'
-                sortable
-                dataType='numeric'
-                style={{ minWidth: '8rem' }}
-                body={balanceBodyTemplate}
+                filterField='address'
+                style={{ minWidth: '14rem' }}
+                body={addressBodyTemplate}
               />
               <Column
                 field='status'
@@ -355,22 +301,117 @@ const Customers = () => {
                 body={statusBodyTemplate}
               />
               <Column
-                field='activity'
-                header='Activity'
-                sortable
-                style={{ minWidth: '10rem' }}
-                body={activityBodyTemplate}
-              />
-              <Column
                 headerStyle={{ width: '4rem', textAlign: 'center' }}
                 bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
                 body={actionBodyTemplate}
               />
             </DataTable>
           </div>
-          {/* </div> */}
         </div>
       </div>
+      <Dialog
+        visible={studentDialog}
+        style={{ width: '750px' }}
+        header='Cập nhật thông tin student'
+        modal
+        className='p-fluid'
+        footer={studentDialogFooter}
+        onHide={hideStudentDialog}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} mb={2}>
+            <div className={classes.avatarCircle}>
+              <img
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  borderRadius: '50%',
+                }}
+                src={student?.photoUrl ? student?.photoUrl : DefaultAvatar}
+                alt=''
+              />
+            </div>
+          </Grid>
+          <Grid item xs={6}>
+            <InputTextField
+              label={
+                <span>
+                  Họ và tên <span className='required'>*</span>
+                </span>
+              }
+              name='fullName'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.fullName}
+              errorMessage={errors.fullName ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <InputTextField
+              label={
+                <span>
+                  Số điện thoại <span className='required'>*</span>
+                </span>
+              }
+              name='phone'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.phone}
+              errorMessage={errors.phone ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputTextField
+              label={
+                <span>
+                  Email <span className='required'>*</span>
+                </span>
+              }
+              name='email'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.email}
+              errorMessage={errors.email ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputTextField
+              label={
+                <span>
+                  Địa chỉ <span className='required'>*</span>
+                </span>
+              }
+              name='address'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.address}
+              errorMessage={errors.address ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <SelectForm
+              label='Trạng thái'
+              name='status'
+              required
+              control={control}
+              options={STUDENT_STATUS_DROPDOWN}
+              errors={errors}
+            />
+          </Grid>
+        </Grid>
+      </Dialog>
     </div>
   );
 };

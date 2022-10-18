@@ -10,7 +10,6 @@ import Button from '@mui/material/Button';
 import { Grid, Box } from '@mui/material';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // STYLES
-import { driverFormStyles } from './DriverFormStyles';
 const DriverForm = (props) => {
   const {
     register,
@@ -23,7 +22,6 @@ const DriverForm = (props) => {
     accountDriver: '',
     driverName: '',
   });
-  const classes = driverFormStyles();
   // RENDER
   return (
     <div>
@@ -59,7 +57,7 @@ const DriverForm = (props) => {
                 </Grid>
               </Grid>
 
-              <Box className={classes.buttonBottom}>
+              <Box>
                 <Button variant='contained'>Lưu</Button>
               </Box>
             </form>

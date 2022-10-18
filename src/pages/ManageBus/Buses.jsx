@@ -14,6 +14,9 @@ import Loading from '../../components/Loading/Loading';
 import { Grid } from '@mui/material';
 import InputTextField from '../../components/Input/InputTextFiled';
 import { setValueToForm } from '../../utils/helper';
+import { toast, ToastContainer } from 'react-toastify';
+import { BUS_STATUS } from '../../constants/BusStatus';
+import { Tag } from 'primereact/tag';
 
 const Buses = () => {
   const [filters, setFilters] = useState({
@@ -63,6 +66,10 @@ const Buses = () => {
   const [deleteBusDialog, setDeleteBusDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    getListBus();
+  }, []);
+
+  const getListBus = () => {
     setLoading(true);
     busService.getListBusVehicle().then(
       (res) => {
@@ -74,8 +81,7 @@ const Buses = () => {
         setLoading(false);
       }
     );
-  }, []);
-
+  };
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -113,21 +119,6 @@ const Buses = () => {
       </div>
     );
   };
-  const formatDate = (value) => {
-    const date = new Date(value);
-    return date.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
-
-  const formatCurrency = (value) => {
-    return value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
-  };
 
   const colorBodyTemplate = (rowData) => {
     return (
@@ -145,14 +136,6 @@ const Buses = () => {
     );
   };
 
-  const dateBodyTemplate = (rowData) => {
-    return formatDate(rowData.date);
-  };
-
-  const balanceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.balance);
-  };
-
   const seatsBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -162,9 +145,9 @@ const Buses = () => {
   };
   const statusBodyTemplate = (rowData) => {
     return (
-      <span className={`customer-badge status-${rowData?.status}`}>
-        {rowData.status}
-      </span>
+      <Tag severity={BUS_STATUS[rowData.status].severity}>
+        {BUS_STATUS[rowData.status].label}
+      </Tag>
     );
   };
 
@@ -181,7 +164,7 @@ const Buses = () => {
           icon='pi pi-trash'
           className='p-button-rounded p-button-warning'
           style={{ width: '30px', height: '30px' }}
-          onClick={() => confirmDeleteBus(rowData)}
+          onClick={() => showConfirmDeleteBus(rowData)}
         />
       </React.Fragment>
     );
@@ -193,7 +176,35 @@ const Buses = () => {
     setBusDialog(true);
   };
   const onSaveBus = handleSubmit((data) => {
-    console.log(data);
+    hideBusDialog();
+    const payload = {
+      color: data.color,
+      licensePlates: data.licensePlates,
+      seat: data.seat,
+    };
+    if (data.busId) {
+      busService
+        .updateBusVehicle(payload, data.busId)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListBus();
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+          setLoading(false);
+        });
+    } else {
+      busService
+        .createBusVehicle(payload)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListBus();
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+          setLoading(false);
+        });
+    }
   });
   const editBus = (bus) => {
     console.log(bus);
@@ -204,9 +215,12 @@ const Buses = () => {
     setBusDialog(false);
   };
   //
-  const confirmDeleteBus = (bus) => {
+  const showConfirmDeleteBus = (bus) => {
     setBus(bus);
     setDeleteBusDialog(true);
+  };
+  const confirmDeleteBus = () => {
+    console.log(bus);
   };
   const hideDeleteBusDialog = () => {
     setDeleteBusDialog(false);
@@ -225,7 +239,7 @@ const Buses = () => {
         icon='pi pi-check'
         className='p-button-text'
         onClick={() => {
-          deleteProduct();
+          confirmDeleteBus();
         }}
       />
     </React.Fragment>
@@ -248,8 +262,10 @@ const Buses = () => {
   );
   // Call API
   const deleteProduct = () => {};
+  //
   return (
     <div>
+      <ToastContainer />
       <Loading isLoading={loading}></Loading>
       <div className='row'>
         <div className='col-12'>
@@ -370,10 +386,17 @@ const Buses = () => {
               control={control}
               registerProps={{
                 required: true,
+                pattern: /^[0-9]*$/g,
               }}
               register={register}
               error={errors.seat}
-              errorMessage={errors.seat ? 'Trường này là bắt buộc' : null}
+              errorMessage={
+                errors.seat && errors.seat?.type === 'required'
+                  ? 'Trường này là bắt buộc'
+                  : errors.seat?.type === 'pattern'
+                  ? 'Trường này bắt buộc nhập số'
+                  : null
+              }
             />
           </Grid>
         </Grid>

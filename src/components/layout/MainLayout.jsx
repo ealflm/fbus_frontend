@@ -1,6 +1,6 @@
 import React from 'react';
-import './layout.css';
-import Sidebar from '../sidebar/Sidebar';
+import './Layout.css';
+import Sidebar from '../Sidebar/Sidebar';
 // import Topnav from '../topnav/TopNav'
 import { Navigate, Outlet, useOutlet } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';

@@ -14,5 +14,12 @@ class BusService {
       data: busVehicle,
     });
   };
+  updateBusVehicle = (busVehicle, busId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/bus/${busId}`,
+      method: 'PUT',
+      data: busVehicle,
+    });
+  };
 }
 export const busService = new BusService();

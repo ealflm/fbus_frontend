@@ -1,129 +1,436 @@
+import { Grid } from '@mui/material';
+
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { Tag } from 'primereact/tag';
+import { Button } from 'primereact/button';
+import { Chip } from 'primereact/chip';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
+import { Dialog } from 'primereact/dialog';
+
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-
-import Table from '../../components/Table/Table';
-import Badge from '../../components/badge/Badge';
-
+import { set, useForm } from 'react-hook-form';
+import { toast, ToastContainer } from 'react-toastify';
+import InputTextField from '../../components/Input/InputTextFiled';
 import Loading from '../../components/Loading/Loading';
-
-import driverList from '../../assets/JsonData/drivers-list.json';
-
-const driverTableHead = [
-  '',
-  'Họ và tên',
-  'Đánh giá',
-  'Ngày sinh',
-  'Số điện thoại',
-  'Phương tiện',
-  'Lộ Trình',
-  'Trạng Thái',
-  'Hành động',
-];
-
-const driverStatus = {
-  'Vô hiệu hóa': 'info',
-  'Hoạt động': 'success',
-  'Không hoạt động': 'danger',
-};
-
-const renderHead = (item, index) => <th key={index}>{item}</th>;
-
-const renderBody = (item, index) => (
-  <tr key={index}>
-    <td>{index}</td>
-    <td>{item.name}</td>
-    <td>{item.rate}</td>
-    <td>{item.birth}</td>
-    <td>{item.phone}</td>
-    <td>{item.bus}</td>
-    <td>{item.route}</td>
-    <td>
-      <Badge type={driverStatus[item.status]} content={item.status} />
-    </td>
-    <td>
-      <div className='action__item'>
-        <Link to='/edit'>
-          <i className='bx bx-edit'></i>
-        </Link>
-        <Link to='/disabledriver'>
-          <i className='bx bx-user-x'></i>
-        </Link>
-      </div>
-    </td>
-  </tr>
-);
-
-const Drivers = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [drivers, setDriverList] = useState(driverList);
-  const [dataShow, setDataShow] = useState(driverList);
-  const [refreshData, setRefreshData] = useState(false);
-
-  const limit = 10;
-  let pages = 1;
-  let range = [];
-  // sort FE
-
-  useEffect(() => {
-    setTimeout(() => {
-      const initDataShow =
-        limit && drivers ? drivers.slice(0, Number(limit)) : drivers;
-      if (limit !== undefined) {
-        let page = Math.floor(drivers.length / Number(limit));
-        pages = drivers.length & (Number(limit) === 0) ? page : page + 1;
-        range = [...Array(pages).keys()];
-      }
-      setDriverList(initDataShow);
-      setDataShow(initDataShow);
-      setIsLoading(false);
-    }, 2000);
-  }, []);
-
-  const handleFetchData = (data) => {
-    // console.log(dataShow);
-    const start = Number(limit) * (data.currentPage - 1);
-    const end = start + Number(limit);
-    setDataShow(driverList.slice(start, end));
-    // console.log(data);
-  };
-  return (
-    <>
-      <Loading isLoading={isLoading} />
-      <div>
-        <div className='page-header'>
-          <h2>Tài xế</h2>
+import SelectForm from '../../components/SelectForm/SelectForm';
+import { ButtonExportExcel } from '../../components/ButtonExportExcel/ButtonExportExcel';
+import {
+  DRIVER_STATUS,
+  DRIVER_STATUS_DROPDOWN,
+} from '../../constants/DriverStatus';
+import { setValueToForm } from '../../utils/helper';
+import DefaultAvatar from '../../assets/images/default-avatar.png';
+import { useDriverFormStyles } from './DriverFormStyles';
+import './AvatarUpload.css';
+import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
+import { driverService } from '../../services/DriverService';
+export default function Drivers() {
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    'country.name': {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    date: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
+    },
+    balance: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+    status: {
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+    activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const classes = useDriverFormStyles();
+  const renderHeader = () => {
+    return (
+      <div className='flex justify-content-between align-items-center'>
+        <h2 className='m-0'>Quản lý tài xế</h2>
+        <div>
+          <Button
+            label='Tạo mới'
+            icon='pi pi-plus'
+            className='p-button-success mr-2'
+            onClick={createDriver}
+          />
+          <ButtonExportExcel
+            dataToExcel={driversList}
+            fileName={`Thông tin`}
+          ></ButtonExportExcel>
+          <span className='p-input-icon-left ml-2'>
+            <i className='pi pi-search' />
+            <InputText
+              value={globalFilterValue}
+              onChange={onGlobalFilterChange}
+              placeholder='Tìm kiếm...'
+            />
+          </span>
         </div>
-        <div className='row'>
-          <div className='col-12'>
-            <div className='card'>
-              <div className='card__body'>
-                <div className='header__table'>
-                  <Link to='/drivers/create'>
-                    <button className='btn-add'>
-                      <div className='btn-add__icon'>
-                        <i className='bx bx-plus'></i>
-                      </div>
-                      <div className='btn-add__info'>
-                        <span>Tài xế</span>
-                      </div>
-                    </button>
-                  </Link>
-                </div>
-                <Table
-                  headData={driverTableHead}
-                  renderHead={(item, index) => renderHead(item, index)}
-                  bodyData={dataShow}
-                  renderBody={(item, index) => renderBody(item, index)}
-                  handleRequest={handleFetchData}
-                  refreshData={refreshData}
-                />
-              </div>
-            </div>
+      </div>
+    );
+  };
+  const nameBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <Chip
+          label={rowData?.fullName}
+          image={`https://fbusstorage.blob.core.windows.net/driver/${rowData?.photoUrl}`}
+        />
+      </React.Fragment>
+    );
+  };
+  const phoneBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className='image-text'>{rowData?.phone}</span>
+      </React.Fragment>
+    );
+  };
+  const addressBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className='image-text'>{rowData?.address}</span>
+      </React.Fragment>
+    );
+  };
+
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <Tag severity={DRIVER_STATUS[rowData?.status]?.severity}>
+        {DRIVER_STATUS[rowData?.status]?.label}
+      </Tag>
+    );
+  };
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <Button
+          icon='pi pi-pencil'
+          className='p-button-rounded p-button-success mr-2'
+          style={{ width: '30px', height: '30px' }}
+          onClick={() => showEditDriver(rowData)}
+        />
+        {/* <Button
+          icon='pi pi-trash'
+          className='p-button-rounded p-button-warning'
+          style={{ width: '30px', height: '30px' }}
+          onClick={() => showConfirmDeleteBus(rowData)}
+        /> */}
+      </React.Fragment>
+    );
+  };
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters['global'].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const initDriver = {
+    driverId: '',
+    fullName: '',
+    phone: '',
+    photoUrl: '',
+    address: '',
+    status: '',
+  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm(initDriver);
+  //
+  const [driversList, setDriverList] = useState();
+  const [loading, setLoading] = useState(false);
+  const [driver, setDriver] = useState();
+  //
+  const [imagePreview, setImagePreview] = useState();
+  const [uploadFile, setUploadFile] = useState();
+  const [driverDialog, setDriverDialog] = useState(false);
+  const [deleteFile, setDeleteFile] = useState();
+  useEffect(() => {
+    getListDrivers();
+  }, []);
+  const getListDrivers = () => {
+    setLoading(true);
+    driverService
+      .getListDrivers()
+      .then((res) => {
+        console.log(res);
+        setDriverList(res.data.body);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+  const showEditDriver = (driver) => {
+    setDriverDialog(true);
+    setValueToForm(driver, setValue);
+    setDriver(driver);
+    setImagePreview(
+      'https://fbusstorage.blob.core.windows.net/driver/' + driver.photoUrl
+    );
+  };
+  const createDriver = () => {
+    reset();
+    setDriverDialog(true);
+  };
+  const hideDriverDialog = () => {
+    setDriverDialog(false);
+    setDriver(null);
+    setImagePreview(null);
+    setDeleteFile(null);
+  };
+  const onSaveDriver = handleSubmit((data) => {
+    setLoading(true);
+    if (data.driverId) {
+      let formData = new FormData();
+      formData.append('FullName', data.fullName);
+      formData.append('Address', data.address);
+      if (deleteFile) {
+        formData.append('DeleteFile', deleteFile.trim());
+      }
+      if (uploadFile) {
+        formData.append('UploadFile', uploadFile);
+      }
+      formData.append('Status', data.status);
+      driverService
+        .updateDriver(formData, data.driverId)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListDrivers();
+          setDriverDialog(false);
+          setUploadFile(null);
+        })
+        .catch((error) => {
+          toast.error(error.message);
+          setLoading(false);
+        });
+    } else {
+      let formData = new FormData();
+      formData.append('FullName', data.fullName);
+      formData.append('Address', data.address);
+      if (uploadFile) {
+        formData.append('UploadFile', uploadFile);
+      }
+      driverService
+        .createDriver(formData)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListDrivers();
+          setDriverDialog(false);
+          setUploadFile(null);
+        })
+        .catch((error) => {
+          toast.error(error.message);
+          setLoading(false);
+        });
+    }
+  });
+  const uploadAvatar = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setUploadFile(e.target.files[0]);
+      setDeleteFile(driver.photoUrl);
+      setImagePreview(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+  const driverDialogFooter = (
+    <React.Fragment>
+      <Button
+        label='Hủy'
+        icon='pi pi-times'
+        className='p-button-text'
+        onClick={hideDriverDialog}
+      />
+      <Button
+        label='Lưu'
+        icon='pi pi-check'
+        className='p-button-text'
+        onClick={onSaveDriver}
+      />
+    </React.Fragment>
+  );
+  return (
+    <div>
+      <ToastContainer />
+      <Loading isLoading={loading}></Loading>
+      <div className='row'>
+        <div className='col-12'>
+          <div className='card'>
+            <DataTable
+              header={renderHeader}
+              value={driversList}
+              paginator
+              size='small'
+              className='p-datatable-customers'
+              rows={10}
+              paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+              rowsPerPageOptions={[10, 25, 50]}
+              dataKey='id'
+              rowHover
+              filters={filters}
+              filterDisplay='menu'
+              responsiveLayout='scroll'
+              globalFilterFields={['fullName', 'phone', 'email']}
+              emptyMessage='Không tìm thấy dữ liệu.'
+              currentPageReportTemplate='Đang xem {first} đến {last} của {totalRecords} thư mục'
+            >
+              <Column
+                field='name'
+                header='Họ và tên'
+                sortable
+                style={{ minWidth: '14rem' }}
+                body={nameBodyTemplate}
+              />
+              <Column
+                field='phone'
+                header='Số điện thoại'
+                sortable
+                filterField='phone'
+                style={{ minWidth: '14rem' }}
+                body={phoneBodyTemplate}
+              />
+
+              <Column
+                field='address'
+                header='Địa chỉ'
+                sortable
+                filterField='address'
+                style={{ minWidth: '14rem' }}
+                body={addressBodyTemplate}
+              />
+              <Column
+                field='status'
+                header='Status'
+                sortable
+                filterMenuStyle={{ width: '14rem' }}
+                style={{ minWidth: '10rem' }}
+                body={statusBodyTemplate}
+              />
+              <Column
+                headerStyle={{ width: '4rem', textAlign: 'center' }}
+                bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
+                body={actionBodyTemplate}
+              />
+            </DataTable>
           </div>
         </div>
       </div>
-    </>
-  );
-};
+      <Dialog
+        visible={driverDialog}
+        style={{ width: '750px' }}
+        header='Thông tin tài xế'
+        modal
+        className='p-fluid'
+        footer={driverDialogFooter}
+        onHide={hideDriverDialog}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} mb={2}>
+            <div className='avatar-upload'>
+              <div className='avatar-edit'>
+                <input
+                  type='file'
+                  id='imageUpload'
+                  accept='.png, .jpg, .jpeg'
+                  onChange={uploadAvatar}
+                />
+                <label htmlFor='imageUpload' className={classes.imageUpload}>
+                  <CameraEnhanceIcon
+                    className={classes.iconUpload}
+                  ></CameraEnhanceIcon>
+                </label>
+              </div>
+              <div className='avatar-preview'>
+                <img src={imagePreview ? imagePreview : DefaultAvatar} alt='' />
+              </div>
+            </div>
+          </Grid>
+          <Grid item xs={6}>
+            <InputTextField
+              label={
+                <span>
+                  Họ và tên <span className='required'>*</span>
+                </span>
+              }
+              name='fullName'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.fullName}
+              errorMessage={errors.fullName ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <InputTextField
+              label={
+                <span>
+                  Số điện thoại <span className='required'>*</span>
+                </span>
+              }
+              name='phone'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.phone}
+              errorMessage={errors.phone ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
 
-export default Drivers;
+          <Grid item xs={12}>
+            <InputTextField
+              label={
+                <span>
+                  Địa chỉ <span className='required'>*</span>
+                </span>
+              }
+              name='address'
+              control={control}
+              registerProps={{
+                required: true,
+              }}
+              register={register}
+              error={errors.address}
+              errorMessage={errors.address ? 'Trường này là bắt buộc' : null}
+            />
+          </Grid>
+          {driver?.driverId && (
+            <Grid item xs={12}>
+              <SelectForm
+                label='Trạng thái'
+                name='status'
+                required
+                control={control}
+                options={DRIVER_STATUS_DROPDOWN}
+                errors={errors}
+              />
+            </Grid>
+          )}
+        </Grid>
+      </Dialog>
+    </div>
+  );
+}

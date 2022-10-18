@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 
 import busJson from '../../assets/JsonData/bus-locations.json';
 
-import './mapbox.css';
+import './Mapbox.css';
 
 // import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
@@ -146,11 +146,6 @@ const Mapbox = () => {
 
   return (
     <div className='map-body'>
-      <div className='sidebarStyle'>
-        <div>
-          Longitude: {lng} | Latitude: {lat} | Zomm: {zoom}
-        </div>
-      </div>
       <div className='map-wapper'>
         <div className='map-container' ref={mapContainerRef}></div>
       </div>
