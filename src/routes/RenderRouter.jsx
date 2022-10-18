@@ -63,29 +63,29 @@ const RouterList = [
     element: <Trips />,
   },
   // REPORTS
-  {
-    exact: true,
-    path: '/reports',
-    element: <Reports />,
-  },
-  // DISCOUNT
-  {
-    exact: true,
-    path: '/discounts',
-    element: <PageNotFound />,
-  },
-  // INVENTORY
-  {
-    exact: true,
-    path: '/inventorys',
-    element: <PageNotFound />,
-  },
-  // SETTING
-  {
-    exact: true,
-    path: '/settings',
-    element: <PageNotFound />,
-  },
+  // {
+  //   exact: true,
+  //   path: '/reports',
+  //   element: <Reports />,
+  // },
+  // // DISCOUNT
+  // {
+  //   exact: true,
+  //   path: '/discounts',
+  //   element: <PageNotFound />,
+  // },
+  // // INVENTORY
+  // {
+  //   exact: true,
+  //   path: '/inventorys',
+  //   element: <PageNotFound />,
+  // },
+  // // SETTING
+  // {
+  //   exact: true,
+  //   path: '/settings',
+  //   element: <PageNotFound />,
+  // },
 ];
 
 export const RenderRouter = () => {

@@ -3,7 +3,7 @@ export const loadingStyles = makeStyles(() =>
   createStyles({
     BoxLoading: {
       position: 'fixed',
-      zIndex: '999',
+      zIndex: '9999',
       height: '100%',
       width: '100%',
       overflow: 'show',

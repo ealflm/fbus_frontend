@@ -2,7 +2,7 @@ import React from 'react';
 
 import Chart from 'react-apexcharts';
 
-import StatusCard from '../../components/status-card/StatusCard';
+import StatusCard from '../../components/Status-card/StatusCard';
 
 import statusCards from '../../assets/JsonData/status-card-data.json';
 import { redirect, useParams } from 'react-router-dom';

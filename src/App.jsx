@@ -2,7 +2,7 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 //
-import MainLayout from './components/layout/MainLayout';
+import MainLayout from './components/Layout/MainLayout';
 import { RenderRouter } from './routes/RenderRouter';
 import PageNotFound from './pages/PageNotFound/PageNotFound';
 import { Login } from './auth/Login';

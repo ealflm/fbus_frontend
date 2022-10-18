@@ -1,9 +1,20 @@
 import { createStyles, makeStyles } from '@mui/styles';
 
-export const driverFormStyles = makeStyles(() =>
+export const useDriverFormStyles = makeStyles(() =>
   createStyles({
-    buttonBottom: {
-      marginTop: '1.4rem',
+    avatarCircle: {
+      width: '100px',
+      height: '100px',
+      margin: '0 auto',
+    },
+    imageUpload: {
+      position: 'relative',
+    },
+    iconUpload: {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%,-50%)',
     },
   })
 );
