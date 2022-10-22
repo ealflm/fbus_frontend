@@ -14,20 +14,15 @@ import 'primereact/resources/themes/lara-light-blue/theme.css'; //theme
 import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css';
 
-import * as APIInterceptor from './interceptor/Interceptor';
-import { AuthProvider } from './auth/useAuth';
 import { BrowserRouter } from 'react-router-dom';
 
 document.title = 'FBUS';
-APIInterceptor.Interceptor();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
   <BrowserRouter>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <App />
   </BrowserRouter>
   // </React.StrictMode>
 );

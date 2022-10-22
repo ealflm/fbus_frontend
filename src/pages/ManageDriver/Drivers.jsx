@@ -26,6 +26,7 @@ import { useDriverFormStyles } from './DriverFormStyles';
 import './AvatarUpload.css';
 import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
 import { driverService } from '../../services/DriverService';
+import { IMAGE_URL } from '../../configs/baseURL';
 export default function Drivers() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -86,7 +87,7 @@ export default function Drivers() {
       <React.Fragment>
         <Chip
           label={rowData?.fullName}
-          image={`https://fbusstorage.blob.core.windows.net/driver/${rowData?.photoUrl}`}
+          image={IMAGE_URL.DRIVER_IMAGE + rowData?.photoUrl}
         />
       </React.Fragment>
     );
@@ -186,9 +187,7 @@ export default function Drivers() {
     setDriverDialog(true);
     setValueToForm(driver, setValue);
     setDriver(driver);
-    setImagePreview(
-      'https://fbusstorage.blob.core.windows.net/driver/' + driver.photoUrl
-    );
+    setImagePreview(IMAGE_URL.DRIVER_IMAGE + driver.photoUrl);
   };
   const createDriver = () => {
     reset();
@@ -249,8 +248,10 @@ export default function Drivers() {
   const uploadAvatar = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setUploadFile(e.target.files[0]);
-      setDeleteFile(driver.photoUrl);
       setImagePreview(URL.createObjectURL(e.target.files[0]));
+      if (driver) {
+        setDeleteFile(driver.photoUrl);
+      }
     }
   };
   const driverDialogFooter = (
@@ -389,6 +390,7 @@ export default function Drivers() {
                   Số điện thoại <span className='required'>*</span>
                 </span>
               }
+              disabled={driver?.driverId}
               name='phone'
               control={control}
               registerProps={{
