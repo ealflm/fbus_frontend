@@ -1,7 +1,7 @@
 import * as axios from 'axios';
 import { LOCAL_STORAGE_KEY } from '../configs/baseURL';
 import { getLocalStorageItem, removeLocalStorageItem } from '../utils/helper';
-export const Interceptor = () => {
+const Interceptor = () => {
   axios.interceptors.request.use(
     (config) => {
       const token = getLocalStorageItem(LOCAL_STORAGE_KEY.TOKEN);
@@ -30,3 +30,4 @@ export const Interceptor = () => {
     }
   );
 };
+export default Interceptor;

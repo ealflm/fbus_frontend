@@ -29,6 +29,7 @@ import { setValueToForm } from '../../utils/helper';
 import SelectForm from '../../components/SelectForm/SelectForm';
 import { toast, ToastContainer } from 'react-toastify';
 import DefaultAvatar from '../../assets/images/default-avatar.png';
+import { IMAGE_URL } from '../../configs/baseURL';
 const Customers = () => {
   const [customers, setCustomers] = useState();
   const [filters, setFilters] = useState({
@@ -159,7 +160,10 @@ const Customers = () => {
   const nameBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <Chip label={rowData?.fullName} image={rowData?.photoUrl} />
+        <Chip
+          label={rowData?.fullName}
+          image={IMAGE_URL.STUDENT_IMAGE + rowData?.photoUrl}
+        />
       </React.Fragment>
     );
   };
@@ -202,7 +206,7 @@ const Customers = () => {
       formData.append('Phone', data.phone);
       formData.append('address', data.address);
       formData.append('Status', data.status);
-      formData.append('PhotoUrl', data.photoUrl);
+      // formData.append('PhotoUrl', data.photoUrl);
       customerService
         .updateCustomer(formData, data.studentId)
         .then((res) => {
@@ -327,7 +331,11 @@ const Customers = () => {
                   height: '100px',
                   borderRadius: '50%',
                 }}
-                src={student?.photoUrl ? student?.photoUrl : DefaultAvatar}
+                src={
+                  student?.photoUrl
+                    ? IMAGE_URL.STUDENT_IMAGE + student?.photoUrl
+                    : DefaultAvatar
+                }
                 alt=''
               />
             </div>
