@@ -8,6 +8,7 @@ import { Box, Button, FormControl, Icon, IconButton } from '@mui/material';
 
 import BodyListContentMap from '../../components/BodyContentMap/BodyListContentMap';
 import BodyDetailMap from '../../components/BodyContentMap/BodyDetailMap';
+import StationManage from './StationManage/StationManage';
 const Trips = () => {
   const styles = useTripStyles();
   const [showDetail, setShowDetail] = useState(false);
@@ -21,7 +22,11 @@ const Trips = () => {
       [event.target.name]: event.target.checked,
     });
   };
+  const [showStationDialog, setShowStationDialog] = useState(false);
   const { station, route } = checked;
+  const showCreateStation = () => {
+    setShowStationDialog(true);
+  };
   return (
     <div className={styles.tripWrap}>
       <div className={styles.boxHeader}>
@@ -44,7 +49,7 @@ const Trips = () => {
                   }
                   label='Trạm xe buýt'
                 />
-                <IconButton>
+                <IconButton onClick={showCreateStation}>
                   <Icon color='primary'>add_circle</Icon>
                 </IconButton>
               </div>
@@ -78,6 +83,10 @@ const Trips = () => {
         <BodyDetailMap setShowDetail={setShowDetail} />
       )}
       <Mapbox />
+      <StationManage
+        showStationDialog={showStationDialog}
+        setShowStationDialog={setShowStationDialog}
+      />
     </div>
   );
 };
