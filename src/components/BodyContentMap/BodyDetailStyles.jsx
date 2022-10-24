@@ -7,7 +7,7 @@ export const useBodyDetailStyles = makeStyles(() =>
       width: '300px',
       backgroundColor: 'rgba(255, 255, 255, 0.88)',
       right: '20px',
-      top: '140px',
+      top: '17%',
       zIndex: 999,
       borderRadius: '9px',
     },
