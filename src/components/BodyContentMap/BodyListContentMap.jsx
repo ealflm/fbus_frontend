@@ -6,16 +6,27 @@ import { Card } from 'reactstrap';
 import { useBodyListStyles } from './BodyListStyles';
 
 export default function BodyListContentMap(props) {
-  const { stationList, routeList, setShowDetail, getStationDetail } = props;
+  const {
+    stationList,
+    routeList,
+    setShowDetail,
+    getStationDetail,
+    getRouteDetail,
+  } = props;
+  const styles = useBodyListStyles();
+
+  useEffect(() => {
+    // console.log(routeList);
+    // console.log(stationList);
+  }, [routeList, stationList]);
   const setDetailStation = (station) => {
     setShowDetail(true);
     getStationDetail(station);
   };
-  const styles = useBodyListStyles();
-  useEffect(() => {
-    console.log(routeList);
-    console.log(stationList);
-  }, [routeList, stationList]);
+  const setDetailRoute = (route) => {
+    setShowDetail(true);
+    getRouteDetail(route);
+  };
   return stationList ? (
     <div className={styles.boxBodyList}>
       <div className={styles.contentBoxBody}>
@@ -78,21 +89,25 @@ export default function BodyListContentMap(props) {
                   key={index}
                   variant='outlined'
                   sx={{ display: 'flex' }}
-                  onClick={() => {}}
+                  onClick={() => {
+                    setDetailRoute(item);
+                  }}
                 >
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <CardContent sx={{ flex: '1 0 auto' }}>
-                      <Typography
-                        component='div'
-                        variant='subtitle1'
-                      ></Typography>
+                      <Typography component='div' variant='subtitle1'>
+                        {item.name}
+                      </Typography>
                       <Typography
                         variant='subtitle2'
                         color='text.secondary'
                         component='div'
-                      ></Typography>
-                      <Typography variant='body2'></Typography>
-                      <Typography variant='body2'></Typography>
+                      >
+                        Khoảng cách: {item.distance}
+                      </Typography>
+                      <Typography variant='body2'>
+                        Số lượng trạm: {item.totalStation}
+                      </Typography>
                     </CardContent>
                   </Box>
                 </Card>
