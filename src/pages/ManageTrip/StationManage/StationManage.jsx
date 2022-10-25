@@ -4,7 +4,6 @@ import { Button } from 'primereact/button';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import InputTextField from '../../../components/Input/InputTextFiled';
-import Mapbox from '../../../components/Mapbox/Mapbox';
 import MiniMap from '../../../components/MiniMap/MiniMap';
 import { stationService } from '../../../services/StationService';
 import { toast, ToastContainer } from 'react-toastify';
