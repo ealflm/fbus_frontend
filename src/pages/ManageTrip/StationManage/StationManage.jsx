@@ -9,7 +9,12 @@ import { stationService } from '../../../services/StationService';
 import { toast, ToastContainer } from 'react-toastify';
 
 export default function StationManage(props) {
-  const { showStationDialog, setShowStationDialog } = props;
+  const {
+    showStationDialog,
+    setShowStationDialog,
+    setRefereshData,
+    refershData,
+  } = props;
   const initValue = {
     name: '',
     address: '',
@@ -45,6 +50,7 @@ export default function StationManage(props) {
         toast.success(res.data.message);
         reset();
         setShowStationDialog(false);
+        setRefereshData(!refershData);
       })
       .catch((error) => {
         toast.error(error.message);

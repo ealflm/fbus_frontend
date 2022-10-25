@@ -21,12 +21,20 @@ export default function BodyDetailMap(props) {
   } = props;
   const styles = useBodyDetailStyles();
   useEffect(() => {
-    '';
-  }, [setShowDetail]);
+    if (routeDetail) {
+      console.log(routeDetail);
+    } else if (stationDetail) {
+      console.log(stationDetail);
+    }
+  }, [setShowDetail, stationDetail, routeDetail]);
 
   const backStationList = () => {
     setShowDetail(false);
     setStationDetail(null);
+  };
+  const backRouteList = () => {
+    setShowDetail(false);
+    setRouteDetail(null);
   };
   return setShowDetail && stationDetail ? (
     <div className={styles.boxBodyDetail}>
@@ -72,14 +80,14 @@ export default function BodyDetailMap(props) {
           <ArrowBackIcon />
         </IconButton>
         <Box>
-          <Button variant='text'>Cập nhật</Button>
+          {/* <Button variant='text'>Cập nhật</Button> */}
           <IconButton>
             <DeleteIcon />
           </IconButton>
         </Box>
       </div>
     </div>
-  ) : routeDetail ? (
+  ) : setShowDetail && routeDetail ? (
     <div className={styles.boxBodyDetail}>
       <div className={styles.contentBoxBody}>
         <h4 className={styles.boxBodyTitle}>Chi tiết Tuyến</h4>
@@ -105,14 +113,26 @@ export default function BodyDetailMap(props) {
               </Typography>
               {routeDetail.stationList.map((item, index) => {
                 return (
-                  <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                  <Box
                     key={index}
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
                   >
-                    Vĩ độ: {item.name}
-                  </Typography>
+                    <Typography
+                      variant='subtitle1'
+                      color='text.secondary'
+                      component='div'
+                    >
+                      Tên trạm:
+                    </Typography>
+                    <Typography
+                      variant='subtitle1'
+                      color='text.secondary'
+                      component='div'
+                      mt={3}
+                    >
+                      {item.name}
+                    </Typography>
+                  </Box>
                 );
               })}
             </CardContent>
@@ -122,7 +142,7 @@ export default function BodyDetailMap(props) {
       <div className={styles.bottomContentBody}>
         <IconButton
           onClick={() => {
-            backStationList();
+            backRouteList();
           }}
         >
           <ArrowBackIcon />

@@ -10,6 +10,8 @@ import BodyListContentMap from '../../components/BodyContentMap/BodyListContentM
 import BodyDetailMap from '../../components/BodyContentMap/BodyDetailMap';
 import StationManage from './StationManage/StationManage';
 import { stationService } from '../../services/StationService';
+import { routeService } from '../../services/RouteService';
+
 import { toast } from 'react-toastify';
 const Trips = () => {
   const styles = useTripStyles();
@@ -23,12 +25,13 @@ const Trips = () => {
     station: true,
   });
   const [showStationDialog, setShowStationDialog] = useState(false);
+  const [refereshData, setRefereshData] = useState(false);
   const { station, route } = checked;
   useEffect(() => {
     if (station) {
       getListStation();
     }
-  }, [checked]);
+  }, [checked, refereshData]);
 
   // HANLDE FUNTION CALL API
   const getListStation = () => {
@@ -36,6 +39,14 @@ const Trips = () => {
       .getListStations()
       .then((res) => {
         setStationList(res.data.body);
+      })
+      .catch((error) => toast.error(error.message));
+  };
+  const getListRoute = () => {
+    routeService
+      .getListRoutes()
+      .then((res) => {
+        setRouteList(res.data.body);
       })
       .catch((error) => toast.error(error.message));
   };
@@ -52,20 +63,20 @@ const Trips = () => {
   const showLayoutListRoute = () => {
     setShowDetail(false);
     setStationList(null);
-    stationService
-      .getListStations()
-      .then((res) => {
-        setRouteList(res.data.body);
-      })
-      .catch((error) => toast.error(error.message));
+    getListRoute();
   };
   const showLayoutListStation = () => {
-    setRouteList(null);
     setShowDetail(false);
+    setRouteList(null);
     getListStation();
   };
   const getStationDetail = (stationDetail) => {
+    setRouteDetail(null);
     setStationDetail(stationDetail);
+  };
+  const getRouteDetail = (routeDetail) => {
+    setStationDetail(null);
+    setRouteDetail(routeDetail);
   };
   return (
     <div className={styles.tripWrap}>
@@ -117,6 +128,7 @@ const Trips = () => {
         <BodyDetailMap
           setShowDetail={setShowDetail}
           stationDetail={stationDetail}
+          routeDetail={routeDetail}
           setStationDetail={setStationDetail}
           setRouteDetail={setRouteDetail}
         />
@@ -125,17 +137,22 @@ const Trips = () => {
           setShowDetail={setShowDetail}
           stationList={stationList}
           routeList={routeList}
+          // Function form child to parrent
           getStationDetail={getStationDetail}
+          getRouteDetail={getRouteDetail}
         />
       )}
       <Mapbox
         stationList={stationList}
         routerList={routeList}
         stationDetail={stationDetail}
+        routeDetail={routeDetail}
       />
       <StationManage
         showStationDialog={showStationDialog}
         setShowStationDialog={setShowStationDialog}
+        setRefereshData={setRefereshData}
+        refereshData={refereshData}
       />
     </div>
   );

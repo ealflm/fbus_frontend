@@ -12,7 +12,7 @@ class StationService {
     return axios({
       url: `${API_URL.BASE_URL}/station/${stationId}`,
       method: 'PUT',
-      data: stationId,
+      data: station,
     });
   };
   createStation = (station) => {
