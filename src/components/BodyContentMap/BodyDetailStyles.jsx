@@ -25,6 +25,7 @@ export const useBodyDetailStyles = makeStyles(() =>
       padding: '10px',
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     cardBodyList: {
       display: 'flex',
