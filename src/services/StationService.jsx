@@ -22,5 +22,11 @@ class StationService {
       data: station,
     });
   };
+  deleteStation = (stationId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/station/${stationId}`,
+      method: 'DELETE',
+    });
+  };
 }
 export const stationService = new StationService();
