@@ -29,7 +29,6 @@
     "react-apexcharts": "^1.4.0",
     "react-data-export": "^0.6.0",
     "react-dom": "^18.2.0",
-    "react-export-excel": "^0.5.3",
     "react-hook-form": "^7.37.0",
     "react-map-gl": "^7.0.19",
     "react-router-dom": "^6.4.1",

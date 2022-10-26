@@ -13,6 +13,7 @@ import { stationService } from '../../services/StationService';
 import { routeService } from '../../services/RouteService';
 
 import { toast } from 'react-toastify';
+import { Dialog } from 'primereact/dialog';
 const Trips = () => {
   const styles = useTripStyles();
   //
@@ -29,6 +30,7 @@ const Trips = () => {
   const { station, route } = checked;
   useEffect(() => {
     if (station) {
+      console.log('run');
       getListStation();
     }
   }, [checked, refereshData]);
@@ -78,6 +80,7 @@ const Trips = () => {
     setStationDetail(null);
     setRouteDetail(routeDetail);
   };
+
   return (
     <div className={styles.tripWrap}>
       <div className={styles.boxHeader}>
@@ -131,6 +134,8 @@ const Trips = () => {
           routeDetail={routeDetail}
           setStationDetail={setStationDetail}
           setRouteDetail={setRouteDetail}
+          setRefereshData={setRefereshData}
+          refereshData={refereshData}
         />
       ) : (
         <BodyListContentMap
