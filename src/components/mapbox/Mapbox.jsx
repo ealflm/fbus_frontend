@@ -1,24 +1,19 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
-
-import busJson from '../../assets/JsonData/bus-locations.json';
-
 import './Mapbox.css';
-
-// import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import markerIcon from '../../assets/images/markerIcon.png';
 mapboxgl.accessToken =
   'pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg';
-// mapboxgl.accessToken =
-//   'pk.eyJ1Ijoic2FuZ2RlcHRyYWkiLCJhIjoiY2w0bXFvaDRwMW9uZjNpbWtpMjZ3eGxnbCJ9.2gQ3NUL1eBYTwP1Q_qS34A';
+
 const Mapbox = (props) => {
-  const { stationList, stationDetail } = props;
+  const { stationList, stationDetail, refereshData } = props;
   const [map, setMap] = useState();
   const mapContainerRef = useRef(null); //MapBox Container
   const [lng, setLng] = useState(106.80997955258721); //Longitude
   const [lat, setLat] = useState(10.84105064580045); //Latitude
-  const [zoom, setZoom] = useState(17); //Zoom Level
+  const [zoom, setZoom] = useState(17);
+  const [currentMarkerList, setCurrentMarkerList] = useState();
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -29,18 +24,29 @@ const Mapbox = (props) => {
     setMap(map);
   }, []);
   useEffect(() => {
+    if (currentMarkerList !== null) {
+      for (var i = currentMarkerList?.length - 1; i >= 0; i--) {
+        currentMarkerList[i].remove();
+      }
+    }
+  }, [refereshData]);
+  useEffect(() => {
     if (map) {
       if (stationList) {
+        let markerArr = [];
         for (const station of stationList) {
           const el = document.createElement('div');
           el.className = 'marker';
-          el.id = station.id;
+          el.id = station.stationId;
           el.style.width = `20px`;
           el.style.height = `45px`;
           el.style.backgroundImage = `url(${markerIcon})`;
           el.style.cursor = 'pointer';
           var marker = new mapboxgl.Marker(el);
           marker.setLngLat([station.longitude, station.latitude]).addTo(map);
+          markerArr = [...markerArr, marker];
+          console.log(markerArr);
+          console.log(markerArr[0]._element.id);
           const popup = new mapboxgl.Popup({
             closeButton: true,
             closeOnClick: true,
@@ -50,9 +56,11 @@ const Mapbox = (props) => {
           marker.setPopup(popup);
           popup.remove();
         }
+        setCurrentMarkerList(markerArr);
       }
     }
   }, [map, stationList]);
+
   useEffect(() => {
     if (map) {
       if (stationDetail) {

@@ -152,6 +152,7 @@ const Trips = () => {
         routerList={routeList}
         stationDetail={stationDetail}
         routeDetail={routeDetail}
+        refereshData={refereshData}
       />
       <StationManage
         showStationDialog={showStationDialog}

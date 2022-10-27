@@ -205,6 +205,7 @@ export default function Drivers() {
       let formData = new FormData();
       formData.append('FullName', data.fullName);
       formData.append('Address', data.address);
+      formData.append('Phone', data.phone);
       if (deleteFile) {
         formData.append('DeleteFile', deleteFile.trim());
       }
@@ -228,6 +229,7 @@ export default function Drivers() {
       let formData = new FormData();
       formData.append('FullName', data.fullName);
       formData.append('Address', data.address);
+      formData.append('Phone', data.phone);
       if (uploadFile) {
         formData.append('UploadFile', uploadFile);
       }
