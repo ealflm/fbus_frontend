@@ -16,7 +16,7 @@ export default function BodyDetailMap(props) {
     setStationDetail,
     setRouteDetail,
     setRefereshData,
-    refershData,
+    refereshData,
   } = props;
   const styles = useBodyDetailStyles();
 
@@ -81,7 +81,7 @@ export default function BodyDetailMap(props) {
         .then((res) => {
           toast.success(res.data.message);
           setShowConfirmDeleteDialog(false);
-          setRefereshData(!refershData);
+          setRefereshData(!refereshData);
           backStationList();
         })
         .catch((error) => {
