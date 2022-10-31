@@ -174,7 +174,6 @@ export default function Drivers() {
     driverService
       .getListDrivers()
       .then((res) => {
-        console.log(res);
         setDriverList(res.data.body);
         setLoading(false);
       })
