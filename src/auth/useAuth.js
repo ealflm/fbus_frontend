@@ -6,8 +6,8 @@ import jwtDecode from "jwt-decode";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useLocalStorage(LOCAL_STORAGE_KEY.TOKEN, null);
   const navigate = useNavigate();
+  const [token, setToken] = useLocalStorage(LOCAL_STORAGE_KEY.TOKEN, null);
 
   const setLocalStoragelogin = async (data) => {
     setToken(data);
