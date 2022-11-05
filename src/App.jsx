@@ -1,39 +1,25 @@
-import './assets/boxicons-2.0.7/css/boxicons.min.css';
-
 // import './scss/App.scss'
-import Blank from './pages/Blank';
-import MainLayout from './components/layout/MainLayout';
 
-import Dashboard from './pages/Dashboard';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Customers from './pages/Customers';
-import Drivers from './pages/Drivers';
-import Buses from './pages/Buses';
-import Reports from './pages/Reports';
-import Createdriver from './pages/Createdriver';
-import Trips from './pages/Trips';
-import Createbus from './pages/Createbus';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+//
+import MainLayout from './components/Layout/MainLayout';
 import { RenderRouter } from './routes/RenderRouter';
+import PageNotFound from './pages/PageNotFound/PageNotFound';
+import { Login } from './auth/Login';
+import { AuthProvider } from './auth/useAuth';
+import Interceptor from './interceptor/Interceptor';
+Interceptor();
 function App() {
   return (
-    <BrowserRouter>
+    <AuthProvider>
       <Routes>
+        <Route path='*' element={<PageNotFound />} />
+        <Route path='/login' element={<Login />} />
         <Route path='/' element={<MainLayout />}>
-          {/* <Route index element={<Dashboard />} />
-                    <Route path="customers" element={<Customers />} />
-                    <Route path="drivers" element={<Drivers />} />
-                    <Route path="buses" element={<Buses />} />
-                    <Route path="trips" element={<Trips />} />
-                    <Route path="reports" element={<Reports />} />
-                    <Route path="discount" element={<Blank />} />
-                    <Route path="inventory" element={<Blank />} />
-                    <Route path="settings" element={<Blank />} />
-                    <Route path='createdriver' element={<Createdriver/>}/>
-                    <Route path='createbus' element={<Createbus />}/> */}
           {RenderRouter()}
         </Route>
       </Routes>
-    </BrowserRouter>
+    </AuthProvider>
   );
 }
 

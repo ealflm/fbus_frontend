@@ -29,35 +29,35 @@ const sidebarNav = [
     icon: <i className='bx bx-trip'></i>,
     section: 'trips',
   },
-  {
-    text: 'Đánh giá',
-    link: '/reports',
-    icon: <i className='bx bxs-report'></i>,
-    section: 'reports',
-  },
-  {
-    text: 'discount',
-    link: '/discount',
-    icon: <i className='bx bx-gift'></i>,
-    section: 'discounts',
-  },
-  {
-    text: 'inventory',
-    link: '/inventory',
-    icon: <i className='bx bx-store-alt'></i>,
-    section: '',
-  },
-  {
-    text: 'settings',
-    link: '/settings',
-    icon: <i className='bx bx-cog'></i>,
-    section: '',
-  },
-  {
-    text: 'logout',
-    link: '/logout',
-    icon: <i className='bx bx-log-out'></i>,
-    section: 'logout',
-  },
+  // {
+  //   text: 'Đánh giá',
+  //   link: '/reports',
+  //   icon: <i className='bx bxs-report'></i>,
+  //   section: 'reports',
+  // },
+  // {
+  //   text: 'discount',
+  //   link: '/discounts',
+  //   icon: <i className='bx bx-gift'></i>,
+  //   section: 'discounts',
+  // },
+  // {
+  //   text: 'inventory',
+  //   link: '/inventorys',
+  //   icon: <i className='bx bx-store-alt'></i>,
+  //   section: '',
+  // },
+  // {
+  //   text: 'settings',
+  //   link: '/settings',
+  //   icon: <i className='bx bx-cog'></i>,
+  //   section: '',
+  // },
+  // {
+  //   text: 'logout',
+  //   link: '/logout',
+  //   icon: <i className='bx bx-log-out'></i>,
+  //   section: 'logout',
+  // },
 ];
 export default sidebarNav;

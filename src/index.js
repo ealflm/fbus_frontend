@@ -5,12 +5,24 @@ import './assets/boxicons-2.0.7/css/boxicons.min.css';
 import './assets/css/grid.css';
 import './assets/css/index.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './assets/boxicons-2.0.7/css/boxicons.min.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; //theme
+import 'primereact/resources/primereact.min.css'; //core css
+import 'primeicons/primeicons.css';
 
-document.title = 'Fbus Admin';
+import { BrowserRouter } from 'react-router-dom';
+
+document.title = 'FBUS';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
     <App />
-  </React.StrictMode>
+  </BrowserRouter>
+  // </React.StrictMode>
 );
