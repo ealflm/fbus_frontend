@@ -1,102 +1,106 @@
-import { Navigate, Route } from 'react-router-dom';
-import Blank from '../pages/Blank';
-import Buses from '../pages/Buses';
-import Createbus from '../pages/Createbus';
-import Createdriver from '../pages/Createdriver';
-import Customers from '../pages/Customers';
-import Dashboard from '../pages/Dashboard';
-import Drivers from '../pages/Drivers';
-import Reports from '../pages/Reports';
-import Trips from '../pages/Trips';
+import { Navigate, Route } from "react-router-dom";
+import Dashboard from "../pages/Dashboard/Dashboard";
+import Customers from "../pages/ManageCustomer/Customers";
+import Drivers from "../pages/ManageDriver/Drivers";
+import Trips from "../pages/ManageTrip/Trips";
+import Buses from "../pages/ManageBus/Buses";
+import CreateBus from "../pages/ManageBus/CreateBus";
+import DriverForm from "../pages/ManageDriver/DriverForm";
+import RouteManage from "../pages/ManageTrip/RouteManage/RouteManage";
 
 const RouterList = [
   {
     exact: true,
-    path: '/',
+    path: "/",
     element: <Dashboard />,
   },
   {
     exact: true,
-    path: '/dashboard',
+    path: "/dashboard",
     element: <Dashboard />,
   },
   {
     exact: true,
-    path: '/customers',
+    path: "/customers",
     element: <Customers />,
   },
   // DRIVER
   {
     exact: true,
-    path: '/drivers',
+    path: "/drivers",
     element: <Drivers />,
   },
   {
     exact: true,
-    path: '/drivers/:id',
-    element: <Createdriver type='EDIT' />,
+    path: "/drivers/:id",
+    element: <DriverForm type="EDIT" />,
   },
   {
     exact: true,
-    path: '/drivers/create',
-    element: <Createdriver type='CREATE' />,
+    path: "/drivers/create",
+    element: <DriverForm type="CREATE" />,
   },
   // BUSES
   {
     exact: true,
-    path: '/buses',
+    path: "/buses",
     element: <Buses />,
   },
   {
     exact: true,
-    path: '/buses/:id',
-    element: <Createbus type='EDIT' />,
+    path: "/buses/:id",
+    element: <CreateBus type="EDIT" />,
   },
   {
     exact: true,
-    path: '/buses/create',
-    element: <Createbus type='CREATE' />,
+    path: "/buses/create",
+    element: <CreateBus type="CREATE" />,
   },
   // TRIPS
   {
     exact: true,
-    path: '/trips',
+    path: "/trips",
     element: <Trips />,
   },
+  {
+    exact: true,
+    path: "trips/create-route",
+    element: <RouteManage />,
+  },
   // REPORTS
-  {
-    exact: true,
-    path: '/reports',
-    element: <Reports />,
-  },
-  // DISCOUNT
-  {
-    exact: true,
-    path: '/discounts',
-    element: <Blank />,
-  },
-  // INVENTORY
-  {
-    exact: true,
-    path: '/inventory',
-    element: <Blank />,
-  },
-  // SETTING
-  {
-    exact: true,
-    path: '/setting',
-    element: <Blank />,
-  },
+  // {
+  //   exact: true,
+  //   path: '/reports',
+  //   element: <Reports />,
+  // },
+  // // DISCOUNT
+  // {
+  //   exact: true,
+  //   path: '/discounts',
+  //   element: <PageNotFound />,
+  // },
+  // // INVENTORY
+  // {
+  //   exact: true,
+  //   path: '/inventorys',
+  //   element: <PageNotFound />,
+  // },
+  // // SETTING
+  // {
+  //   exact: true,
+  //   path: '/settings',
+  //   element: <PageNotFound />,
+  // },
 ];
 
 export const RenderRouter = () => {
   return RouterList.map((item, index) => {
-    if ((item.path === '/') | (item.path === '')) {
+    if ((item.path === "/") | (item.path === "")) {
       return (
         <Route
           key={index}
-          path='/'
-          element={<Navigate to='/dashboard' replace />}
+          path="/"
+          element={<Navigate to="/dashboard" replace />}
         />
       );
     } else {
