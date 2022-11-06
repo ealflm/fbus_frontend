@@ -15,10 +15,12 @@ import { routeService } from "../../services/RouteService";
 import { toast } from "react-toastify";
 import { Dialog } from "primereact/dialog";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading/Loading";
 const Trips = () => {
   const styles = useTripStyles();
   const navigate = useNavigate();
   //
+  const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [stationDetail, setStationDetail] = useState();
   const [routeDetail, setRouteDetail] = useState();
@@ -39,20 +41,31 @@ const Trips = () => {
 
   // HANLDE FUNTION CALL API
   const getListStation = () => {
+    setLoading(true);
     stationService
       .getListStations()
       .then((res) => {
         setStationList(res.data.body);
+        setLoading(false);
       })
-      .catch((error) => toast.error(error.message));
+
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error.message);
+      });
   };
   const getListRoute = () => {
+    setLoading(true);
     routeService
       .getListRoutes()
       .then((res) => {
         setRouteList(res.data.body);
+        setLoading(false);
       })
-      .catch((error) => toast.error(error.message));
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
   };
   // HANLDE FUNTIONC LOGIC LAYOUT
   const handleChangeCheckBox = (event) => {
@@ -84,92 +97,98 @@ const Trips = () => {
   };
 
   return (
-    <div className={styles.tripWrap}>
-      <div className={styles.boxHeader}>
-        <Box pl={2} pt={1.5}>
-          <FormControl component="fieldset" variant="standard">
-            <FormGroup>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="station"
-                      checked={station}
-                      onChange={handleChangeCheckBox}
-                    />
-                  }
-                />
-                <Button variant="text" onClick={() => showLayoutListStation()}>
-                  Trạm xe buýt
-                </Button>
-                <IconButton onClick={showCreateStation}>
-                  <Icon color="primary">add_circle</Icon>
-                </IconButton>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "end",
-                }}
-              >
-                <Button variant="text" onClick={() => showLayoutListRoute()}>
-                  Tuyến xe buýt
-                </Button>
-                <IconButton>
-                  <Icon
-                    color="primary"
-                    onClick={() => {
-                      navigate("/trips/create-route");
-                    }}
+    <>
+      <Loading isLoading={loading}></Loading>
+      <div className={styles.tripWrap}>
+        <div className={styles.boxHeader}>
+          <Box pl={2} pt={1.5}>
+            <FormControl component="fieldset" variant="standard">
+              <FormGroup>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="station"
+                        checked={station}
+                        onChange={handleChangeCheckBox}
+                      />
+                    }
+                  />
+                  <Button
+                    variant="text"
+                    onClick={() => showLayoutListStation()}
                   >
-                    add_circle
-                  </Icon>
-                </IconButton>
-              </div>
-            </FormGroup>
-          </FormControl>
-        </Box>
-      </div>
-      {showDetail ? (
-        <BodyDetailMap
-          setShowDetail={setShowDetail}
+                    Trạm xe buýt
+                  </Button>
+                  <IconButton onClick={showCreateStation}>
+                    <Icon color="primary">add_circle</Icon>
+                  </IconButton>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "end",
+                  }}
+                >
+                  <Button variant="text" onClick={() => showLayoutListRoute()}>
+                    Tuyến xe buýt
+                  </Button>
+                  <IconButton>
+                    <Icon
+                      color="primary"
+                      onClick={() => {
+                        navigate("/trips/create-route");
+                      }}
+                    >
+                      add_circle
+                    </Icon>
+                  </IconButton>
+                </div>
+              </FormGroup>
+            </FormControl>
+          </Box>
+        </div>
+        {showDetail ? (
+          <BodyDetailMap
+            setShowDetail={setShowDetail}
+            stationDetail={stationDetail}
+            routeDetail={routeDetail}
+            setStationDetail={setStationDetail}
+            setRouteDetail={setRouteDetail}
+            setRefereshData={setRefereshData}
+            refereshData={refereshData}
+          />
+        ) : (
+          <BodyListContentMap
+            setShowDetail={setShowDetail}
+            stationList={stationList}
+            routeList={routeList}
+            // Function form child to parrent
+            getStationDetail={getStationDetail}
+            getRouteDetail={getRouteDetail}
+          />
+        )}
+        <Mapbox
+          stationList={stationList}
+          routerList={routeList}
           stationDetail={stationDetail}
           routeDetail={routeDetail}
-          setStationDetail={setStationDetail}
-          setRouteDetail={setRouteDetail}
+          refereshData={refereshData}
+        />
+        <StationManage
+          showStationDialog={showStationDialog}
+          setShowStationDialog={setShowStationDialog}
           setRefereshData={setRefereshData}
           refereshData={refereshData}
         />
-      ) : (
-        <BodyListContentMap
-          setShowDetail={setShowDetail}
-          stationList={stationList}
-          routeList={routeList}
-          // Function form child to parrent
-          getStationDetail={getStationDetail}
-          getRouteDetail={getRouteDetail}
-        />
-      )}
-      <Mapbox
-        stationList={stationList}
-        routerList={routeList}
-        stationDetail={stationDetail}
-        routeDetail={routeDetail}
-        refereshData={refereshData}
-      />
-      <StationManage
-        showStationDialog={showStationDialog}
-        setShowStationDialog={setShowStationDialog}
-        setRefereshData={setRefereshData}
-        refereshData={refereshData}
-      />
-    </div>
+      </div>
+    </>
   );
 };
 

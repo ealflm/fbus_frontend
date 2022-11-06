@@ -1,0 +1,14 @@
+.marker {
+  background-image: url("../../../assets/images/markerIcon.png");
+  width: 20px;
+  height: 40px;
+  background-size: 100%;
+  cursor: pointer;
+}
+.marker-selected {
+  background-image: url("../../../assets/images/makerSelected.png");
+  width: 20px;
+  height: 40px;
+  background-size: 100%;
+  cursor: pointer;
+}

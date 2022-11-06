@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(LOCAL_STORAGE_KEY.TOKEN);
     navigate("/login", { replace: true });
   };
-  if (token !== null) {
+  if (token && token !== null) {
     const { exp } = jwtDecode(token);
     const expirationTime = exp * 1000 - 60000;
     if (Date.now() >= expirationTime) {

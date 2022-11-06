@@ -1,146 +1,223 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useRef } from "react";
-import mapboxgl from "mapbox-gl";
-import markerIcon from "../../../assets/images/markerIcon.png";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Box, Card, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { ScrollPanel } from "primereact/scrollpanel";
-mapboxgl.accessToken =
-  "pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg";
+import { stationService } from "../../../services/StationService";
+import Map from "./Map";
+import Loading from "../../../components/Loading/Loading";
+import InputTextField from "../../../components/Input/InputTextFiled";
+import { useFieldArray, useForm } from "react-hook-form";
+import AddIcon from "@mui/icons-material/Add";
+import SelectForm from "../../../components/SelectForm/SelectForm";
+import CloseIcon from "@mui/icons-material/Close";
+import { toast, ToastContainer } from "react-toastify";
 export default function RouteManage() {
-  const mapContainerRef = useRef(null); //MapBox Container
-  const [lng, setLng] = useState(106.809862); //Longitude
-  const [lat, setLat] = useState(10.841128); //Latitude
-  const [zoom, setZoom] = useState(17); //Zoom Level
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      stationList: [],
+    },
+  });
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "stationList", // unique name for your Field Array
+    }
+  );
+  //
+  const [loading, setLoading] = useState(false);
+  const [stationList, setStationList] = useState([]);
+  const [stationDropDown, setStationDropDown] = useState([]);
+  const [coordinatorFlyTo, setCordinatorFlyTo] = useState();
+  const [showButtonConfirm, setShowButtonConfirm] = useState(false);
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v11",
-      center: [lng, lat],
-      zoom: zoom,
-    });
-
-    return () => map.remove();
+    getListStation();
   }, []);
-
+  const getListStation = () => {
+    setLoading(true);
+    stationService
+      .getListStations()
+      .then((res) => {
+        setStationList(res.data.body);
+        mapSelectStation(res.data.body);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+      });
+  };
+  const mapSelectStation = (stations) => {
+    const result = stations.map((item, index) => {
+      return { label: item.name, value: item.stationId };
+    });
+    setStationDropDown(result);
+  };
+  const onSubmit = handleSubmit((data) => {
+    setShowButtonConfirm(true);
+    const valueArr = data.stationList.map(function (item) {
+      return item.stationId;
+    });
+    if (checkIfDuplicateExists(valueArr)) {
+      toast.warn("Không được chọn trùng trạm");
+      setShowButtonConfirm(false);
+      return;
+    }
+    let result = [];
+    data.stationList.map((item2, index) => {
+      return stationList.map((item, index) => {
+        if (item.stationId === item2.stationId) {
+          result = [...result, item];
+          return result;
+        }
+      });
+    });
+    console.log(result);
+  });
+  const checkIfDuplicateExists = (valueArr) => {
+    let isDuplicate;
+    isDuplicate = valueArr.some(function (item, idx) {
+      return valueArr.indexOf(item) != idx;
+    });
+    return isDuplicate;
+  };
+  const onCancle = () => {
+    setShowButtonConfirm(false);
+  };
+  const handleOnChange = (e) => {
+    const flyMarkerCoor = stationList.find(
+      (item) => item.stationId === e.target.value
+    );
+    setCordinatorFlyTo(flyMarkerCoor);
+  };
   return (
     <Box>
+      <ToastContainer></ToastContainer>
+      <Loading isLoading={loading} />
       <Grid container spacing={2}>
         <Grid item xs={9}>
-          <div
-            className="minimap-body"
-            style={{ width: "100%", height: "93vh" }}
-          >
-            <div
-              style={{
-                width: "inherit",
-                height: "inherit",
-                borderRadius: "9px",
-              }}
-              className="minimap-container"
-              ref={mapContainerRef}
-            ></div>
-          </div>
+          <Map stationList={stationList} coordinatorFlyTo={coordinatorFlyTo} />
         </Grid>
+
         <Grid item xs={3}>
-          <Box>
-            <Typography variant="h6">Danh sách trạm đã chọn</Typography>
-          </Box>
-          <ScrollPanel style={{ width: "100%", height: "89vh" }}>
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
               <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
+                <Typography variant="h6">Tạo tuyến</Typography>
               </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
-              <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>{" "}
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
-              <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>{" "}
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
-              <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>{" "}
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
-              <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>
-            <Card
-              style={{
-                marginBottom: "15px",
-                padding: "1.25rem",
-              }}
-            >
-              <Box>
-                <Typography variant="body1">Tên trạm</Typography>
-                <Typography variant="body1">Địa chỉ</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2">Kinh độ</Typography>
-                <Typography variant="body2">Vĩ độ</Typography>
-              </Box>
-            </Card>
-          </ScrollPanel>
+              <InputTextField
+                label={
+                  <span>
+                    Tên Tuyến <span className="required"></span>
+                  </span>
+                }
+                name="name"
+                control={control}
+                register={register}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                onClick={() => {
+                  append({
+                    stationId: "",
+                  });
+                }}
+              >
+                <AddIcon></AddIcon>
+                <Typography variant="body1">Thêm Trạm</Typography>
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <ScrollPanel
+                style={{
+                  width: "100%",
+                  height: "50vh",
+                  border: "1px solid #c7c7c7",
+                }}
+              >
+                {fields.map((field, index) => {
+                  return (
+                    <Box
+                      style={{
+                        display: "flex",
+                        marginTop: "10px",
+                        padding: "0 5px",
+                      }}
+                      key={field.id}
+                    >
+                      <SelectForm
+                        label="Trạm"
+                        name={`stationList.${index}.stationId`}
+                        required
+                        control={control}
+                        options={stationDropDown}
+                        errors={errors}
+                        handleOnChange={handleOnChange}
+                      />
+                      <IconButton>
+                        <CloseIcon
+                          onClick={() => {
+                            remove(index);
+                          }}
+                        ></CloseIcon>
+                      </IconButton>
+                    </Box>
+                  );
+                })}
+              </ScrollPanel>
+            </Grid>
+            {!showButtonConfirm ? (
+              <>
+                <Grid item xs={12}>
+                  <Button
+                    onClick={() => {
+                      onSubmit();
+                    }}
+                  >
+                    Xát nhận trạm
+                  </Button>
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs={6}>
+                  <Button
+                    onClick={() => {
+                      onSubmit();
+                    }}
+                  >
+                    Lưu
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    onClick={() => {
+                      onCancle();
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                </Grid>
+              </>
+            )}
+          </Grid>
         </Grid>
       </Grid>
     </Box>

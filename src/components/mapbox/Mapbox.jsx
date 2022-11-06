@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import mapboxgl from 'mapbox-gl';
-import './Mapbox.css';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import markerIcon from '../../assets/images/markerIcon.png';
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import mapboxgl from "mapbox-gl";
+import "./Mapbox.css";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import markerIcon from "../../assets/images/markerIcon.png";
 mapboxgl.accessToken =
-  'pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg';
+  "pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg";
 
 const Mapbox = (props) => {
   const { stationList, stationDetail, refereshData } = props;
@@ -17,7 +17,7 @@ const Mapbox = (props) => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: "mapbox://styles/mapbox/streets-v11",
       center: [lng, lat],
       zoom: zoom,
     });
@@ -35,18 +35,16 @@ const Mapbox = (props) => {
       if (stationList) {
         let markerArr = [];
         for (const station of stationList) {
-          const el = document.createElement('div');
-          el.className = 'marker';
+          const el = document.createElement("div");
+          el.className = "marker";
           el.id = station.stationId;
           el.style.width = `20px`;
           el.style.height = `45px`;
           el.style.backgroundImage = `url(${markerIcon})`;
-          el.style.cursor = 'pointer';
+          el.style.cursor = "pointer";
           var marker = new mapboxgl.Marker(el);
           marker.setLngLat([station.longitude, station.latitude]).addTo(map);
           markerArr = [...markerArr, marker];
-          console.log(markerArr);
-          console.log(markerArr[0]._element.id);
           const popup = new mapboxgl.Popup({
             closeButton: true,
             closeOnClick: true,
@@ -72,9 +70,9 @@ const Mapbox = (props) => {
     }
   }, [map, stationDetail]);
   return (
-    <div className='map-body'>
-      <div className='map-wapper'>
-        <div className='map-container' ref={mapContainerRef}></div>
+    <div className="map-body">
+      <div className="map-wapper">
+        <div className="map-container" ref={mapContainerRef}></div>
       </div>
     </div>
   );

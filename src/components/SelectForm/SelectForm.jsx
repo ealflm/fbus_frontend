@@ -1,4 +1,4 @@
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller } from "react-hook-form";
 import {
   Box,
   Select,
@@ -6,9 +6,9 @@ import {
   InputLabel,
   FormControl,
   Typography,
-} from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
-import FormHelperText from '@mui/material/FormHelperText';
+} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import FormHelperText from "@mui/material/FormHelperText";
 
 const SelectForm = ({
   label,
@@ -23,10 +23,11 @@ const SelectForm = ({
   control,
   helperText,
   messageRequired,
+  handleOnChange,
 }) => {
-  const defaultMessage = 'Trường này là bắt buộc';
+  const defaultMessage = "Trường này là bắt buộc";
   let valueErrors = {};
-  let keyErrors = '';
+  let keyErrors = "";
   for (const k in errors) {
     if (k === name) {
       valueErrors = errors[k];
@@ -36,16 +37,16 @@ const SelectForm = ({
 
   const handleErrors = valueErrors
     ? [{ path: keyErrors, message: valueErrors.message }]
-    : '';
+    : "";
 
   const [data, setData] = useState(value || null);
   const [reSize, setReSize] = useState(0);
   const [width, setWidth] = useState(0);
 
-  // const handleChange = (event: any) => {
-  //   setdata(event.target.value as string);
+  // const handleChange = (event) => {
+  //   setdata(event.target.value );
   //   if (fetchValueSelect) {
-  //     fetchValueSelect(event.target.value as string);
+  //     fetchValueSelect(event.target.value );
   //   }
   // };
   const selectRef = useRef();
@@ -56,12 +57,13 @@ const SelectForm = ({
       }, 1000);
     };
 
-    window.addEventListener('resize', listener);
+    window.addEventListener("resize", listener);
 
     return () => {
-      window.removeEventListener('resize', listener);
+      window.removeEventListener("resize", listener);
     };
   }, []);
+
   useEffect(() => {
     setWidth(selectRef && selectRef.current?.offsetWidth - 38);
   }, [reSize]);
@@ -71,8 +73,8 @@ const SelectForm = ({
       error={
         handleErrors && !data && handleErrors.some((e) => e?.path === name)
       }
-      variant='outlined'
-      size='medium'
+      variant="outlined"
+      size="medium"
     >
       <Controller
         name={name}
@@ -90,17 +92,18 @@ const SelectForm = ({
             <>
               <InputLabel
                 required={required}
-                sx={{ color: '#1D1D1B !important' }}
+                sx={{ color: "#1D1D1B !important" }}
               >
                 {label}
               </InputLabel>
               <Select
                 {...props}
-                variant='outlined'
-                sx={{ background: disabled ? '#e4e4e4 !important' : '' }}
-                // size="small"
-                // multiple={multiple}
-                onChange={onChange}
+                variant="outlined"
+                sx={{ background: disabled ? "#e4e4e4 !important" : "" }}
+                onChange={(e) => {
+                  onChange(e);
+                  handleOnChange(e);
+                }}
                 onBlur={onBlur}
                 value={value}
                 disabled={disabled}
@@ -110,16 +113,6 @@ const SelectForm = ({
                   !data &&
                   handleErrors.some((e) => e?.path === name)
                 }
-                // helperText={
-                //   handleErrors &&
-                //   handleErrors.some((e: any) => e?.path === name)
-                //     ? handleErrors.find((e: any) => e?.path === name).message
-                //     : helperText
-                //     ? helperText
-                //     : ""
-                // }
-
-                // {...field}
                 ref={selectRef}
               >
                 {options &&
@@ -128,7 +121,7 @@ const SelectForm = ({
                       <Typography
                         sx={{
                           width: width,
-                          whiteSpace: 'initial',
+                          whiteSpace: "initial",
                         }}
                       >
                         {option.label}
@@ -145,7 +138,7 @@ const SelectForm = ({
           ? handleErrors.find((e) => e?.path === name).message
           : helperText
           ? helperText
-          : ''}
+          : ""}
       </FormHelperText>
     </FormControl>
   );
