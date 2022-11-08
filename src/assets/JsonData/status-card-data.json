@@ -1,0 +1,22 @@
+[
+    {
+        "icon": "bx bx-user",
+        "count": "1,995",
+        "title": "Tổng tài khoản"
+    },
+    {
+        "icon": "bx bx-calendar",
+        "count": "2,001",
+        "title": "Truy cập hằng ngày"
+    },
+    {
+        "icon": "bx bx-bus-school",
+        "count": "6",
+        "title": "Tổng xe buýt"
+    },
+    {
+        "icon": "bx bx-receipt",
+        "count": "1,711",
+        "title": "Tổng đăng ký"
+    }
+]
