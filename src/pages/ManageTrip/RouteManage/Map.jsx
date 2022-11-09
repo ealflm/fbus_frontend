@@ -1,12 +1,8 @@
 import React from "react";
 import mapboxgl from "mapbox-gl";
-import MakerIcon from "../../../assets/images/markerIcon.png";
-import MakerSelected from "../../../assets/images/makerSelected.png";
 import "./Map.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { useEffect } from "react";
-import { useRef } from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 mapboxgl.accessToken =
   "pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg";
 
@@ -18,6 +14,7 @@ export default function Map(props) {
   const [zoom, setZoom] = useState(17); //Zoom Level
   const [map, setMap] = useState();
   const [stationSelected, setStationSelected] = useState([]);
+
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -41,7 +38,7 @@ export default function Map(props) {
         stationList.map((marker) => {
           const elStationMarker = document.createElement("div");
           elStationMarker.id = marker.stationId;
-          elStationMarker.className = "marker";
+          elStationMarker.className = stationSelected.includes(marker.stationId) ? 'markerSelected' : "markerIcon";
           const markerDiv = new mapboxgl.Marker(elStationMarker)
             .setLngLat([marker.longitude, marker.latitude])
             .addTo(map);
@@ -71,11 +68,17 @@ export default function Map(props) {
           markerDiv.getElement().addEventListener("mouseleave", () => {
             popup.remove();
           });
+          markerDiv.getElement().addEventListener("click", (e) => {
+            setStationSelected(prev => {
+              const temp = prev.includes(e.target.id) ? prev.filter(item => item !== e.target.id) : [...prev, e.target.id];
+              return [...temp];
+            });
+          });
           currentBusStationMarkers.push(markerDiv);
         });
       }
     }
-  }, [stationList, stationSelected]);
+  }, [map, stationList, stationSelected]);
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {
@@ -86,7 +89,7 @@ export default function Map(props) {
       }
     }
   }, [map, coordinatorFlyTo]);
-  useEffect(() => {});
+  useEffect(() => { });
   const removeSationFormList = (stationId) => {
     const stations = stationSelected.filter(
       (value) => value.stationId !== stationId

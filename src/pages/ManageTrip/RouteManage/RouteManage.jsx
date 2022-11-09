@@ -93,7 +93,7 @@ export default function RouteManage() {
   const checkIfDuplicateExists = (valueArr) => {
     let isDuplicate;
     isDuplicate = valueArr.some(function (item, idx) {
-      return valueArr.indexOf(item) != idx;
+      return valueArr.indexOf(item) !== idx;
     });
     return isDuplicate;
   };
@@ -191,7 +191,7 @@ export default function RouteManage() {
                       onSubmit();
                     }}
                   >
-                    Xát nhận trạm
+                    Xác nhận trạm
                   </Button>
                 </Grid>
               </>
