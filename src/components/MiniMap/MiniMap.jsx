@@ -17,7 +17,7 @@ const MiniMap = (props) => {
   useEffect(() => {
     const miniMap = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: process.env.MAPBOX_STYLE || "mapbox://styles/mapbox/satellite-streets-v11",
+      style: process.env.MAPBOX_STYLE || "mapbox://styles/mapbox/dark-v10",
       center: [lng, lat],
       zoom: zoom,
     });

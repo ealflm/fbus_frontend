@@ -20,6 +20,7 @@
     "@testing-library/user-event": "^13.5.0",
     "apexcharts": "^3.35.5",
     "axios": "^0.27.2",
+    "dotenv": "^16.0.3",
     "file-saver": "^2.0.5",
     "jwt-decode": "^3.1.2",
     "mapbox-gl": "^2.10.0",
