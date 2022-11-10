@@ -3,7 +3,6 @@ import mapboxgl from "mapbox-gl";
 import "./Map.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useState, useEffect, useRef } from "react";
-import { MAPBOX_STYLE } from "../../../environments/environments";
 mapboxgl.accessToken =
   "pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg";
 
@@ -19,7 +18,7 @@ export default function Map(props) {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: MAPBOX_STYLE,
+      style: "mapbox://styles/mapbox/streets-v11",
       center: [lng, lat],
       zoom: zoom,
     });
