@@ -17,7 +17,7 @@ const Mapbox = (props) => {
   const [currentMarkerList, setCurrentMarkerList] = useState();
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
+      container: 'map-container',
       style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,

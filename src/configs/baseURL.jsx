@@ -11,5 +11,5 @@ export const IMAGE_URL = {
 };
 
 export const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZHRzYW5nZHRkIiwiYSI6ImNsYWNtemlzbzBiYjczdWxkMWcyMWo4ZDgifQ.LnRW2djnIbuUwLASAACpOg';
-export const MAPBOX_STYLE_URL_PRODUCTION = `mapbox://styles/dtsangdtd/streets-v11?optimize=true`;
+export const MAPBOX_STYLE_URL_PRODUCTION = `mapbox://styles/mapbox/streets-v11?optimize=true`;
 export const MAPBOX_STYLE_URL_DEVELOPMENT = `mapbox://styles/mapbox/streets-v11?optimize=true`;
