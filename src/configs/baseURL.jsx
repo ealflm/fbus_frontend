@@ -11,4 +11,4 @@ export const IMAGE_URL = {
 };
 
 export const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZHRzYW5nZHRkIiwiYSI6ImNsYWNtemlzbzBiYjczdWxkMWcyMWo4ZDgifQ.LnRW2djnIbuUwLASAACpOg';
-export const MAPBOX_STYLE_URL = 'mapbox://styles/mapbox/streets-v8';
+export const MAPBOX_STYLE_URL = `https://api.mapbox.com/styles/v1/streets-v10`;
