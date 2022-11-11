@@ -21,15 +21,6 @@ const Mapbox = (props) => {
       style: MAPBOX_STYLE_URL,
       center: [lng, lat],
       zoom: zoom,
-      transformRequest: (url, resourceType) => {
-        if (resourceType === 'Source' && url.startsWith('https://fbus.azurewebsites.net/trips')) {
-          return {
-            url: url.replace('https', 'http'),
-            headers: { 'my-custom-header': true },
-            credentials: 'include'  // Include cookies for cross-origin requests
-          };
-        }
-      }
     });
     setMap(map);
   }, []);
