@@ -5,7 +5,6 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import markerIcon from "../../assets/images/markerIcon.png";
 import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL_DEVELOPMENT, MAPBOX_STYLE_URL_PRODUCTION } from "../../configs/baseURL";
 
-// mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const Mapbox = (props) => {
@@ -23,7 +22,6 @@ const Mapbox = (props) => {
       center: [lng, lat],
       zoom: zoom,
     });
-
     setMap(map);
   }, []);
   useEffect(() => {
