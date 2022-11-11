@@ -22,9 +22,9 @@ const Mapbox = (props) => {
       center: [lng, lat],
       zoom: zoom,
       transformRequest: (url, resourceType) => {
-        if (resourceType === 'Source' && url.startsWith('http://localhost:3000/')) {
+        if (resourceType === 'Source' && url.startsWith('https://fbus.azurewebsites.net/trips')) {
           return {
-            url: url.replace('http', 'https'),
+            url: url.replace('https', 'http'),
             headers: { 'my-custom-header': true },
             credentials: 'include'  // Include cookies for cross-origin requests
           };
