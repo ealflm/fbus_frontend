@@ -1,10 +1,14 @@
 import React from "react";
-import mapboxgl from "mapbox-gl";
+// import mapboxgl from "mapbox-gl";
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
 import "./Map.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useState, useEffect, useRef } from "react";
 import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL_DEVELOPMENT, MAPBOX_STYLE_URL_PRODUCTION } from "../../../configs/baseURL";
 
+mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function Map(props) {
