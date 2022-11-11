@@ -15,7 +15,7 @@ const MiniMap = (props) => {
   const [zoom, setZoom] = useState(17); //Zoom Level
   useEffect(() => {
     const miniMap = new mapboxgl.Map({
-      container: 'minimap-container',
+      container: mapContainerRef.current,
       style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,

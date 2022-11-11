@@ -18,7 +18,7 @@ export default function Map(props) {
 
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: 'minimap-container',
+      container: mapContainerRef.current,
       style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,
