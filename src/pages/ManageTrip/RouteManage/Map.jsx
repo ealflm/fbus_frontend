@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "./Map.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useState, useEffect, useRef } from "react";
-import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL } from "../../../configs/baseURL";
+import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL_DEVELOPMENT, MAPBOX_STYLE_URL_PRODUCTION } from "../../../configs/baseURL";
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -19,7 +19,7 @@ export default function Map(props) {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: MAPBOX_STYLE_URL,
+      style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,
     });
