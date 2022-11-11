@@ -22,63 +22,57 @@ export default function Map(props) {
       center: [lng, lat],
       zoom: zoom,
     });
-
     setMap(map);
     return () => map.remove();
   }, []);
+
   useEffect(() => {
     if (map) {
-      let currentBusStationMarkers = [];
-      if (currentBusStationMarkers !== null) {
-        for (var i = currentBusStationMarkers.length - 1; i >= 0; i--) {
-          currentBusStationMarkers[i].remove();
-        }
-      }
-      if (stationList?.length >= 0) {
-        stationList.map((marker) => {
-          const elStationMarker = document.createElement("div");
-          elStationMarker.id = marker.stationId;
-          elStationMarker.className = stationSelected.includes(marker.stationId) ? 'markerSelected' : "markerIcon";
-          const markerDiv = new mapboxgl.Marker(elStationMarker)
-            .setLngLat([marker.longitude, marker.latitude])
-            .addTo(map);
-          // markerDiv.getElement().addEventListener("click", (e) => {
-          //   if (!stationSelected.includes(marker)) {
-          //     const result = [...stationSelected, marker];
-          //     setStationSelected(result);
-          //     elStationMarker.style.backgroundImage = `url(${MakerSelected})`;
-          //     // this._routesForm["stationList"].setValue(this.stations);
-          //   } else {
-          //     removeSationFormList(marker.stationId);
-          //     elStationMarker.style.backgroundImage = `url(${MakerIcon})`;
-          //     // this._routesForm["stationList"].setValue(this.stations);
-          //   }
-          // });
-          const popup = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false,
-            offset: 25,
-          });
-          popup.setHTML(`<p>${marker.name}</p>`).addTo(map);
-          markerDiv.setPopup(popup);
-          popup.remove();
-          markerDiv.getElement().addEventListener("mouseover", () => {
-            markerDiv.togglePopup();
-          });
-          markerDiv.getElement().addEventListener("mouseleave", () => {
-            popup.remove();
-          });
-          markerDiv.getElement().addEventListener("click", (e) => {
-            setStationSelected(prev => {
-              const temp = prev.includes(e.target.id) ? prev.filter(item => item !== e.target.id) : [...prev, e.target.id];
-              return [...temp];
-            });
-          });
-          currentBusStationMarkers.push(markerDiv);
+      (stationList || []).forEach((marker) => {
+
+        // Clear old element
+        const markerElement = document.getElementById(marker.stationId);
+        markerElement?.remove();
+
+        // Create new element
+        const elStationMarker = document.createElement("div");
+        elStationMarker.id = marker.stationId;
+        elStationMarker.className = stationSelected.includes(marker.stationId) ? 'markerSelected' : "markerIcon";
+        const markerDiv = new mapboxgl.Marker(elStationMarker)
+          .setLngLat([marker.longitude, marker.latitude])
+          .addTo(map);
+
+        const popup = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          offset: 25,
         });
-      }
+        popup.setHTML(`<p>${marker.name}</p>`).addTo(map);
+
+        markerDiv.setPopup(popup);
+        popup.remove();
+
+        // Mouse over event
+        markerDiv.getElement().addEventListener("mouseover", () => {
+          markerDiv.togglePopup();
+        });
+
+        // Mouse leavve event
+        markerDiv.getElement().addEventListener("mouseleave", () => {
+          popup.remove();
+        });
+
+        // Click event
+        markerDiv.getElement().addEventListener("click", (e) => {
+          setStationSelected(prev => {
+            const temp = prev.includes(e.target.id) ? prev.filter(item => item !== e.target.id) : [...prev, e.target.id];
+            return [...temp];
+          });
+        });
+      });
     }
   }, [map, stationList, stationSelected]);
+
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {
@@ -89,13 +83,14 @@ export default function Map(props) {
       }
     }
   }, [map, coordinatorFlyTo]);
-  useEffect(() => { });
+
   const removeSationFormList = (stationId) => {
     const stations = stationSelected.filter(
       (value) => value.stationId !== stationId
     );
     setStationSelected(stations);
   };
+
   return (
     <div className="minimap-body" style={{ width: "100%", height: "93vh" }}>
       <div
