@@ -19,6 +19,15 @@ const MiniMap = (props) => {
       style: MAPBOX_STYLE_URL,
       center: [lng, lat],
       zoom: zoom,
+      transformRequest: (url, resourceType) => {
+        if (resourceType === 'Source' && url.startsWith('http://localhost:3000/')) {
+          return {
+            url: url.replace('http', 'https'),
+            headers: { 'my-custom-header': true },
+            credentials: 'include'  // Include cookies for cross-origin requests
+          };
+        }
+      }
     });
 
     clickSetMarkerOnMap(miniMap);
