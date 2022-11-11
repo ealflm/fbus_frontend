@@ -3,11 +3,10 @@ import mapboxgl from 'mapbox-gl';
 import markerIcon from '../../assets/images/markerIcon.png';
 // import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL } from '../../configs/baseURL';
 
-mapboxgl.accessToken =
-  'pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg';
-// mapboxgl.accessToken =
-//   'pk.eyJ1Ijoic2FuZ2RlcHRyYWkiLCJhIjoiY2w0bXFvaDRwMW9uZjNpbWtpMjZ3eGxnbCJ9.2gQ3NUL1eBYTwP1Q_qS34A';
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
 const MiniMap = (props) => {
   const { setValue, getCoordinates } = props;
   const mapContainerRef = useRef(null); //MapBox Container
@@ -17,7 +16,7 @@ const MiniMap = (props) => {
   useEffect(() => {
     const miniMap = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: process.env.MAPBOX_STYLE || "mapbox://styles/mapbox/dark-v10",
+      style: MAPBOX_STYLE_URL,
       center: [lng, lat],
       zoom: zoom,
     });

@@ -3,8 +3,9 @@ import mapboxgl from "mapbox-gl";
 import "./Mapbox.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import markerIcon from "../../assets/images/markerIcon.png";
-mapboxgl.accessToken =
-  "pk.eyJ1IjoibGV0cm9uZ3RoYW5nMTMxMDAwIiwiYSI6ImNsODdjMDN4aDBiY3M0MHJ3c3FydzZnM2gifQ.lzb2BAjXcUeDiXYaz6N3pg";
+import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL } from "../../configs/baseURL";
+
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const Mapbox = (props) => {
   const { stationList, stationDetail, refereshData } = props;
@@ -17,7 +18,7 @@ const Mapbox = (props) => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: process.env.MAPBOX_STYLE || "mapbox://styles/mapbox/dark-v10",
+      style: MAPBOX_STYLE_URL,
       center: [lng, lat],
       zoom: zoom,
     });
