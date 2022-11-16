@@ -12,7 +12,7 @@ mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function Map(props) {
-  const { stationList, coordinatorFlyTo } = props;
+  const { stationList, coordinatorFlyTo, getStationSelected } = props;
   const mapContainerRef = useRef(null); //MapBox Container
   const [lng, setLng] = useState(106.809862); //Longitude
   const [lat, setLat] = useState(10.841128); //Latitude
@@ -34,7 +34,6 @@ export default function Map(props) {
   useEffect(() => {
     if (map) {
       (stationList || []).forEach((marker) => {
-
         // Clear old element
         const markerElement = document.getElementById(marker.stationId);
         markerElement?.remove();
@@ -42,7 +41,9 @@ export default function Map(props) {
         // Create new element
         const elStationMarker = document.createElement("div");
         elStationMarker.id = marker.stationId;
-        elStationMarker.className = stationSelected.includes(marker.stationId) ? 'markerSelected' : "markerIcon";
+        elStationMarker.className = stationSelected.includes(marker.stationId)
+          ? "markerSelected"
+          : "markerIcon";
         const markerDiv = new mapboxgl.Marker(elStationMarker)
           .setLngLat([marker.longitude, marker.latitude])
           .addTo(map);
@@ -69,15 +70,19 @@ export default function Map(props) {
 
         // Click event
         markerDiv.getElement().addEventListener("click", (e) => {
-          setStationSelected(prev => {
-            const temp = prev.includes(e.target.id) ? prev.filter(item => item !== e.target.id) : [...prev, e.target.id];
+          setStationSelected((prev) => {
+            const temp = prev.includes(e.target.id)
+              ? prev.filter((item) => item !== e.target.id)
+              : [...prev, e.target.id];
             return [...temp];
           });
         });
       });
     }
   }, [map, stationList, stationSelected]);
-
+  useEffect(() => {
+    getStationSelected(stationSelected);
+  }, [stationSelected]);
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {
@@ -88,13 +93,6 @@ export default function Map(props) {
       }
     }
   }, [map, coordinatorFlyTo]);
-
-  const removeSationFormList = (stationId) => {
-    const stations = stationSelected.filter(
-      (value) => value.stationId !== stationId
-    );
-    setStationSelected(stations);
-  };
 
   return (
     <div className="minimap-body" style={{ width: "100%", height: "93vh" }}>
