@@ -1,13 +1,17 @@
 import React from "react";
 // import mapboxgl from "mapbox-gl";
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
+import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
+import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
 import "./Map.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { useState, useEffect, useRef } from "react";
-import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL_DEVELOPMENT, MAPBOX_STYLE_URL_PRODUCTION } from "../../../configs/baseURL";
-
+import {
+  MAPBOX_ACCESS_TOKEN,
+  MAPBOX_STYLE_URL_DEVELOPMENT,
+  MAPBOX_STYLE_URL_PRODUCTION,
+} from "../../../configs/baseURL";
+import routeExample from "./Route.json";
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -19,11 +23,13 @@ export default function Map(props) {
   const [zoom, setZoom] = useState(17); //Zoom Level
   const [map, setMap] = useState();
   const [stationSelected, setStationSelected] = useState([]);
-
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
+      style:
+        process.env.NODE_ENV === "development"
+          ? MAPBOX_STYLE_URL_DEVELOPMENT
+          : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,
     });
@@ -34,7 +40,6 @@ export default function Map(props) {
   useEffect(() => {
     if (map) {
       (stationList || []).forEach((marker) => {
-
         // Clear old element
         const markerElement = document.getElementById(marker.stationId);
         markerElement?.remove();
@@ -42,7 +47,9 @@ export default function Map(props) {
         // Create new element
         const elStationMarker = document.createElement("div");
         elStationMarker.id = marker.stationId;
-        elStationMarker.className = stationSelected.includes(marker.stationId) ? 'markerSelected' : "markerIcon";
+        elStationMarker.className = stationSelected.includes(marker.stationId)
+          ? "markerSelected"
+          : "markerIcon";
         const markerDiv = new mapboxgl.Marker(elStationMarker)
           .setLngLat([marker.longitude, marker.latitude])
           .addTo(map);
@@ -69,15 +76,48 @@ export default function Map(props) {
 
         // Click event
         markerDiv.getElement().addEventListener("click", (e) => {
-          setStationSelected(prev => {
-            const temp = prev.includes(e.target.id) ? prev.filter(item => item !== e.target.id) : [...prev, e.target.id];
+          setStationSelected((prev) => {
+            const temp = prev.includes(e.target.id)
+              ? prev.filter((item) => item !== e.target.id)
+              : [...prev, e.target.id];
             return [...temp];
           });
         });
       });
     }
   }, [map, stationList, stationSelected]);
-
+  useEffect(() => {
+    if (map) {
+      const coordinates = routeExample.routes[0].geometry.coordinates;
+      const geojson: any = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: coordinates,
+        },
+      };
+      map.on("load", () => {
+        map.addSource("route", {
+          type: "geojson",
+          data: geojson,
+        });
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: "route",
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#888",
+            "line-width": 8,
+          },
+        });
+      });
+    }
+  }, [map]);
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {
@@ -88,13 +128,6 @@ export default function Map(props) {
       }
     }
   }, [map, coordinatorFlyTo]);
-
-  const removeSationFormList = (stationId) => {
-    const stations = stationSelected.filter(
-      (value) => value.stationId !== stationId
-    );
-    setStationSelected(stations);
-  };
 
   return (
     <div className="minimap-body" style={{ width: "100%", height: "93vh" }}>

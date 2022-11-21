@@ -1,25 +1,31 @@
-import * as axios from 'axios';
-import { API_URL } from '../configs/baseURL';
+import * as axios from "axios";
+import { API_URL, MAPBOX_ACCESS_TOKEN } from "../configs/baseURL";
 
 class RouteService {
   getListRoutes = () => {
     return axios({
       url: `${API_URL.BASE_URL}/route`,
-      method: 'GET',
+      method: "GET",
     });
   };
   updateRoute = (route, routeId) => {
     return axios({
       url: `${API_URL.BASE_URL}/route/${routeId}`,
-      method: 'PUT',
+      method: "PUT",
       data: route,
     });
   };
   createRoute = (route) => {
     return axios({
       url: `${API_URL.BASE_URL}/route`,
-      method: 'POST',
+      method: "POST",
       data: route,
+    });
+  };
+  mapBoxRenderRoute = (coordinate) => {
+    return axios({
+      url: `${API_URL.MAP_BOX_DIRECTION}/${coordinate}?alternatives=false&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${MAPBOX_ACCESS_TOKEN}`,
+      method: "GET",
     });
   };
 }
