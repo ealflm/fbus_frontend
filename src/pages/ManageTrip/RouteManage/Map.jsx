@@ -20,13 +20,31 @@ export default function Map(props) {
     coordinatorFlyTo,
     getStationSelected,
     routeLine,
-    map,
-    mapContainerRef,
-    setMap,
   } = props;
-
   const [stationSelected, setStationSelected] = useState([]);
+  const [lng, setLng] = useState(106.809862); //Longitude
+  const [lat, setLat] = useState(10.841128); //Latitude
+  const [zoom, setZoom] = useState(14); //Zoom Level
+  const [map, setMap] = useState();
+  const mapContainerRef = useRef(null);
+  const [currentRouteLine, setCurrentRouteLine] = useState();
+  const [isChangedOnMap, setIsChangedOnMap] = useState(false);
 
+  //
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style:
+        process.env.NODE_ENV === "development"
+          ? MAPBOX_STYLE_URL_DEVELOPMENT
+          : MAPBOX_STYLE_URL_PRODUCTION,
+      center: [lng, lat],
+      zoom: zoom,
+    });
+    setMap(map);
+  }, []);
+
+  //
   useEffect(() => {
     if (map) {
       (stationList || []).forEach((marker) => {
@@ -74,14 +92,32 @@ export default function Map(props) {
           });
         });
       });
+
+      // Remove layer and source when something has changed on map
+      if (map.getLayer("route") && map.getSource("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+        setIsChangedOnMap(true);
+      }
     }
   }, [map, stationList, stationSelected]);
+
+  //
   useEffect(() => {
     getStationSelected(stationSelected);
   }, [stationSelected]);
+
+  //
   useEffect(() => {
     if (map) {
       const coordinates = routeLine?.routes[0].geometry.coordinates;
+      const currentCoordinates = currentRouteLine?.routes[0].geometry.coordinates;
+
+      // Check if coordinates are old, don't need do anything
+      if (JSON.stringify(coordinates) === JSON.stringify(currentCoordinates) && !isChangedOnMap) {
+        return;
+      }
+
       const geojson = {
         type: "Feature",
         properties: {},
@@ -90,13 +126,32 @@ export default function Map(props) {
           coordinates: coordinates,
         },
       };
-      if (map.getLayer("route")) {
+
+      // Remove old layer and source
+      if (map.getLayer("route") && map.getSource("route")) {
         map.removeLayer("route");
-      }
-      if (map.getSource("route")) {
         map.removeSource("route");
-      }
-      map.on("load", () => {
+
+        if (routeLine) { // Check case has change of adding/removing stations to make this route.
+          map.addSource("route", {
+            type: "geojson",
+            data: geojson,
+          });
+          map.addLayer({
+            id: "route",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "#30a4f1",
+              "line-width": 8,
+            },
+          });
+        }
+      } else if (map.loaded()) {
         map.addSource("route", {
           type: "geojson",
           data: geojson,
@@ -114,9 +169,14 @@ export default function Map(props) {
             "line-width": 8,
           },
         });
-      });
+      }
+
+      setCurrentRouteLine(routeLine);
+      setIsChangedOnMap(false);
     }
   }, [map, routeLine]);
+
+  //
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {

@@ -20,12 +20,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { routeService } from "../../../services/RouteService";
 import { toast, ToastContainer } from "react-toastify";
 import { isEmpty } from "lodash";
-import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
-import {
-  MAPBOX_ACCESS_TOKEN,
-  MAPBOX_STYLE_URL_DEVELOPMENT,
-  MAPBOX_STYLE_URL_PRODUCTION,
-} from "../../../configs/baseURL";
+
 import { useRef } from "react";
 export default function RouteManage() {
   const {
@@ -54,34 +49,18 @@ export default function RouteManage() {
   const [showButtonConfirm, setShowButtonConfirm] = useState(false);
   const [listStationSelected, setListStationSelected] = useState();
   const [routeLine, setRouteLine] = useState();
-  const mapContainerRef = useRef(null); //MapBox Container
-  const [lng, setLng] = useState(106.809862); //Longitude
-  const [lat, setLat] = useState(10.841128); //Latitude
-  const [zoom, setZoom] = useState(14); //Zoom Level
-  const [map, setMap] = useState();
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style:
-        process.env.NODE_ENV === "development"
-          ? MAPBOX_STYLE_URL_DEVELOPMENT
-          : MAPBOX_STYLE_URL_PRODUCTION,
-      center: [lng, lat],
-      zoom: zoom,
-    });
-    setMap(map);
-  }, []);
+
   useEffect(() => {
     getListStation();
   }, []);
 
+  //
   const getListStation = () => {
     setLoading(true);
     stationService
       .getListStations()
       .then((res) => {
         setStationList(res.data.body);
-
         setLoading(false);
       })
       .catch((error) => {
@@ -89,6 +68,7 @@ export default function RouteManage() {
       });
   };
 
+  //
   const getStationSelected = (stationListSelected) => {
     const result = stationListSelected.map((stationSelected, index) => {
       return stationList.find(
@@ -97,6 +77,8 @@ export default function RouteManage() {
     });
     setListStationSelected(result);
   };
+
+  //
   const onSubmit = handleSubmit((data) => {
     if (isEmpty(listStationSelected)) {
       toast.warn("Xin hãy chọn trạm");
@@ -119,6 +101,7 @@ export default function RouteManage() {
     }
   });
 
+  //
   const onCancle = () => {
     setShowButtonConfirm(false);
     setRouteLine(null);
@@ -135,9 +118,6 @@ export default function RouteManage() {
             coordinatorFlyTo={coordinatorFlyTo}
             getStationSelected={getStationSelected}
             routeLine={routeLine}
-            map={map}
-            mapContainerRef={mapContainerRef}
-            setMap={setMap}
           />
         </Grid>
 
