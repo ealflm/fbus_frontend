@@ -5,7 +5,7 @@ export const MAPBOX_STYLE_URL_DEVELOPMENT = `mapbox://styles/mapbox/streets-v11?
 
 export const API_URL = {
   BASE_URL: "https://fbus-api.azurewebsites.net/api/v1.0/admin",
-  MAP_BOX_DIRECTION: `https://api.mapbox.com/directions/v5/mapbox/walking`,
+  MAP_BOX_DIRECTION: `https://api.mapbox.com/directions/v5/mapbox/cycling`,
 };
 
 export const LOCAL_STORAGE_KEY = {

@@ -11,31 +11,21 @@ import {
   MAPBOX_STYLE_URL_DEVELOPMENT,
   MAPBOX_STYLE_URL_PRODUCTION,
 } from "../../../configs/baseURL";
-import routeExample from "./Route.json";
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function Map(props) {
-  const { stationList, coordinatorFlyTo, getStationSelected } = props;
-  const mapContainerRef = useRef(null); //MapBox Container
-  const [lng, setLng] = useState(106.809862); //Longitude
-  const [lat, setLat] = useState(10.841128); //Latitude
-  const [zoom, setZoom] = useState(17); //Zoom Level
-  const [map, setMap] = useState();
+  const {
+    stationList,
+    coordinatorFlyTo,
+    getStationSelected,
+    routeLine,
+    map,
+    mapContainerRef,
+    setMap,
+  } = props;
+
   const [stationSelected, setStationSelected] = useState([]);
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style:
-        process.env.NODE_ENV === "development"
-          ? MAPBOX_STYLE_URL_DEVELOPMENT
-          : MAPBOX_STYLE_URL_PRODUCTION,
-      center: [lng, lat],
-      zoom: zoom,
-    });
-    setMap(map);
-    return () => map.remove();
-  }, []);
 
   useEffect(() => {
     if (map) {
@@ -87,9 +77,12 @@ export default function Map(props) {
     }
   }, [map, stationList, stationSelected]);
   useEffect(() => {
+    getStationSelected(stationSelected);
+  }, [stationSelected]);
+  useEffect(() => {
     if (map) {
-      const coordinates = routeExample.routes[0].geometry.coordinates;
-      const geojson: any = {
+      const coordinates = routeLine?.routes[0].geometry.coordinates;
+      const geojson = {
         type: "Feature",
         properties: {},
         geometry: {
@@ -97,6 +90,12 @@ export default function Map(props) {
           coordinates: coordinates,
         },
       };
+      if (map.getLayer("route")) {
+        map.removeLayer("route");
+      }
+      if (map.getSource("route")) {
+        map.removeSource("route");
+      }
       map.on("load", () => {
         map.addSource("route", {
           type: "geojson",
@@ -111,13 +110,13 @@ export default function Map(props) {
             "line-cap": "round",
           },
           paint: {
-            "line-color": "#888",
+            "line-color": "#30a4f1",
             "line-width": 8,
           },
         });
       });
     }
-  }, [map]);
+  }, [map, routeLine]);
   useEffect(() => {
     if (map) {
       if (coordinatorFlyTo) {
