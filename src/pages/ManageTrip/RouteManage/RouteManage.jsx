@@ -44,9 +44,9 @@ export default function RouteManage() {
   //
   const [loading, setLoading] = useState(false);
   const [stationList, setStationList] = useState([]);
-  const [stationDropDown, setStationDropDown] = useState([]);
   const [coordinatorFlyTo, setCordinatorFlyTo] = useState();
   const [showButtonConfirm, setShowButtonConfirm] = useState(false);
+  const [listStationSelected, setListStationSelected] = useState();
   useEffect(() => {
     getListStation();
   }, []);
@@ -57,68 +57,48 @@ export default function RouteManage() {
       .getListStations()
       .then((res) => {
         setStationList(res.data.body);
-        mapSelectStation(res.data.body);
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
       });
   };
-  const mapSelectStation = (stations) => {
-    const result = stations.map((item, index) => {
-      return { label: item.name, value: item.stationId };
+
+  const getStationSelected = (stationListSelected) => {
+    const result = stationListSelected.map((stationSelected, index) => {
+      return stationList.find(
+        (station) => stationSelected === station.stationId
+      );
     });
-    setStationDropDown(result);
+    setListStationSelected(result);
   };
   const onSubmit = handleSubmit((data) => {
     setShowButtonConfirm(true);
     const valueArr = data.stationList.map(function (item) {
       return item.stationId;
     });
-    if (checkIfDuplicateExists(valueArr)) {
-      toast.warn("Không được chọn trùng trạm");
-      setShowButtonConfirm(false);
-      return;
-    }
-    let result = [];
-    data.stationList.map((item2, index) => {
-      return stationList.map((item, index) => {
-        if (item.stationId === item2.stationId) {
-          result = [...result, item];
-          return result;
-        }
-      });
-    });
-    console.log(result);
   });
-  const checkIfDuplicateExists = (valueArr) => {
-    let isDuplicate;
-    isDuplicate = valueArr.some(function (item, idx) {
-      return valueArr.indexOf(item) !== idx;
-    });
-    return isDuplicate;
-  };
+
   const onCancle = () => {
     setShowButtonConfirm(false);
   };
-  const handleOnChange = (e) => {
-    const flyMarkerCoor = stationList.find(
-      (item) => item.stationId === e.target.value
-    );
-    setCordinatorFlyTo(flyMarkerCoor);
-  };
+
   return (
     <Box>
       <ToastContainer></ToastContainer>
       <Loading isLoading={loading} />
       <Grid container spacing={2}>
         <Grid item xs={9}>
-          <Map stationList={stationList} coordinatorFlyTo={coordinatorFlyTo} />
+          <Map
+            stationList={stationList}
+            coordinatorFlyTo={coordinatorFlyTo}
+            getStationSelected={getStationSelected}
+          />
         </Grid>
 
         <Grid item xs={3}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={11.4}>
               <Box>
                 <Typography variant="h6">Tạo tuyến</Typography>
               </Box>
@@ -134,7 +114,7 @@ export default function RouteManage() {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button
+              {/* <Button
                 onClick={() => {
                   append({
                     stationId: "",
@@ -143,43 +123,41 @@ export default function RouteManage() {
               >
                 <AddIcon></AddIcon>
                 <Typography variant="body1">Thêm Trạm</Typography>
-              </Button>
+              </Button> */}
+              <Typography variant="h6">Danh sách trạm</Typography>
             </Grid>
             <Grid item xs={12}>
               <ScrollPanel
                 style={{
                   width: "100%",
-                  height: "50vh",
-                  border: "1px solid #c7c7c7",
+                  minHeight: "70vh",
                 }}
               >
-                {fields.map((field, index) => {
+                {listStationSelected?.map((item, index) => {
                   return (
-                    <Box
+                    <Card
                       style={{
-                        display: "flex",
-                        marginTop: "10px",
-                        padding: "0 5px",
+                        marginBottom: "15px",
+                        padding: "1.25rem",
                       }}
-                      key={field.id}
                     >
-                      <SelectForm
-                        label="Trạm"
-                        name={`stationList.${index}.stationId`}
-                        required
-                        control={control}
-                        options={stationDropDown}
-                        errors={errors}
-                        handleOnChange={handleOnChange}
-                      />
-                      <IconButton>
-                        <CloseIcon
-                          onClick={() => {
-                            remove(index);
-                          }}
-                        ></CloseIcon>
-                      </IconButton>
-                    </Box>
+                      <Box>
+                        <Typography variant="body1">
+                          <b> Tên trạm:</b> {item.name}
+                        </Typography>
+                        <Typography variant="body1">
+                          <b> Địa chỉ:</b> {item.address}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="body2">
+                          <b>Kinh độ:</b> {item.longitude}
+                        </Typography>
+                        <Typography variant="body2">
+                          <b>Vĩ độ:</b> {item.latitude}
+                        </Typography>
+                      </Box>
+                    </Card>
                   );
                 })}
               </ScrollPanel>

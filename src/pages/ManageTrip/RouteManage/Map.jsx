@@ -16,7 +16,7 @@ mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function Map(props) {
-  const { stationList, coordinatorFlyTo } = props;
+  const { stationList, coordinatorFlyTo, getStationSelected } = props;
   const mapContainerRef = useRef(null); //MapBox Container
   const [lng, setLng] = useState(106.809862); //Longitude
   const [lat, setLat] = useState(10.841128); //Latitude
