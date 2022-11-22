@@ -1,13 +1,13 @@
-import { Box, Card, CardContent, IconButton, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useBodyDetailStyles } from './BodyDetailStyles';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
-import { stationService } from '../../services/StationService';
-import { toast, ToastContainer } from 'react-toastify';
+import { Box, Card, CardContent, IconButton, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useBodyDetailStyles } from "./BodyDetailStyles";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { stationService } from "../../services/StationService";
+import { toast, ToastContainer } from "react-toastify";
 export default function BodyDetailMap(props) {
   const {
     setShowDetail,
@@ -43,17 +43,17 @@ export default function BodyDetailMap(props) {
   const deleteFooterDialog = (
     <React.Fragment>
       <Button
-        label='Hủy'
-        icon='pi pi-times'
-        className='p-button-text'
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
         onClick={() => {
           hideDeleteDialog();
         }}
       />
       <Button
-        label='Đồng ý'
-        icon='pi pi-check'
-        className='p-button-text'
+        label="Đồng ý"
+        icon="pi pi-check"
+        className="p-button-text"
         onClick={() => {
           confirmDelete();
         }}
@@ -95,16 +95,16 @@ export default function BodyDetailMap(props) {
       <ToastContainer></ToastContainer>
       <Dialog
         visible={showDeleteConfirmDialog}
-        style={{ width: '450px' }}
-        header='Xác nhận'
+        style={{ width: "450px" }}
+        header="Xác nhận"
         modal
         footer={deleteFooterDialog}
         onHide={hideDeleteDialog}
       >
-        <div className='confirmation-content'>
+        <div className="confirmation-content">
           <i
-            className='pi pi-exclamation-triangle mr-3'
-            style={{ fontSize: '2rem' }}
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
           />
           <span>Bạn có chắc chắn muốn xóa ?</span>
         </div>
@@ -114,29 +114,29 @@ export default function BodyDetailMap(props) {
           <div className={styles.contentBoxBody}>
             <h4 className={styles.boxBodyTitle}>Chi tiết trạm</h4>
             <Box className={styles.cardBodyList}>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                  <Typography component='div' variant='h6'>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <CardContent sx={{ flex: "1 0 auto" }}>
+                  <Typography component="div" variant="h6">
                     {stationDetail.name}
                   </Typography>
                   <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                    variant="subtitle1"
+                    color="text.secondary"
+                    component="div"
                   >
                     Địa chỉ: {stationDetail.address}
                   </Typography>
                   <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                    variant="subtitle1"
+                    color="text.secondary"
+                    component="div"
                   >
                     Kinh độ: {stationDetail.longitude}
                   </Typography>
                   <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                    variant="subtitle1"
+                    color="text.secondary"
+                    component="div"
                   >
                     Vĩ độ: {stationDetail.latitude}
                   </Typography>
@@ -169,50 +169,49 @@ export default function BodyDetailMap(props) {
           <div className={styles.contentBoxBody}>
             <h4 className={styles.boxBodyTitle}>Chi tiết Tuyến</h4>
             <Box className={styles.cardBodyList}>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                  <Typography component='div' variant='h6'>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <CardContent sx={{ flex: "1 0 auto" }}>
+                  <Typography component="div" variant="h6">
                     {routeDetail.name}
                   </Typography>
                   <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                    variant="subtitle1"
+                    color="text.secondary"
+                    component="div"
                   >
                     Khoảng cách: {routeDetail.distance}
                   </Typography>
                   <Typography
-                    variant='subtitle1'
-                    color='text.secondary'
-                    component='div'
+                    variant="subtitle1"
+                    color="text.secondary"
+                    component="div"
                   >
                     Số trạm: {routeDetail.totalStation}
                   </Typography>
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      component="div"
+                    >
+                      Tên trạm:
+                    </Typography>
+                  </Box>
                   {routeDetail.stationList.map((item, index) => {
                     return (
-                      <Box
+                      <Typography
                         key={index}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                        }}
+                        variant="subtitle1"
+                        color="text.secondary"
+                        style={{ textAlign: "end" }}
                       >
-                        <Typography
-                          variant='subtitle1'
-                          color='text.secondary'
-                          component='div'
-                        >
-                          Tên trạm:
-                        </Typography>
-                        <Typography
-                          variant='subtitle1'
-                          color='text.secondary'
-                          component='div'
-                          mt={3}
-                        >
-                          {item.name}
-                        </Typography>
-                      </Box>
+                        {item.name}
+                      </Typography>
                     );
                   })}
                 </CardContent>

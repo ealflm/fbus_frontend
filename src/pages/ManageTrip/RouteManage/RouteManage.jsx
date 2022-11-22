@@ -182,7 +182,7 @@ export default function RouteManage() {
                   <b> Độ dài của tuyến là:</b> {distance}
                 </Typography>
                 <Typography variant="body1">
-                  <b>Tổng số trạm:</b> {listStationSelected.length}
+                  <b>Tổng số trạm:</b> {listStationSelected?.length}
                 </Typography>
               </Box>
             </Grid>
