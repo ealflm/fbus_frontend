@@ -49,7 +49,8 @@ export default function RouteManage() {
   const [showButtonConfirm, setShowButtonConfirm] = useState(false);
   const [listStationSelected, setListStationSelected] = useState();
   const [routeLine, setRouteLine] = useState();
-
+  const [distanceList, setDistanceList] = useState([]);
+  const [distance, setDistance] = useState();
   useEffect(() => {
     getListStation();
   }, []);
@@ -79,25 +80,58 @@ export default function RouteManage() {
   };
 
   //
-  const onSubmit = handleSubmit((data) => {
+  const onConfirm = () => {
     if (isEmpty(listStationSelected)) {
       toast.warn("Xin hãy chọn trạm");
       return;
     }
-    setShowButtonConfirm(true);
     let corrdinators = [];
-    if (showButtonConfirm) {
-      listStationSelected.forEach((element) => {
-        const lnglat = element.longitude + "," + element.latitude;
-        corrdinators = [...corrdinators, lnglat];
-      });
-      const corrdinatorResult = corrdinators.join(";");
-      routeService
-        .mapBoxRenderRoute(corrdinatorResult)
-        .then((res) => {
+    listStationSelected.forEach((element) => {
+      const lnglat = element.longitude + "," + element.latitude;
+      corrdinators = [...corrdinators, lnglat];
+    });
+    const corrdinatorResult = corrdinators.join(";");
+    setLoading(true);
+    routeService
+      .mapBoxRenderRoute(corrdinatorResult)
+      .then((res) => {
+        if (res.data) {
           setRouteLine(res.data);
+          setDistance(res.data.routes[0].distance);
+          const legs = res.data.routes[0].legs;
+          let distanceArr = [0, res.data.routes[0].legs[0].distance];
+          for (let index = 1; index < legs.length; index++) {
+            legs[index].distance += legs[index - 1]?.distance;
+            distanceArr = [...distanceArr, legs[index].distance];
+          }
+          setDistanceList(distanceArr);
+        }
+        setLoading(false);
+      })
+      .catch((error) => setLoading(false));
+    setShowButtonConfirm(true);
+  };
+  const onSubmit = handleSubmit((data) => {
+    if (showButtonConfirm) {
+      const listStation = listStationSelected.map((item) => {
+        return item.stationId;
+      });
+      const payload = {
+        name: data.name,
+        distance: distance,
+        totalStation: listStationSelected.length,
+        stationList: listStation,
+        distanceList: distanceList,
+      };
+      console.log(payload);
+      routeService
+        .createRoute(payload)
+        .then((res) => {
+          toast.success("Tạo tuyến thành công");
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          toast.error("Tạo tuyến thất bại");
+        });
     }
   });
 
@@ -105,6 +139,7 @@ export default function RouteManage() {
   const onCancle = () => {
     setShowButtonConfirm(false);
     setRouteLine(null);
+    setDistance(0);
   };
 
   return (
@@ -124,7 +159,7 @@ export default function RouteManage() {
         <Grid item xs={3}>
           <Grid container spacing={2}>
             <Grid item xs={11.4}>
-              <Box>
+              <Box style={{ marginBottom: "10px" }}>
                 <Typography variant="h6">Tạo tuyến</Typography>
               </Box>
               <InputTextField
@@ -134,28 +169,32 @@ export default function RouteManage() {
                   </span>
                 }
                 name="name"
+                error={errors.name}
                 control={control}
+                registerProps={{
+                  required: true,
+                }}
                 register={register}
+                errorMessage={errors.name ? "Trường này là bắt buộc" : null}
               />
+              <Box style={{ marginTop: "10px", paddingLeft: "5px" }}>
+                <Typography variant="body1">
+                  <b> Độ dài của tuyến là:</b> {distance}
+                </Typography>
+                <Typography variant="body1">
+                  <b>Tổng số trạm:</b> {listStationSelected.length}
+                </Typography>
+              </Box>
             </Grid>
             <Grid item xs={12}>
-              {/* <Button
-                onClick={() => {
-                  append({
-                    stationId: "",
-                  });
-                }}
-              >
-                <AddIcon></AddIcon>
-                <Typography variant="body1">Thêm Trạm</Typography>
-              </Button> */}
               <Typography variant="h6">Danh sách trạm</Typography>
             </Grid>
             <Grid item xs={12}>
               <ScrollPanel
                 style={{
                   width: "100%",
-                  minHeight: "70vh",
+                  minHeight: "62vh",
+                  height: "50vh",
                 }}
               >
                 {listStationSelected?.map((item, index) => {
@@ -192,7 +231,7 @@ export default function RouteManage() {
                 <Grid item xs={12}>
                   <Button
                     onClick={() => {
-                      onSubmit();
+                      onConfirm();
                     }}
                   >
                     Xác nhận trạm
