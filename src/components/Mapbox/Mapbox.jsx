@@ -1,28 +1,38 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 // import mapboxgl from "mapbox-gl";
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl-csp';
+import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
+import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
 import "./Mapbox.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import markerIcon from "../../assets/images/markerIcon.png";
-import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL_DEVELOPMENT, MAPBOX_STYLE_URL_PRODUCTION } from "../../configs/baseURL";
+import {
+  MAPBOX_ACCESS_TOKEN,
+  MAPBOX_STYLE_URL_DEVELOPMENT,
+  MAPBOX_STYLE_URL_PRODUCTION,
+} from "../../configs/baseURL";
 
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const Mapbox = (props) => {
-  const { stationList, stationDetail, refereshData } = props;
+  const { stationList, stationDetail, refereshData, routeDetail, routeLine } =
+    props;
   const [map, setMap] = useState();
   const mapContainerRef = useRef(null); //MapBox Container
   const [lng, setLng] = useState(106.80997955258721); //Longitude
   const [lat, setLat] = useState(10.84105064580045); //Latitude
   const [zoom, setZoom] = useState(17);
   const [currentMarkerList, setCurrentMarkerList] = useState();
+  const [currentRouteLine, setCurrentRouteLine] = useState();
+  const [isChangedOnMap, setIsChangedOnMap] = useState(false);
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: process.env.NODE_ENV === 'development' ? MAPBOX_STYLE_URL_DEVELOPMENT : MAPBOX_STYLE_URL_PRODUCTION,
+      style:
+        process.env.NODE_ENV === "development"
+          ? MAPBOX_STYLE_URL_DEVELOPMENT
+          : MAPBOX_STYLE_URL_PRODUCTION,
       center: [lng, lat],
       zoom: zoom,
     });
@@ -74,6 +84,88 @@ const Mapbox = (props) => {
       }
     }
   }, [map, stationDetail]);
+  useEffect(() => {
+    if (map) {
+      console.log(routeLine);
+      if (map.getLayer("route") && map.getSource("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+        setIsChangedOnMap(true);
+      }
+    }
+  }, [map, stationDetail, routeLine]);
+  useEffect(() => {
+    if (map) {
+      const coordinates = routeLine?.routes[0].geometry.coordinates;
+      const currentCoordinates =
+        currentRouteLine?.routes[0].geometry.coordinates;
+
+      // Check if coordinates are old, don't need do anything
+      if (
+        JSON.stringify(coordinates) === JSON.stringify(currentCoordinates) &&
+        !isChangedOnMap
+      ) {
+        return;
+      }
+
+      const geojson = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: coordinates,
+        },
+      };
+
+      // Remove old layer and source
+      if (map.getLayer("route") && map.getSource("route")) {
+        map.removeLayer("route");
+        map.removeSource("route");
+
+        if (routeLine) {
+          // Check case has change of adding/removing stations to make this route.
+          map.addSource("route", {
+            type: "geojson",
+            data: geojson,
+          });
+          map.addLayer({
+            id: "route",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "#30a4f1",
+              "line-width": 8,
+            },
+          });
+        }
+      } else if (map.loaded()) {
+        map.addSource("route", {
+          type: "geojson",
+          data: geojson,
+        });
+        map.addLayer({
+          id: "route",
+          type: "line",
+          source: "route",
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#30a4f1",
+            "line-width": 8,
+          },
+        });
+      }
+
+      setCurrentRouteLine(routeLine);
+      setIsChangedOnMap(false);
+    }
+  }, [map, routeLine]);
   return (
     <div className="map-body">
       <div className="map-wapper">

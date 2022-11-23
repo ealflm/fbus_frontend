@@ -17,6 +17,7 @@ export default function BodyDetailMap(props) {
     setRouteDetail,
     setRefereshData,
     refereshData,
+    setRouteLine,
   } = props;
   const styles = useBodyDetailStyles();
 
@@ -34,10 +35,12 @@ export default function BodyDetailMap(props) {
   const backStationList = () => {
     setShowDetail(false);
     setStationDetail(null);
+    setRouteLine(null);
   };
   const backRouteList = () => {
     setShowDetail(false);
     setRouteDetail(null);
+    setRouteLine(null);
   };
   // CUSTOME LAYOUT FOOTER DELETE DIALOG
   const deleteFooterDialog = (

@@ -1,33 +1,21 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  Grid,
-  IconButton,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, Grid, Typography } from "@mui/material";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { stationService } from "../../../services/StationService";
 import Map from "./Map";
 import Loading from "../../../components/Loading/Loading";
 import InputTextField from "../../../components/Input/InputTextFiled";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { routeService } from "../../../services/RouteService";
 import { toast, ToastContainer } from "react-toastify";
 import { isEmpty } from "lodash";
 
-import { useRef } from "react";
 export default function RouteManage() {
   const {
     register,
     handleSubmit,
-    reset,
-    setValue,
     control,
     formState: { errors },
   } = useForm({
@@ -36,12 +24,7 @@ export default function RouteManage() {
       stationList: [],
     },
   });
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "stationList", // unique name for your Field Array
-    }
-  );
+
   //
   const [loading, setLoading] = useState(false);
   const [stationList, setStationList] = useState([]);
@@ -123,7 +106,6 @@ export default function RouteManage() {
         stationList: listStation,
         distanceList: distanceList,
       };
-      console.log(payload);
       routeService
         .createRoute(payload)
         .then((res) => {
@@ -179,7 +161,8 @@ export default function RouteManage() {
               />
               <Box style={{ marginTop: "10px", paddingLeft: "5px" }}>
                 <Typography variant="body1">
-                  <b> Độ dài của tuyến là:</b> {distance}
+                  <b> Độ dài của tuyến là:</b> {(distance / 1000).toFixed(2)}{" "}
+                  /Km
                 </Typography>
                 <Typography variant="body1">
                   <b>Tổng số trạm:</b> {listStationSelected?.length}

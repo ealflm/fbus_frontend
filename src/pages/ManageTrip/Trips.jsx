@@ -31,6 +31,7 @@ const Trips = () => {
   });
   const [showStationDialog, setShowStationDialog] = useState(false);
   const [refereshData, setRefereshData] = useState(false);
+  const [routeLine, setRouteLine] = useState();
   const { station, route } = checked;
   useEffect(() => {
     if (station) {
@@ -94,6 +95,22 @@ const Trips = () => {
   const getRouteDetail = (routeDetail) => {
     setStationDetail(null);
     setRouteDetail(routeDetail);
+    let corrdinators = [];
+    routeDetail.stationList.forEach((element) => {
+      const lnglat = element.longitude + "," + element.latitude;
+      corrdinators = [...corrdinators, lnglat];
+    });
+    const corrdinatorResult = corrdinators.join(";");
+    setLoading(true);
+    routeService
+      .mapBoxRenderRoute(corrdinatorResult)
+      .then((res) => {
+        if (res.data) {
+          setRouteLine(res.data);
+        }
+        setLoading(false);
+      })
+      .catch((error) => setLoading(false));
   };
 
   return (
@@ -163,6 +180,7 @@ const Trips = () => {
             setRouteDetail={setRouteDetail}
             setRefereshData={setRefereshData}
             refereshData={refereshData}
+            setRouteLine={setRouteLine}
           />
         ) : (
           <BodyListContentMap
@@ -180,6 +198,7 @@ const Trips = () => {
           stationDetail={stationDetail}
           routeDetail={routeDetail}
           refereshData={refereshData}
+          routeLine={routeLine}
         />
         <StationManage
           showStationDialog={showStationDialog}
