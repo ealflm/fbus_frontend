@@ -1,24 +1,30 @@
-import * as axios from 'axios';
-import { API_URL } from '../configs/baseURL';
+import * as axios from "axios";
+import { API_URL } from "../configs/baseURL";
 class BusService {
   getListBusVehicle = () => {
     return axios({
       url: `${API_URL.BASE_URL}/bus`,
-      method: 'GET',
+      method: "GET",
     });
   };
   createBusVehicle = (busVehicle) => {
     return axios({
       url: `${API_URL.BASE_URL}/bus`,
-      method: 'POST',
+      method: "POST",
       data: busVehicle,
     });
   };
   updateBusVehicle = (busVehicle, busId) => {
     return axios({
       url: `${API_URL.BASE_URL}/bus/${busId}`,
-      method: 'PUT',
+      method: "PUT",
       data: busVehicle,
+    });
+  };
+  deleteBus = (busId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/bus/${busId}`,
+      method: "DELETE",
     });
   };
 }

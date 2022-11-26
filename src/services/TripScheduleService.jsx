@@ -22,5 +22,11 @@ class TripScheduleService {
       data: trip,
     });
   };
+  deleteTripSchedule = (tripId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/trip/${tripId}`,
+      method: "DELETE",
+    });
+  };
 }
 export const tripScheduleService = new TripScheduleService();

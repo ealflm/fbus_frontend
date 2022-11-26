@@ -205,7 +205,6 @@ const Buses = () => {
     }
   });
   const editBus = (bus) => {
-    console.log(bus);
     setValueToForm(bus, setValue);
     setBusDialog(true);
   };
@@ -218,7 +217,17 @@ const Buses = () => {
     setDeleteBusDialog(true);
   };
   const confirmDeleteBus = () => {
-    console.log(bus);
+    setLoading(true);
+    busService
+      .deleteBus(bus.busId)
+      .then((res) => {
+        toast.success(res.data.message);
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
   };
   const hideDeleteBusDialog = () => {
     setDeleteBusDialog(false);
@@ -259,7 +268,6 @@ const Buses = () => {
     </React.Fragment>
   );
   // Call API
-  const deleteProduct = () => {};
   //
   return (
     <div>
@@ -414,7 +422,7 @@ const Buses = () => {
           />
           {bus && (
             <span>
-              Bạn có chắc chắn muốn xóa <b>{bus.licensePlates}</b>?
+              Bạn có chắc chắn muốn xóa xe buýt <b>{bus.licensePlates}</b>?
             </span>
           )}
         </div>

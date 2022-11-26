@@ -28,9 +28,9 @@ export default function BodyDetailMap(props) {
   const [routeId, setRouteId] = useState();
   useEffect(() => {
     if (routeDetail) {
-      console.log(routeDetail);
+      // console.log(routeDetail);
     } else if (stationDetail) {
-      console.log(stationDetail);
+      // console.log(stationDetail);
     }
   }, [setShowDetail, stationDetail, routeDetail]);
 

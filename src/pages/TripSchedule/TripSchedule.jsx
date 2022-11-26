@@ -7,7 +7,7 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import React from "react";
 import { useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Loading from "../../components/Loading/Loading";
 import { ButtonExportExcel } from "../../components/ButtonExportExcel/ButtonExportExcel";
 import { TRIP_STATUS } from "../../constants/TripStatus";
@@ -15,6 +15,13 @@ import { useEffect } from "react";
 import { tripScheduleService } from "../../services/TripScheduleService";
 import { Chip } from "primereact/chip";
 import { IMAGE_URL } from "../../configs/baseURL";
+import { Dialog } from "primereact/dialog";
+import { Grid } from "@mui/material";
+import SelectForm from "../../components/SelectForm/SelectForm";
+import { useForm } from "react-hook-form";
+import { busService } from "../../services/BusServices";
+import { routeService } from "../../services/RouteService";
+import { driverService } from "../../services/DriverService";
 
 export default function TripSchedule() {
   const [filters, setFilters] = useState({
@@ -42,9 +49,24 @@ export default function TripSchedule() {
     },
     activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
   });
+  let initBus = { licensePlates: "", color: "", seat: "" };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm(initBus);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [tripSchedules, setTripSchedule] = useState([]);
+  const [tripScheduleDialog, setTripScheduleDialog] = useState();
+  const [trip, setTrip] = useState();
+  const [deleteTripDialog, setDeleteTripDialog] = useState(false);
+  const [driverList, setDriverList] = useState([]);
+  const [routeList, setRouteList] = useState([]);
+  const [busList, setBusList] = useState([]);
   //
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -54,8 +76,43 @@ export default function TripSchedule() {
     setFilters(_filters);
     setGlobalFilterValue(value);
   };
-
+  const getInitDropDownList = () => {
+    setLoading(true);
+    Promise.all([
+      busService.getListBusVehicle(),
+      routeService.getListRoutes(),
+      driverService.getListDrivers(),
+    ])
+      .then((values) => {
+        const busListMapDropdown = values[0].data.body.map((item) => {
+          return {
+            value: item.busId,
+            label: item.licensePlates,
+          };
+        });
+        const routeListMapDropdown = values[1].data.body.map((item) => {
+          return {
+            value: item.routeId,
+            label: item.name,
+          };
+        });
+        const driverListMapDropdown = values[2].data.body.map((item) => {
+          return {
+            value: item.driverId,
+            label: item.fullName,
+          };
+        });
+        setBusList(busListMapDropdown);
+        setRouteList(routeListMapDropdown);
+        setDriverList(driverListMapDropdown);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+      });
+  };
   useEffect(() => {
+    getInitDropDownList();
     getListTripShedule();
   }, []);
   const getListTripShedule = () => {
@@ -70,6 +127,81 @@ export default function TripSchedule() {
       }
     );
   };
+  const showConfirmDeleteBus = (trip) => {
+    setTrip(trip);
+    setDeleteTripDialog(true);
+  };
+  const confirmDeleteBus = () => {
+    setLoading(true);
+    tripScheduleService
+      .deleteTripSchedule(trip.tripId)
+      .then((res) => {
+        toast.success(res.data.message);
+        setLoading(false);
+        setDeleteTripDialog(false);
+        getListTripShedule();
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
+  };
+  const hideDeleteTripDialog = () => {
+    setTrip(null);
+    setDeleteTripDialog(false);
+  };
+  const hideTripScheduleDialog = () => {
+    setTripScheduleDialog(false);
+    reset();
+  };
+  //create trip schedule
+  const createTripSchedule = () => {
+    setTripScheduleDialog(true);
+    setTrip(null);
+  };
+  // edit trip schedule
+  const editTripSchedule = (trip) => {
+    setTripScheduleDialog(true);
+    setTrip(trip);
+  };
+  const onSaveTripSchedule = handleSubmit(() => {});
+  //footer trip schedule dialog
+  const tripScheduleDialogFooter = (
+    <React.Fragment>
+      <Button
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
+        onClick={hideTripScheduleDialog}
+      />
+      <Button
+        label="Lưu"
+        icon="pi pi-check"
+        className="p-button-text"
+        onClick={onSaveTripSchedule}
+      />
+    </React.Fragment>
+  );
+  // footer confirm delete
+  const deleteBusDialogFooter = (
+    <React.Fragment>
+      <Button
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
+        onClick={hideDeleteTripDialog}
+      />
+      <Button
+        label="Đồng ý"
+        icon="pi pi-check"
+        className="p-button-text"
+        onClick={() => {
+          confirmDeleteBus();
+        }}
+      />
+    </React.Fragment>
+  );
+  // table render
   const renderHeader = () => {
     return (
       <div className="flex justify-content-between align-items-center">
@@ -79,7 +211,7 @@ export default function TripSchedule() {
             label="Tạo mới"
             icon="pi pi-plus"
             className="p-button-success mr-2"
-            // onClick={createBus}
+            onClick={createTripSchedule}
           />
 
           <ButtonExportExcel
@@ -175,14 +307,16 @@ export default function TripSchedule() {
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success mr-2"
           style={{ width: "30px", height: "30px" }}
-          // onClick={() => editBus(rowData)}
+          onClick={() => editTripSchedule(rowData)}
         />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-rounded p-button-warning"
-          style={{ width: "30px", height: "30px" }}
-          // onClick={() => showConfirmDeleteBus(rowData)}
-        />
+        {rowData.status !== 0 ? (
+          <Button
+            icon="pi pi-trash"
+            className="p-button-rounded p-button-warning"
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => showConfirmDeleteBus(rowData)}
+          />
+        ) : null}
       </React.Fragment>
     );
   };
@@ -302,6 +436,65 @@ export default function TripSchedule() {
           </div>
         </div>
       </div>
+      {/* layout create trip schedule */}
+      <Dialog
+        visible={tripScheduleDialog}
+        style={{ width: "450px" }}
+        header={trip ? "Chỉnh sửa thông tin chuyến" : "Tạo thông tin chuyến"}
+        modal
+        className="p-fluid"
+        footer={tripScheduleDialogFooter}
+        onHide={hideTripScheduleDialog}
+      >
+        <Grid container spacing={2} mt={2}>
+          <Grid item xs={12}>
+            <SelectForm
+              label="Tên xe"
+              name="busId"
+              required
+              control={control}
+              options={busList}
+              errors={errors}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <SelectForm
+              label="Tên tài xế"
+              name="driverId"
+              required
+              control={control}
+              options={driverList}
+              errors={errors}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <SelectForm
+              label="Tên Tuyến"
+              name="routeId"
+              required
+              control={control}
+              options={routeList}
+              errors={errors}
+            />
+          </Grid>
+        </Grid>
+      </Dialog>
+      <Dialog
+        visible={deleteTripDialog}
+        style={{ width: "450px" }}
+        header="Xác nhận"
+        modal
+        footer={deleteBusDialogFooter}
+        onHide={hideDeleteTripDialog}
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          {trip && <span>Bạn có chắc chắn muốn xóa chuyến?</span>}
+        </div>
+      </Dialog>
     </div>
   );
 }

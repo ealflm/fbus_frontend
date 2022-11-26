@@ -66,7 +66,8 @@ const SelectForm = ({
 
   useEffect(() => {
     setWidth(selectRef && selectRef.current?.offsetWidth - 38);
-  }, [reSize]);
+    setData(value);
+  }, [reSize, value]);
   return (
     <FormControl
       fullWidth
@@ -87,7 +88,6 @@ const SelectForm = ({
             : false,
         }}
         render={({ field: { onChange, onBlur, value } }) => {
-          setData(value);
           return (
             <>
               <InputLabel
