@@ -22,6 +22,12 @@ class RouteService {
       data: route,
     });
   };
+  deleteRoute = (routeId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/route/${routeId}`,
+      method: "DELETE",
+    });
+  };
   mapBoxRenderRoute = (coordinate) => {
     return axios({
       url: `${API_URL.MAP_BOX_DIRECTION}/${coordinate}?alternatives=false&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${MAPBOX_ACCESS_TOKEN}`,

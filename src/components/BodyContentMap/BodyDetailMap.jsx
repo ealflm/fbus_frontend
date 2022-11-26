@@ -8,6 +8,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { stationService } from "../../services/StationService";
 import { toast, ToastContainer } from "react-toastify";
+import { routeService } from "../../services/RouteService";
 export default function BodyDetailMap(props) {
   const {
     setShowDetail,
@@ -18,6 +19,7 @@ export default function BodyDetailMap(props) {
     setRefereshData,
     refereshData,
     setRouteLine,
+    showLayoutListRoute,
   } = props;
   const styles = useBodyDetailStyles();
 
@@ -91,6 +93,17 @@ export default function BodyDetailMap(props) {
           toast.error(error.response.data.message);
         });
     } else if (routeId) {
+      routeService
+        .deleteRoute(routeId)
+        .then((res) => {
+          backRouteList();
+          showLayoutListRoute();
+          toast.success(res.data.message);
+          setShowConfirmDeleteDialog(false);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
     }
   };
   return (

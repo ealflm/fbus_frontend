@@ -35,7 +35,6 @@ const Trips = () => {
   const { station, route } = checked;
   useEffect(() => {
     if (station) {
-      console.log("run");
       getListStation();
     }
   }, [checked, refereshData]);
@@ -160,7 +159,7 @@ const Trips = () => {
                     <Icon
                       color="primary"
                       onClick={() => {
-                        navigate("/trips/create-route");
+                        navigate("/maps/create-route");
                       }}
                     >
                       add_circle
@@ -181,6 +180,7 @@ const Trips = () => {
             setRefereshData={setRefereshData}
             refereshData={refereshData}
             setRouteLine={setRouteLine}
+            showLayoutListRoute={showLayoutListRoute}
           />
         ) : (
           <BodyListContentMap

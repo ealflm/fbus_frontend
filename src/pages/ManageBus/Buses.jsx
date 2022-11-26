@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { ButtonExportExcel } from '../../components/ButtonExportExcel/ButtonExportExcel';
-import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
-import { ProgressBar } from 'primereact/progressbar';
-import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { busService } from '../../services/BusServices';
-import { Dialog } from 'primereact/dialog';
-import Loading from '../../components/Loading/Loading';
-import { Grid } from '@mui/material';
-import InputTextField from '../../components/Input/InputTextFiled';
-import { setValueToForm } from '../../utils/helper';
-import { toast, ToastContainer } from 'react-toastify';
-import { BUS_STATUS } from '../../constants/BusStatus';
-import { Tag } from 'primereact/tag';
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { ButtonExportExcel } from "../../components/ButtonExportExcel/ButtonExportExcel";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { busService } from "../../services/BusServices";
+import { Dialog } from "primereact/dialog";
+import Loading from "../../components/Loading/Loading";
+import { Grid } from "@mui/material";
+import InputTextField from "../../components/Input/InputTextFiled";
+import { setValueToForm } from "../../utils/helper";
+import { toast, ToastContainer } from "react-toastify";
+import { BUS_STATUS } from "../../constants/BusStatus";
+import { Tag } from "primereact/tag";
 
 const Buses = () => {
   const [filters, setFilters] = useState({
@@ -25,7 +23,7 @@ const Buses = () => {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
     },
-    'country.name': {
+    "country.name": {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
     },
@@ -44,9 +42,9 @@ const Buses = () => {
     },
     activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
   });
-  const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  let initBus = { licensePlates: '', color: '', seat: '' };
+  let initBus = { licensePlates: "", color: "", seat: "" };
   const {
     register,
     handleSubmit,
@@ -85,7 +83,7 @@ const Buses = () => {
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
-    _filters['global'].value = value;
+    _filters["global"].value = value;
 
     setFilters(_filters);
     setGlobalFilterValue(value);
@@ -93,13 +91,13 @@ const Buses = () => {
 
   const renderHeader = () => {
     return (
-      <div className='flex justify-content-between align-items-center'>
-        <h2 className='m-0'>Thông tin xe buýt</h2>
+      <div className="flex justify-content-between align-items-center">
+        <h2 className="m-0">Thông tin xe buýt</h2>
         <div>
           <Button
-            label='Tạo mới'
-            icon='pi pi-plus'
-            className='p-button-success mr-2'
+            label="Tạo mới"
+            icon="pi pi-plus"
+            className="p-button-success mr-2"
             onClick={createBus}
           />
 
@@ -107,12 +105,12 @@ const Buses = () => {
             dataToExcel={busList}
             fileName={`Thông tin`}
           ></ButtonExportExcel>
-          <span className='p-input-icon-left ml-2'>
-            <i className='pi pi-search' />
+          <span className="p-input-icon-left ml-2">
+            <i className="pi pi-search" />
             <InputText
               value={globalFilterValue}
               onChange={onGlobalFilterChange}
-              placeholder='Tìm kiếm... '
+              placeholder="Tìm kiếm... "
             />
           </span>
         </div>
@@ -123,7 +121,7 @@ const Buses = () => {
   const colorBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className='image-text'>{rowData?.color}</span>
+        <span className="image-text">{rowData?.color}</span>
       </React.Fragment>
     );
   };
@@ -131,7 +129,7 @@ const Buses = () => {
   const licensePlatesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className='image-text'>{rowData?.licensePlates}</span>
+        <span className="image-text">{rowData?.licensePlates}</span>
       </React.Fragment>
     );
   };
@@ -139,7 +137,7 @@ const Buses = () => {
   const seatsBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className='image-text'>{rowData?.seat}</span>
+        <span className="image-text">{rowData?.seat}</span>
       </React.Fragment>
     );
   };
@@ -155,15 +153,15 @@ const Buses = () => {
     return (
       <React.Fragment>
         <Button
-          icon='pi pi-pencil'
-          className='p-button-rounded p-button-success mr-2'
-          style={{ width: '30px', height: '30px' }}
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success mr-2"
+          style={{ width: "30px", height: "30px" }}
           onClick={() => editBus(rowData)}
         />
         <Button
-          icon='pi pi-trash'
-          className='p-button-rounded p-button-warning'
-          style={{ width: '30px', height: '30px' }}
+          icon="pi pi-trash"
+          className="p-button-rounded p-button-warning"
+          style={{ width: "30px", height: "30px" }}
           onClick={() => showConfirmDeleteBus(rowData)}
         />
       </React.Fragment>
@@ -229,15 +227,15 @@ const Buses = () => {
   const deleteBusDialogFooter = (
     <React.Fragment>
       <Button
-        label='Hủy'
-        icon='pi pi-times'
-        className='p-button-text'
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
         onClick={hideDeleteBusDialog}
       />
       <Button
-        label='Đồng ý'
-        icon='pi pi-check'
-        className='p-button-text'
+        label="Đồng ý"
+        icon="pi pi-check"
+        className="p-button-text"
         onClick={() => {
           confirmDeleteBus();
         }}
@@ -247,15 +245,15 @@ const Buses = () => {
   const busDialogFooter = (
     <React.Fragment>
       <Button
-        label='Hủy'
-        icon='pi pi-times'
-        className='p-button-text'
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
         onClick={hideBusDialog}
       />
       <Button
-        label='Lưu'
-        icon='pi pi-check'
-        className='p-button-text'
+        label="Lưu"
+        icon="pi pi-check"
+        className="p-button-text"
         onClick={onSaveBus}
       />
     </React.Fragment>
@@ -267,62 +265,62 @@ const Buses = () => {
     <div>
       <ToastContainer />
       <Loading isLoading={loading}></Loading>
-      <div className='row'>
-        <div className='col-12'>
-          <div className='card'>
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
             <DataTable
               header={renderHeader}
               value={busList}
               paginator
-              size='small'
-              className='p-datatable-customers'
+              size="small"
+              className="p-datatable-customers"
               rows={10}
-              paginatorTemplate='FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+              paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
               rowsPerPageOptions={[10, 25, 50]}
-              dataKey='id'
+              dataKey="id"
               rowHover
               filters={filters}
-              filterDisplay='menu'
-              responsiveLayout='scroll'
-              globalFilterFields={['licensePlates', 'color', 'seat']}
-              emptyMessage='Không tìm thấy dữ liệu.'
-              currentPageReportTemplate='Đang xem {first} đến {last} của {totalRecords} thư mục'
+              filterDisplay="menu"
+              responsiveLayout="scroll"
+              globalFilterFields={["licensePlates", "color", "seat"]}
+              emptyMessage="Không tìm thấy dữ liệu."
+              currentPageReportTemplate="Đang xem {first} đến {last} của {totalRecords} thư mục"
             >
               <Column
-                field='licensePlates'
-                header='Biển số xe'
+                field="licensePlates"
+                header="Biển số xe"
                 sortable
-                style={{ minWidth: '14rem' }}
+                style={{ minWidth: "14rem" }}
                 body={licensePlatesBodyTemplate}
               />
               <Column
-                field='color'
-                header='Màu xe'
+                field="color"
+                header="Màu xe"
                 sortable
-                filterField='color'
-                style={{ minWidth: '14rem' }}
+                filterField="color"
+                style={{ minWidth: "14rem" }}
                 body={colorBodyTemplate}
               />
               <Column
-                header='Số chỗ'
+                header="Số chỗ"
                 sortable
-                sortField='seat'
-                filterField='seat'
-                style={{ minWidth: '14rem' }}
+                sortField="seat"
+                filterField="seat"
+                style={{ minWidth: "14rem" }}
                 body={seatsBodyTemplate}
               />
               <Column
-                field='status'
-                header='Status'
+                field="status"
+                header="Status"
                 sortable
-                filterMenuStyle={{ width: '14rem' }}
-                style={{ minWidth: '10rem' }}
+                filterMenuStyle={{ width: "14rem" }}
+                style={{ minWidth: "10rem" }}
                 body={statusBodyTemplate}
               />
               <Column
-                header='Hành động'
-                headerStyle={{ width: '8rem', textAlign: 'center' }}
-                bodyStyle={{ textAlign: 'center', overflow: 'visible' }}
+                header="Hành động"
+                headerStyle={{ width: "8rem", textAlign: "center" }}
+                bodyStyle={{ textAlign: "center", overflow: "visible" }}
                 body={actionBodyTemplate}
               />
             </DataTable>
@@ -331,10 +329,10 @@ const Buses = () => {
       </div>
       <Dialog
         visible={busDialog}
-        style={{ width: '450px' }}
-        header='Tạo mới xe'
+        style={{ width: "450px" }}
+        header="Tạo mới xe"
         modal
-        className='p-fluid'
+        className="p-fluid"
         footer={busDialogFooter}
         onHide={hideBusDialog}
       >
@@ -343,10 +341,10 @@ const Buses = () => {
             <InputTextField
               label={
                 <span>
-                  Biển số xe <span className='required'>*</span>
+                  Biển số xe <span className="required">*</span>
                 </span>
               }
-              name='licensePlates'
+              name="licensePlates"
               control={control}
               registerProps={{
                 required: true,
@@ -354,7 +352,7 @@ const Buses = () => {
               register={register}
               error={errors.licensePlates}
               errorMessage={
-                errors.licensePlates ? 'Trường này là bắt buộc' : null
+                errors.licensePlates ? "Trường này là bắt buộc" : null
               }
             />
           </Grid>
@@ -362,27 +360,27 @@ const Buses = () => {
             <InputTextField
               label={
                 <span>
-                  Màu xe <span className='required'>*</span>
+                  Màu xe <span className="required">*</span>
                 </span>
               }
-              name='color'
+              name="color"
               control={control}
               registerProps={{
                 required: true,
               }}
               register={register}
               error={errors.color}
-              errorMessage={errors.color ? 'Trường này là bắt buộc' : null}
+              errorMessage={errors.color ? "Trường này là bắt buộc" : null}
             />
           </Grid>
           <Grid item xs={12}>
             <InputTextField
               label={
                 <span>
-                  Số chỗ <span className='required'>*</span>
+                  Số chỗ <span className="required">*</span>
                 </span>
               }
-              name='seat'
+              name="seat"
               control={control}
               registerProps={{
                 required: true,
@@ -391,10 +389,10 @@ const Buses = () => {
               register={register}
               error={errors.seat}
               errorMessage={
-                errors.seat && errors.seat?.type === 'required'
-                  ? 'Trường này là bắt buộc'
-                  : errors.seat?.type === 'pattern'
-                  ? 'Trường này bắt buộc nhập số'
+                errors.seat && errors.seat?.type === "required"
+                  ? "Trường này là bắt buộc"
+                  : errors.seat?.type === "pattern"
+                  ? "Trường này bắt buộc nhập số"
                   : null
               }
             />
@@ -403,16 +401,16 @@ const Buses = () => {
       </Dialog>
       <Dialog
         visible={deleteBusDialog}
-        style={{ width: '450px' }}
-        header='Xác nhận'
+        style={{ width: "450px" }}
+        header="Xác nhận"
         modal
         footer={deleteBusDialogFooter}
         onHide={hideDeleteBusDialog}
       >
-        <div className='confirmation-content'>
+        <div className="confirmation-content">
           <i
-            className='pi pi-exclamation-triangle mr-3'
-            style={{ fontSize: '2rem' }}
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
           />
           {bus && (
             <span>

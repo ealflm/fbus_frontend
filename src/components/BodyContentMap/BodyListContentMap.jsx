@@ -1,9 +1,9 @@
-import { CardContent, Typography } from '@mui/material';
-import { Box } from '@mui/system';
-import { ScrollPanel } from 'primereact/scrollpanel';
-import React, { useEffect, useState } from 'react';
-import { Card } from 'reactstrap';
-import { useBodyListStyles } from './BodyListStyles';
+import { CardContent, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import { ScrollPanel } from "primereact/scrollpanel";
+import React, { useEffect, useState } from "react";
+import { Card } from "reactstrap";
+import { useBodyListStyles } from "./BodyListStyles";
 
 export default function BodyListContentMap(props) {
   const {
@@ -19,6 +19,7 @@ export default function BodyListContentMap(props) {
     // console.log(routeList);
     // console.log(stationList);
   }, [routeList, stationList]);
+
   const setDetailStation = (station) => {
     setShowDetail(true);
     getStationDetail(station);
@@ -32,7 +33,7 @@ export default function BodyListContentMap(props) {
       <div className={styles.contentBoxBody}>
         <h4 className={styles.boxBodyTitle}>Danh sách trạm </h4>
         <ScrollPanel
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: "100%", height: "100%" }}
           className={styles.scrollBodyContent}
         >
           <Box className={styles.cardBodyList}>
@@ -40,28 +41,28 @@ export default function BodyListContentMap(props) {
               return (
                 <Card
                   key={index}
-                  variant='outlined'
-                  sx={{ display: 'flex' }}
+                  variant="outlined"
+                  sx={{ display: "flex" }}
                   onClick={() => {
                     setDetailStation(item);
                   }}
                 >
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <CardContent sx={{ flex: '1 0 auto' }}>
-                      <Typography component='div' variant='subtitle1'>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <CardContent sx={{ flex: "1 0 auto" }}>
+                      <Typography component="div" variant="subtitle1">
                         {item.name}
                       </Typography>
                       <Typography
-                        variant='subtitle2'
-                        color='text.secondary'
-                        component='div'
+                        variant="subtitle2"
+                        color="text.secondary"
+                        component="div"
                       >
                         Địa chỉ: {item.address}
                       </Typography>
-                      <Typography variant='body2'>
+                      <Typography variant="body2">
                         Kinh độ: {item.longitude}
                       </Typography>
-                      <Typography variant='body2'>
+                      <Typography variant="body2">
                         Vĩ độ: {item.latitude}
                       </Typography>
                     </CardContent>
@@ -79,7 +80,7 @@ export default function BodyListContentMap(props) {
       <div className={styles.contentBoxBody}>
         <h4 className={styles.boxBodyTitle}>Danh sách Tuyến </h4>
         <ScrollPanel
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: "100%", height: "100%" }}
           className={styles.scrollBodyContent}
         >
           <Box className={styles.cardBodyList}>
@@ -87,25 +88,25 @@ export default function BodyListContentMap(props) {
               return (
                 <Card
                   key={index}
-                  variant='outlined'
-                  sx={{ display: 'flex' }}
+                  variant="outlined"
+                  sx={{ display: "flex" }}
                   onClick={() => {
                     setDetailRoute(item);
                   }}
                 >
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <CardContent sx={{ flex: '1 0 auto' }}>
-                      <Typography component='div' variant='subtitle1'>
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <CardContent sx={{ flex: "1 0 auto" }}>
+                      <Typography component="div" variant="subtitle1">
                         {item.name}
                       </Typography>
                       <Typography
-                        variant='subtitle2'
-                        color='text.secondary'
-                        component='div'
+                        variant="subtitle2"
+                        color="text.secondary"
+                        component="div"
                       >
                         Khoảng cách: {item.distance}
                       </Typography>
-                      <Typography variant='body2'>
+                      <Typography variant="body2">
                         Số lượng trạm: {item.totalStation}
                       </Typography>
                     </CardContent>

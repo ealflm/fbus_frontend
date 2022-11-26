@@ -7,6 +7,7 @@ import Buses from "../pages/ManageBus/Buses";
 import CreateBus from "../pages/ManageBus/CreateBus";
 import DriverForm from "../pages/ManageDriver/DriverForm";
 import RouteManage from "../pages/ManageTrip/RouteManage/RouteManage";
+import TripSchedule from "../pages/TripSchedule/TripSchedule";
 
 const RouterList = [
   {
@@ -59,13 +60,18 @@ const RouterList = [
   // TRIPS
   {
     exact: true,
-    path: "/trips",
+    path: "/maps",
     element: <Trips />,
   },
   {
     exact: true,
-    path: "trips/create-route",
+    path: "maps/create-route",
     element: <RouteManage />,
+  },
+  {
+    exact: true,
+    path: "/trip-schedule",
+    element: <TripSchedule />,
   },
   // REPORTS
   // {
