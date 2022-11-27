@@ -102,7 +102,7 @@ const SelectForm = ({
                 sx={{ background: disabled ? "#e4e4e4 !important" : "" }}
                 onChange={(e) => {
                   onChange(e);
-                  handleOnChange(e);
+                  // handleOnChange(e);
                 }}
                 onBlur={onBlur}
                 value={value}

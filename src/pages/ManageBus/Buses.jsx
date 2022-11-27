@@ -71,7 +71,6 @@ const Buses = () => {
     setLoading(true);
     busService.getListBusVehicle().then(
       (res) => {
-        console.log(res);
         setBusList(res.data.body);
         setLoading(false);
       },

@@ -1,27 +1,32 @@
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
-
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import React from "react";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Loading from "../../components/Loading/Loading";
 import { ButtonExportExcel } from "../../components/ButtonExportExcel/ButtonExportExcel";
-import { TRIP_STATUS } from "../../constants/TripStatus";
+import { TRIP_STATUS, TRIP_STATUS_DROPDOWN } from "../../constants/TripStatus";
 import { useEffect } from "react";
 import { tripScheduleService } from "../../services/TripScheduleService";
 import { Chip } from "primereact/chip";
 import { IMAGE_URL } from "../../configs/baseURL";
 import { Dialog } from "primereact/dialog";
-import { Grid } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import SelectForm from "../../components/SelectForm/SelectForm";
 import { useForm } from "react-hook-form";
 import { busService } from "../../services/BusServices";
 import { routeService } from "../../services/RouteService";
 import { driverService } from "../../services/DriverService";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { getTimeForApi, mapTimeWithUI } from "../../utils/helper";
 
 export default function TripSchedule() {
   const [filters, setFilters] = useState({
@@ -49,7 +54,7 @@ export default function TripSchedule() {
     },
     activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
   });
-  let initBus = { licensePlates: "", color: "", seat: "" };
+  let initBus = { routeId: "", driverId: "", date: "", busId: "", status: "" };
   const {
     register,
     handleSubmit,
@@ -67,6 +72,10 @@ export default function TripSchedule() {
   const [driverList, setDriverList] = useState([]);
   const [routeList, setRouteList] = useState([]);
   const [busList, setBusList] = useState([]);
+
+  const [date, setDate] = useState(dayjs(new Date()));
+  const [timeStart, setTimeStart] = useState(dayjs(new Date()));
+  const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
   //
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -115,6 +124,15 @@ export default function TripSchedule() {
     getInitDropDownList();
     getListTripShedule();
   }, []);
+  const handleChange = (newValue) => {
+    setDate(newValue);
+  };
+  const handleChangeTimeStart = (newValue) => {
+    setTimeStart(newValue);
+  };
+  const handleChangeTimeEnd = (newValue) => {
+    setTimeEnd(newValue);
+  };
   const getListTripShedule = () => {
     setLoading(true);
     tripScheduleService.getListTripSchedules().then(
@@ -158,13 +176,53 @@ export default function TripSchedule() {
   const createTripSchedule = () => {
     setTripScheduleDialog(true);
     setTrip(null);
+    reset();
   };
   // edit trip schedule
   const editTripSchedule = (trip) => {
     setTripScheduleDialog(true);
     setTrip(trip);
+    setValue("busId", trip.bus.busId);
+    setValue("driverId", trip.driver.driverId);
+    setValue("routeId", trip.route.routeId);
+    setValue("status", trip.status);
+    setDate(dayjs(trip.date));
+    setTimeStart(mapTimeWithUI(trip.timeStart));
+    setTimeEnd(mapTimeWithUI(trip.timeEnd));
   };
-  const onSaveTripSchedule = handleSubmit(() => {});
+  const onSaveTripSchedule = handleSubmit((data) => {
+    setLoading(true);
+    const payload = {
+      ...data,
+      timeStart: getTimeForApi(timeStart),
+      timeEnd: getTimeForApi(timeEnd),
+    };
+    if (!trip) {
+      tripScheduleService
+        .createTripSchedule(payload)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListTripShedule();
+          setTripScheduleDialog(false);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+          setLoading(false);
+        });
+    } else if (trip) {
+      tripScheduleService
+        .updateTripSchedule(payload, trip.tripId)
+        .then((res) => {
+          toast.success(res.data.message);
+          getListTripShedule();
+          setTripScheduleDialog(false);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+          setLoading(false);
+        });
+    }
+  });
   //footer trip schedule dialog
   const tripScheduleDialogFooter = (
     <React.Fragment>
@@ -439,7 +497,7 @@ export default function TripSchedule() {
       {/* layout create trip schedule */}
       <Dialog
         visible={tripScheduleDialog}
-        style={{ width: "450px" }}
+        style={{ width: "550px" }}
         header={trip ? "Chỉnh sửa thông tin chuyến" : "Tạo thông tin chuyến"}
         modal
         className="p-fluid"
@@ -477,6 +535,55 @@ export default function TripSchedule() {
               errors={errors}
             />
           </Grid>
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label="Ngày"
+                inputFormat="MM/DD/YYYY"
+                value={date}
+                onChange={handleChange}
+                renderInput={(params) => (
+                  <TextField style={{ width: "100%" }} {...params} />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <TimePicker
+                label="Thời gian bắt đầu"
+                value={timeStart}
+                onChange={handleChangeTimeStart}
+                renderInput={(params) => (
+                  <TextField style={{ width: "100%" }} {...params} />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <TimePicker
+                label="Thời gian kết thúc"
+                value={timeEnd}
+                onChange={handleChangeTimeEnd}
+                renderInput={(params) => (
+                  <TextField style={{ width: "100%" }} {...params} />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+          {trip ? (
+            <Grid item xs={12}>
+              <SelectForm
+                label="Trạng thái"
+                name="status"
+                required
+                control={control}
+                options={TRIP_STATUS_DROPDOWN}
+                errors={errors}
+              />
+            </Grid>
+          ) : null}
         </Grid>
       </Dialog>
       <Dialog
