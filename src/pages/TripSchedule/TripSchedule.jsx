@@ -17,6 +17,8 @@ import { Chip } from "primereact/chip";
 import { IMAGE_URL } from "../../configs/baseURL";
 import { Dialog } from "primereact/dialog";
 import { Box, Grid, TextField } from "@mui/material";
+import DefaultAvatar from "../../assets/images/default-avatar.png";
+
 import SelectForm from "../../components/SelectForm/SelectForm";
 import { useForm } from "react-hook-form";
 import { busService } from "../../services/BusServices";
@@ -294,6 +296,9 @@ export default function TripSchedule() {
         <Chip
           label={rowData.driver.fullName}
           image={IMAGE_URL.DRIVER_IMAGE + rowData?.driver.photoUrl}
+          onImageError={(e) => {
+            e.currentTarget.src = DefaultAvatar;
+          }}
         />
       </React.Fragment>
     );

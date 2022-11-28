@@ -164,6 +164,9 @@ const Customers = () => {
         <Chip
           label={rowData?.fullName}
           image={IMAGE_URL.STUDENT_IMAGE + rowData?.photoUrl}
+          onImageError={(e) => {
+            e.currentTarget.src = DefaultAvatar;
+          }}
         />
       </React.Fragment>
     );

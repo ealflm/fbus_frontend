@@ -23,6 +23,8 @@ import AvatarImgae from "../../assets/images/default-avatar.png";
 import ImageIcon from "@mui/icons-material/Image";
 import WorkIcon from "@mui/icons-material/Work";
 import BeachAccessIcon from "@mui/icons-material/BeachAccess";
+import DefaultAvatar from "../../assets/images/default-avatar.png";
+
 import BadgeIcon from "@mui/icons-material/Badge";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import EmailIcon from "@mui/icons-material/Email";
@@ -70,6 +72,9 @@ export default function CustomerDetails() {
                     : AvatarImgae
                 }
                 alt=""
+                onError={(e) => {
+                  e.currentTarget.src = DefaultAvatar;
+                }}
               />
             </Box>
             <List
