@@ -1,63 +1,155 @@
-import React from 'react';
-
-import Chart from 'react-apexcharts';
-
+import React, { useEffect, useState } from 'react';
 import StatusCard from '../../components/Status-card/StatusCard';
-
 import statusCards from '../../assets/JsonData/status-card-data.json';
-import { redirect, useParams } from 'react-router-dom';
-import { Button } from 'primereact/button';
-import { TablePrime } from './../../components/TablePrime/TablePrime';
-
-const chartOptions = {
-  series: [
-    {
-      name: 'Đặt xe buýt',
-      data: [40, 70, 20, 90, 36, 80, 30, 91, 60],
-    },
-    {
-      name: 'Đặt xe được duyệt',
-      data: [35, 60, 15, 80, 30, 70, 25, 89, 55],
-    },
-    {
-      name: 'Hủy đặt xe',
-      data: [3, 6, 5, 4, 9, 2, 7, 3, 4],
-    },
-  ],
-  options: {
-    color: ['#6ab04c', '#2980b9'],
-    chart: {
-      background: 'transparent',
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: 'smooth',
-    },
-    xaxis: {
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-      ],
-    },
-    legend: {
-      position: 'top',
-    },
-    grid: {
-      show: false,
-    },
-  },
-};
+import { dashboardService } from '../../services/DashboardService';
+import { useRef } from 'react';
+import { TicketID, TicketName } from '../../components/Chart/models/chart.model';
+import LineChart from '../../components/Chart/Linechart';
+import BarChart from '../../components/Chart/BarChart';
 
 const Dashboard = () => {
+  const [studentAccount, setStudentAccount] = useState(0);
+  const [driverAccount, setDriverAccount] = useState(0);
+  const [busVehicle, setBusVehicle] = useState(0);
+  const [lineChartData, setLineChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
+  const [maxYAxisLine, setMaxYAcisLine] = useState(10);
+  const [maxYAxisBar, setMaxYAcisBar] = useState(10);
+  const currentYear = useRef(new Date().getFullYear());
+  const currentMonth = useRef(new Date().getMonth());
+
+  // Call API count number of student accounts
+  useEffect(() => {
+    dashboardService
+      .getStudentAccounts()
+      .then(response => {
+        setStudentAccount(response.data.body.all);
+        statusCards = statusCards.map(item => {
+          if (item.id === "studentAccount") {
+            item.count = response.data.body.all;
+          }
+          return item;
+        });
+      });
+  }, []);
+
+  // Call API count number of driver accounts
+  useEffect(() => {
+    dashboardService
+      .getDriverAccounts()
+      .then(response => {
+        setDriverAccount(response.data.body.all);
+        statusCards = statusCards.map(item => {
+          if (item.id === "driverAccount") {
+            item.count = response.data.body.all;
+          }
+          return item;
+        });
+      });
+  }, []);
+
+  // Call API count number of bus vehicles
+  useEffect(() => {
+    dashboardService
+      .getBusVehicles()
+      .then(response => {
+        setBusVehicle(response.data.body.all);
+        statusCards = statusCards.map(item => {
+          if (item.id === "busVehicle") {
+            item.count = response.data.body.all;
+          }
+          return item;
+        });
+      });
+  }, []);
+
+  // Call API count number of new user
+  useEffect(() => {
+    dashboardService
+      .getNewUsers()
+      .then(response => {
+        setBusVehicle(response.data.body.all);
+        statusCards = statusCards.map(item => {
+          if (item.id === "newStudentAccount") {
+            item.count = response.data.body.all;
+          }
+          return item;
+        });
+      });
+  }, []);
+
+  // Call API for tracking tickets
+  useEffect(() => {
+    Promise.all([
+      dashboardService.getBookingTickets(),
+      dashboardService.getCompleteTickets(),
+      dashboardService.getCancelTickets(),
+    ])
+      .then(values => {
+
+        const data = [];
+        values.forEach((response, index) => {
+          let result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+          if (response.data.body && Object.keys(response.data.body).length > 0) {
+            result = Object.keys(response.data.body[currentYear.current]).map(item => {
+              return response.data.body[currentYear.current][item];
+            });
+          }
+          switch (index) {
+            case 0:
+              data.push({ id: TicketID.booking, name: TicketName.booking, data: result });
+              break;
+            case 1:
+              data.push({ id: TicketID.completed, name: TicketName.completed, data: result });
+              break;
+            case 2:
+              data.push({ id: TicketID.canceled, name: TicketName.canceled, data: result });
+              break;
+            default:
+              break;
+          }
+        });
+
+        setLineChartData(data);
+      });
+  }, []);
+
+  useEffect(() => {
+    dashboardService
+      .getNumberOfTicketsByDay()
+      .then(response => {
+        if (response.data.body && Object.keys(response.data.body).length) {
+          const data = [];
+          let calculatedMaxYAxis;
+          Object.keys(response.data.body).forEach(item => {
+            let result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            result = Object.keys(response.data.body[item]).map(item1 => {
+              return response.data.body[item][item1];
+            });
+
+            calculatedMaxYAxis = Math.max(...result, maxYAxisBar);
+
+            switch (item) {
+              case TicketID.booking:
+                data.push({ name: TicketName.booking, data: result.slice(20, 27) });
+                break;
+              case TicketID.completed:
+                data.push({ name: TicketName.completed, data: result.slice(0, 7) });
+                break;
+              case TicketID.canceled:
+                data.push({ name: TicketName.canceled, data: result.slice(0, 7) });
+                break;
+              default:
+                break;
+            }
+          });
+
+          setMaxYAcisBar(calculatedMaxYAxis);
+          setBarChartData(data);
+        }
+      });
+  }, []);
+
   return (
     <div>
       <h2 className='page-header'>Bảng điều khiển</h2>
@@ -80,23 +172,16 @@ const Dashboard = () => {
         <div className='col-6'>
           <div className='card full-height'>
             {/* chart */}
-            <Chart
-              options={chartOptions.options}
-              series={chartOptions.series}
-              type='line'
-              height='100%'
-            />
+            <LineChart maxYAxis={maxYAxisLine} data={lineChartData} height={"100%"} />
           </div>
         </div>
-        <div className='col-12'>
-          {/* <TablePrime></TablePrime> */}
-          {/* <div className='card'> */}
-          {/* <div className='card__header'><h3>Bảng ....</h3></div> */}
-          {/* <div className='card__body'> */}
-          {/* bang thong ke cai gi do nua */}
-
-          {/* </div> */}
-          {/* </div> */}
+        <div className='col-12 mt-7'>
+          <BarChart
+            data={barChartData}
+            height={"400"}
+            currentYear={currentYear.current}
+            maxYAxis={maxYAxisBar}
+          />
         </div>
       </div>
     </div>
