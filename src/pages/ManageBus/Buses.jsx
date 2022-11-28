@@ -15,6 +15,7 @@ import { setValueToForm } from "../../utils/helper";
 import { toast, ToastContainer } from "react-toastify";
 import { BUS_STATUS } from "../../constants/BusStatus";
 import { Tag } from "primereact/tag";
+import { useNavigate } from "react-router-dom";
 
 const Buses = () => {
   const [filters, setFilters] = useState({
@@ -63,6 +64,7 @@ const Buses = () => {
   const [busDialog, setBusDialog] = useState(false);
   const [deleteBusDialog, setDeleteBusDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     getListBus();
   }, []);
@@ -159,9 +161,15 @@ const Buses = () => {
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-rounded p-button-warning"
+          className="p-button-rounded p-button-warning  mr-2"
           style={{ width: "30px", height: "30px" }}
           onClick={() => showConfirmDeleteBus(rowData)}
+        />
+        <Button
+          icon="pi pi-eye"
+          className="p-button-rounded p-button-info"
+          style={{ width: "30px", height: "30px" }}
+          onClick={() => navigate(`/buses/view/${rowData.busId}`)}
         />
       </React.Fragment>
     );

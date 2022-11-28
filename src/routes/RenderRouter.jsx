@@ -8,6 +8,9 @@ import CreateBus from "../pages/ManageBus/CreateBus";
 import DriverForm from "../pages/ManageDriver/DriverForm";
 import RouteManage from "../pages/ManageTrip/RouteManage/RouteManage";
 import TripSchedule from "../pages/TripSchedule/TripSchedule";
+import DriverDetails from "../pages/ManageDriver/DriverDetails";
+import BusDetails from "../pages/ManageBus/BusDetails";
+import CustomerDetails from "../pages/ManageCustomer/CustomerDetails";
 
 const RouterList = [
   {
@@ -25,6 +28,11 @@ const RouterList = [
     path: "/customers",
     element: <Customers />,
   },
+  {
+    exact: true,
+    path: "/customers/view/:id",
+    element: <CustomerDetails />,
+  },
   // DRIVER
   {
     exact: true,
@@ -35,6 +43,11 @@ const RouterList = [
     exact: true,
     path: "/drivers/:id",
     element: <DriverForm type="EDIT" />,
+  },
+  {
+    exact: true,
+    path: "/drivers/view/:id",
+    element: <DriverDetails />,
   },
   {
     exact: true,
@@ -51,6 +64,11 @@ const RouterList = [
     exact: true,
     path: "/buses/:id",
     element: <CreateBus type="EDIT" />,
+  },
+  {
+    exact: true,
+    path: "/buses/view/:id",
+    element: <BusDetails />,
   },
   {
     exact: true,
