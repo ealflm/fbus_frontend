@@ -120,16 +120,16 @@ export default function Drivers() {
     return (
       <React.Fragment>
         <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success mr-2"
-          style={{ width: "30px", height: "30px" }}
-          onClick={() => showEditDriver(rowData)}
-        />
-        <Button
           icon="pi pi-eye"
-          className="p-button-rounded p-button-info"
+          className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
           onClick={() => navigate(`/drivers/view/${rowData.driverId}`)}
+        />
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success "
+          style={{ width: "30px", height: "30px" }}
+          onClick={() => showEditDriver(rowData)}
         />
       </React.Fragment>
     );

@@ -181,16 +181,16 @@ const Customers = () => {
     return (
       <React.Fragment>
         <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success mr-2"
-          style={{ width: "30px", height: "30px" }}
-          onClick={() => showEditStudent(rowData)}
-        />
-        <Button
           icon="pi pi-eye"
-          className="p-button-rounded p-button-info"
+          className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
           onClick={() => navigate(`/customers/view/${rowData.studentId}`)}
+        />
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success "
+          style={{ width: "30px", height: "30px" }}
+          onClick={() => showEditStudent(rowData)}
         />
       </React.Fragment>
     );

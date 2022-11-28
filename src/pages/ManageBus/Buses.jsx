@@ -154,23 +154,26 @@ const Buses = () => {
     return (
       <React.Fragment>
         <Button
+          icon="pi pi-eye"
+          className="p-button-rounded p-button-info  mr-2"
+          style={{ width: "30px", height: "30px" }}
+          onClick={() => navigate(`/buses/view/${rowData.busId}`)}
+        />
+        <Button
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success mr-2"
           style={{ width: "30px", height: "30px" }}
           onClick={() => editBus(rowData)}
         />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-rounded p-button-warning  mr-2"
-          style={{ width: "30px", height: "30px" }}
-          onClick={() => showConfirmDeleteBus(rowData)}
-        />
-        <Button
-          icon="pi pi-eye"
-          className="p-button-rounded p-button-info"
-          style={{ width: "30px", height: "30px" }}
-          onClick={() => navigate(`/buses/view/${rowData.busId}`)}
-        />
+
+        {rowData.status !== 0 ? (
+          <Button
+            icon="pi pi-trash"
+            className="p-button-rounded p-button-warning "
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => showConfirmDeleteBus(rowData)}
+          />
+        ) : null}
       </React.Fragment>
     );
   };
@@ -335,7 +338,7 @@ const Buses = () => {
               <Column
                 header="Hành động"
                 headerStyle={{ width: "8rem", textAlign: "center" }}
-                bodyStyle={{ textAlign: "center", overflow: "visible" }}
+                bodyStyle={{ textAlign: "start", overflow: "visible" }}
                 body={actionBodyTemplate}
               />
             </DataTable>

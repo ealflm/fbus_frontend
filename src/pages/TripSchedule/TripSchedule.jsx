@@ -16,7 +16,7 @@ import { tripScheduleService } from "../../services/TripScheduleService";
 import { Chip } from "primereact/chip";
 import { IMAGE_URL } from "../../configs/baseURL";
 import { Dialog } from "primereact/dialog";
-import { Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import SelectForm from "../../components/SelectForm/SelectForm";
 import { useForm } from "react-hook-form";
 import { busService } from "../../services/BusServices";
@@ -412,7 +412,7 @@ export default function TripSchedule() {
               <Column
                 header="Hành động"
                 headerStyle={{ width: "8rem", textAlign: "center" }}
-                bodyStyle={{ textAlign: "center", overflow: "visible" }}
+                bodyStyle={{ textAlign: "start", overflow: "visible" }}
                 style={{ minWidth: "8rem" }}
                 body={actionBodyTemplate}
               />

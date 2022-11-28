@@ -141,7 +141,9 @@ export default function CustomerDetails() {
             >
               Lịch sử chuyến đi
             </Typography>
-            <ScrollPanel style={{ width: "100%", maxHeight: "80vh" }}>
+            <ScrollPanel
+              style={{ width: "100%", maxHeight: "80vh", height: "80vh" }}
+            >
               {studentDetail?.data?.map((item) => {
                 return (
                   <Card style={{ margin: "9px", padding: "9px" }}>
