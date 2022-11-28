@@ -89,14 +89,13 @@ export default function RouteManage() {
           setRouteLine(
             polyUtil.decode(res.data.routes[0].overview_polyline.points)
           );
-          setDistance(res.data.routes[0].distance);
-          console.log(res.data);
           const legs = res.data.routes[0].legs;
           let distanceArr = [0, res.data.routes[0].legs[0].distance.value];
           for (let index = 1; index < legs.length; index++) {
             legs[index].distance.value += legs[index - 1]?.distance.value;
             distanceArr = [...distanceArr, legs[index].distance.value];
           }
+          setDistance(distanceArr[distanceArr.length - 1]);
           setDistanceList(distanceArr);
         }
         setLoading(false);

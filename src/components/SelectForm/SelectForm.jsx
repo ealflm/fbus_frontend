@@ -24,6 +24,7 @@ const SelectForm = ({
   helperText,
   messageRequired,
   handleOnChange,
+  size = "medium",
 }) => {
   const defaultMessage = "Trường này là bắt buộc";
   let valueErrors = {};
@@ -75,7 +76,7 @@ const SelectForm = ({
         handleErrors && !data && handleErrors.some((e) => e?.path === name)
       }
       variant="outlined"
-      size="medium"
+      size={size}
     >
       <Controller
         name={name}

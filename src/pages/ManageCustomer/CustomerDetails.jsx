@@ -46,7 +46,6 @@ export default function CustomerDetails() {
         setLoading(false);
       });
   };
-  console.log(studentDetail);
 
   return (
     <>
