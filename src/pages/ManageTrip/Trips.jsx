@@ -29,7 +29,7 @@ const Trips = () => {
     station: true,
   });
   const [showStationDialog, setShowStationDialog] = useState(false);
-  const [refereshData, setRefereshData] = useState(false);
+  const [refereshData, setRefereshData] = useState(new Date().getTime());
   const [routeLine, setRouteLine] = useState();
   const { station, route } = checked;
   useEffect(() => {

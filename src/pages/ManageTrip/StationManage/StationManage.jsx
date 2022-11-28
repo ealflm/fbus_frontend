@@ -50,7 +50,7 @@ export default function StationManage(props) {
         toast.success(res.data.message);
         reset();
         setShowStationDialog(false);
-        setRefereshData(!refershData);
+        setRefereshData(new Date().getTime());
       })
       .catch((error) => {
         toast.error(error.message);

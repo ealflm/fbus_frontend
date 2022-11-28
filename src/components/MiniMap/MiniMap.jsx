@@ -16,6 +16,7 @@ const MiniMap = (props) => {
   const [lng, setLng] = useState(106.809862); //Longitude
   const [lat, setLat] = useState(10.841128); //Latitude
   const [zoom, setZoom] = useState(17); //Zoom Level
+
   useEffect(() => {
     const miniMap = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -27,6 +28,7 @@ const MiniMap = (props) => {
     clickSetMarkerOnMap(miniMap);
     return () => miniMap.remove();
   }, []);
+
   const clickSetMarkerOnMap = (miniMap) => {
     const el = document.createElement('div');
     el.className = 'marker';
@@ -35,14 +37,17 @@ const MiniMap = (props) => {
     el.style.backgroundImage = `url(${markerIcon})`;
     el.style.cursor = 'pointer';
     var marker = new mapboxgl.Marker(el);
+
     const add_marker = (event) => {
       var coordinates = event.lngLat;
       getCoordinates(coordinates);
 
       marker.setLngLat(coordinates).addTo(miniMap);
     };
+
     miniMap.on('click', add_marker);
   };
+
   return (
     <div className='minimap-body' style={{ width: '100%', height: '100%' }}>
       <div

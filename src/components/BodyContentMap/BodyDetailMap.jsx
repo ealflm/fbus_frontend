@@ -86,7 +86,7 @@ export default function BodyDetailMap(props) {
         .then((res) => {
           toast.success(res.data.message);
           setShowConfirmDeleteDialog(false);
-          setRefereshData(!refereshData);
+          setRefereshData(new Date().getTime());
           backStationList();
         })
         .catch((error) => {
