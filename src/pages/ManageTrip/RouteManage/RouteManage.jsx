@@ -11,7 +11,8 @@ import { useForm } from "react-hook-form";
 import { routeService } from "../../../services/RouteService";
 import { toast, ToastContainer } from "react-toastify";
 import { isEmpty } from "lodash";
-
+import { useNavigate } from "react-router-dom";
+import * as polyUtil from "polyline-encoded";
 export default function RouteManage() {
   const {
     register,
@@ -34,6 +35,7 @@ export default function RouteManage() {
   const [routeLine, setRouteLine] = useState();
   const [distanceList, setDistanceList] = useState([]);
   const [distance, setDistance] = useState();
+  const navigate = useNavigate();
   useEffect(() => {
     getListStation();
   }, []);
@@ -69,23 +71,31 @@ export default function RouteManage() {
       return;
     }
     let corrdinators = [];
-    listStationSelected.forEach((element) => {
-      const lnglat = element.longitude + "," + element.latitude;
-      corrdinators = [...corrdinators, lnglat];
+    let origin;
+    listStationSelected.forEach((element, index) => {
+      if (index === 0) {
+        origin = element.latitude + "," + element.longitude;
+      } else {
+        const lnglat = element.latitude + "," + element.longitude;
+        corrdinators = [...corrdinators, lnglat];
+      }
     });
     const corrdinatorResult = corrdinators.join(";");
     setLoading(true);
     routeService
-      .mapBoxRenderRoute(corrdinatorResult)
+      .mapBoxRenderRoute(origin, corrdinatorResult)
       .then((res) => {
         if (res.data) {
-          setRouteLine(res.data);
+          setRouteLine(
+            polyUtil.decode(res.data.routes[0].overview_polyline.points)
+          );
           setDistance(res.data.routes[0].distance);
+          console.log(res.data);
           const legs = res.data.routes[0].legs;
-          let distanceArr = [0, res.data.routes[0].legs[0].distance];
+          let distanceArr = [0, res.data.routes[0].legs[0].distance.value];
           for (let index = 1; index < legs.length; index++) {
-            legs[index].distance += legs[index - 1]?.distance;
-            distanceArr = [...distanceArr, legs[index].distance];
+            legs[index].distance.value += legs[index - 1]?.distance.value;
+            distanceArr = [...distanceArr, legs[index].distance.value];
           }
           setDistanceList(distanceArr);
         }
@@ -110,6 +120,7 @@ export default function RouteManage() {
         .createRoute(payload)
         .then((res) => {
           toast.success("Tạo tuyến thành công");
+          navigate("/maps");
         })
         .catch((error) => {
           toast.error("Tạo tuyến thất bại");

@@ -28,9 +28,15 @@ class RouteService {
       method: "DELETE",
     });
   };
-  mapBoxRenderRoute = (coordinate) => {
+  // mapBoxRenderRoute = (coordinate) => {
+  //   return axios({
+  //     url: `${API_URL.MAP_BOX_DIRECTION}/${coordinate}?alternatives=false&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${MAPBOX_ACCESS_TOKEN}`,
+  //     method: "GET",
+  //   });
+  // };
+  mapBoxRenderRoute = (origin, coordinate) => {
     return axios({
-      url: `${API_URL.MAP_BOX_DIRECTION}/${coordinate}?alternatives=false&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${MAPBOX_ACCESS_TOKEN}`,
+      url: `${API_URL.GOONG_MAP_DIRECTION}/Direction?vehicle=car&alternatives=false&api_key=M0PyWun14QaD07fIAY0wnSON0dQtoIB694zOqdv2&origin=${origin}&destination=${coordinate}`,
       method: "GET",
     });
   };

@@ -29,6 +29,7 @@
     "lodash": "^4.17.21",
     "mapbox-gl": "^2.10.0",
     "moment": "^2.29.4",
+    "polyline-encoded": "^0.0.9",
     "primeflex": "^3.2.1",
     "primeicons": "^6.0.1",
     "primereact": "^8.6.1",

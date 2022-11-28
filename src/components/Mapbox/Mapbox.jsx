@@ -86,7 +86,6 @@ const Mapbox = (props) => {
   }, [map, stationDetail]);
   useEffect(() => {
     if (map) {
-      console.log(routeLine);
       if (map.getLayer("route") && map.getSource("route")) {
         map.removeLayer("route");
         map.removeSource("route");
@@ -96,9 +95,10 @@ const Mapbox = (props) => {
   }, [map, stationDetail, routeLine]);
   useEffect(() => {
     if (map) {
-      const coordinates = routeLine?.routes[0].geometry.coordinates;
-      const currentCoordinates =
-        currentRouteLine?.routes[0].geometry.coordinates;
+      const coordinates = routeLine?.map((item) => item.reverse());
+      const currentCoordinates = currentRouteLine?.map((item) =>
+        item.reverse()
+      );
 
       // Check if coordinates are old, don't need do anything
       if (
@@ -116,7 +116,6 @@ const Mapbox = (props) => {
           coordinates: coordinates,
         },
       };
-
       // Remove old layer and source
       if (map.getLayer("route") && map.getSource("route")) {
         map.removeLayer("route");

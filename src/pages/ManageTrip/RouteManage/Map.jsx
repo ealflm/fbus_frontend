@@ -15,12 +15,8 @@ mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function Map(props) {
-  const {
-    stationList,
-    coordinatorFlyTo,
-    getStationSelected,
-    routeLine,
-  } = props;
+  const { stationList, coordinatorFlyTo, getStationSelected, routeLine } =
+    props;
   const [stationSelected, setStationSelected] = useState([]);
   const [lng, setLng] = useState(106.809862); //Longitude
   const [lat, setLat] = useState(10.841128); //Latitude
@@ -110,11 +106,16 @@ export default function Map(props) {
   //
   useEffect(() => {
     if (map) {
-      const coordinates = routeLine?.routes[0].geometry.coordinates;
-      const currentCoordinates = currentRouteLine?.routes[0].geometry.coordinates;
+      const coordinates = routeLine?.map((item) => item.reverse());
+      const currentCoordinates = currentRouteLine?.map((item) =>
+        item.reverse()
+      );
 
       // Check if coordinates are old, don't need do anything
-      if (JSON.stringify(coordinates) === JSON.stringify(currentCoordinates) && !isChangedOnMap) {
+      if (
+        JSON.stringify(coordinates) === JSON.stringify(currentCoordinates) &&
+        !isChangedOnMap
+      ) {
         return;
       }
 
@@ -132,7 +133,8 @@ export default function Map(props) {
         map.removeLayer("route");
         map.removeSource("route");
 
-        if (routeLine) { // Check case has change of adding/removing stations to make this route.
+        if (routeLine) {
+          // Check case has change of adding/removing stations to make this route.
           map.addSource("route", {
             type: "geojson",
             data: geojson,

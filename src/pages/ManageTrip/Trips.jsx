@@ -11,11 +11,10 @@ import BodyDetailMap from "../../components/BodyContentMap/BodyDetailMap";
 import StationManage from "./StationManage/StationManage";
 import { stationService } from "../../services/StationService";
 import { routeService } from "../../services/RouteService";
-
 import { toast } from "react-toastify";
-import { Dialog } from "primereact/dialog";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading/Loading";
+import * as polyUtil from "polyline-encoded";
 const Trips = () => {
   const styles = useTripStyles();
   const navigate = useNavigate();
@@ -95,17 +94,24 @@ const Trips = () => {
     setStationDetail(null);
     setRouteDetail(routeDetail);
     let corrdinators = [];
-    routeDetail.stationList.forEach((element) => {
-      const lnglat = element.longitude + "," + element.latitude;
-      corrdinators = [...corrdinators, lnglat];
+    let origin;
+    routeDetail.stationList.forEach((element, index) => {
+      if (index === 0) {
+        origin = element.latitude + "," + element.longitude;
+      } else {
+        const lnglat = element.latitude + "," + element.longitude;
+        corrdinators = [...corrdinators, lnglat];
+      }
     });
     const corrdinatorResult = corrdinators.join(";");
     setLoading(true);
     routeService
-      .mapBoxRenderRoute(corrdinatorResult)
+      .mapBoxRenderRoute(origin, corrdinatorResult)
       .then((res) => {
         if (res.data) {
-          setRouteLine(res.data);
+          setRouteLine(
+            polyUtil.decode(res.data.routes[0].overview_polyline.points)
+          );
         }
         setLoading(false);
       })
