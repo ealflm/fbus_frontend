@@ -18,7 +18,6 @@ import { vi } from "date-fns/locale";
 import SelectForm from "../../components/SelectForm/SelectForm";
 import { WEEK_DROPDOWN } from "../../constants/WeekConst";
 import { useForm } from "react-hook-form";
-import { getValue } from "@testing-library/user-event/dist/utils";
 const Dashboard = () => {
   const [studentAccount, setStudentAccount] = useState(0);
   const [driverAccount, setDriverAccount] = useState(0);

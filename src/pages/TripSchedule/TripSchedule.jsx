@@ -196,6 +196,7 @@ export default function TripSchedule() {
     setLoading(true);
     const payload = {
       ...data,
+      date: date,
       timeStart: getTimeForApi(timeStart),
       timeEnd: getTimeForApi(timeEnd),
     };
