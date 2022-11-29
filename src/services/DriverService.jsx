@@ -14,6 +14,12 @@ class DriverService {
       method: "GET",
     });
   };
+  deleteDriverById = (driverId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/driver/${driverId}`,
+      method: "DELETE",
+    });
+  };
   updateDriver = (driver, driverId) => {
     return axios({
       url: `${API_URL.BASE_URL}/driver/${driverId}`,

@@ -130,10 +130,18 @@ export default function Drivers() {
         />
         <Button
           icon="pi pi-pencil"
-          className="p-button-rounded p-button-success "
+          className="p-button-rounded p-button-success mr-2 "
           style={{ width: "30px", height: "30px" }}
           onClick={() => showEditDriver(rowData)}
         />
+        {rowData.status !== 0 ? (
+          <Button
+            icon="pi pi-trash"
+            className="p-button-rounded p-button-warning "
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => showConfirmDeleteDriver(rowData)}
+          />
+        ) : null}
       </React.Fragment>
     );
   };
@@ -171,6 +179,7 @@ export default function Drivers() {
   const [uploadFile, setUploadFile] = useState();
   const [driverDialog, setDriverDialog] = useState(false);
   const [deleteFile, setDeleteFile] = useState();
+  const [deleteDriverDialog, setDeleteDriverDialog] = useState(false);
   useEffect(() => {
     getListDrivers();
   }, []);
@@ -196,6 +205,7 @@ export default function Drivers() {
   const createDriver = () => {
     reset();
     setDriverDialog(true);
+    setDriver(null);
   };
   const hideDriverDialog = () => {
     setDriverDialog(false);
@@ -260,6 +270,47 @@ export default function Drivers() {
       }
     }
   };
+  const showConfirmDeleteDriver = (driver) => {
+    setDriver(driver);
+    setDeleteDriverDialog(true);
+  };
+  const confirmDeleteDriver = () => {
+    setLoading(true);
+    driverService
+      .deleteDriverById(driver.driverId)
+      .then((res) => {
+        toast.success(res.data.message);
+        getListDrivers();
+        setLoading(false);
+        setDeleteDriverDialog(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        setLoading(false);
+      });
+  };
+  const hideDeleteDriverDialog = () => {
+    setDeleteDriverDialog(false);
+  };
+  const deleteDriverDialogFooter = (
+    <React.Fragment>
+      <Button
+        label="Hủy"
+        icon="pi pi-times"
+        className="p-button-text"
+        onClick={hideDeleteDriverDialog}
+      />
+      <Button
+        label="Đồng ý"
+        icon="pi pi-check"
+        className="p-button-text"
+        onClick={() => {
+          confirmDeleteDriver();
+        }}
+      />
+    </React.Fragment>
+  );
+
   const driverDialogFooter = (
     <React.Fragment>
       <Button
@@ -335,7 +386,7 @@ export default function Drivers() {
               />
               <Column
                 headerStyle={{ width: "8rem", textAlign: "center" }}
-                bodyStyle={{ textAlign: "center", overflow: "visible" }}
+                bodyStyle={{ textAlign: "start", overflow: "visible" }}
                 body={actionBodyTemplate}
               />
             </DataTable>
@@ -431,6 +482,7 @@ export default function Drivers() {
                 label="Trạng thái"
                 name="status"
                 required
+                disabled={driver.status !== 0}
                 control={control}
                 options={DRIVER_STATUS_DROPDOWN}
                 errors={errors}
@@ -438,6 +490,26 @@ export default function Drivers() {
             </Grid>
           )}
         </Grid>
+      </Dialog>
+      <Dialog
+        visible={deleteDriverDialog}
+        style={{ width: "450px" }}
+        header="Xác nhận"
+        modal
+        footer={deleteDriverDialogFooter}
+        onHide={hideDeleteDriverDialog}
+      >
+        <div className="confirmation-content">
+          <i
+            className="pi pi-exclamation-triangle mr-3"
+            style={{ fontSize: "2rem" }}
+          />
+          {driver && (
+            <span>
+              Bạn có chắc chắn muốn tắt tài xế <b>{driver.fullName}</b>?
+            </span>
+          )}
+        </div>
       </Dialog>
     </div>
   );
