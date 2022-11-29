@@ -425,6 +425,7 @@ const Buses = () => {
                 label="Trạng thái"
                 name="status"
                 required
+                disabled={bus.status !== 0}
                 control={control}
                 options={BUS_DROPDOWN_STATUS}
                 errors={errors}
