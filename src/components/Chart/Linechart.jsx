@@ -4,7 +4,7 @@ import Chart from 'react-apexcharts';
 import { useEffect } from "react";
 
 function LineChart(props) {
-    const { data, height, maxYAxis } = props;
+    const { data, height, maxYAxis, currentYear } = props;
     const [chart, setChart] = useState({
         series: [
             {
@@ -65,7 +65,7 @@ function LineChart(props) {
                 show: false,
             },
             title: {
-                text: `Thống kê vé xe buýt theo ngày `,
+                text: `Thống kê vé xe buýt theo tháng (năm ${currentYear})`,
                 floating: true,
                 offsetY: 0,
                 align: 'center',

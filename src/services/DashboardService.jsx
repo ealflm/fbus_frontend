@@ -44,9 +44,9 @@ class DashboardService {
             method: "GET",
         });
     };
-    getNumberOfTicketsByDay = () => {
+    getNumberOfTicketsByDay = (year, month) => {
         return axios({
-            url: `${API_URL.BASE_URL}/dashboard/ticket-by-day`,
+            url: `${API_URL.BASE_URL}/dashboard/ticket-by-day?Year=${year}&Month=${month}`,
             method: "GET",
         });
     }

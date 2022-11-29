@@ -18,6 +18,7 @@ import { vi } from "date-fns/locale";
 import SelectForm from "../../components/SelectForm/SelectForm";
 import { WEEK_DROPDOWN } from "../../constants/WeekConst";
 import { useForm } from "react-hook-form";
+
 const Dashboard = () => {
   const [studentAccount, setStudentAccount] = useState(0);
   const [driverAccount, setDriverAccount] = useState(0);
@@ -27,18 +28,20 @@ const Dashboard = () => {
   const [maxYAxisLine, setMaxYAcisLine] = useState(10);
   const [maxYAxisBar, setMaxYAcisBar] = useState(10);
   const currentYear = useRef(new Date().getFullYear());
-  const currentMonth = useRef(new Date().getMonth());
+  const currentMonth = useRef(new Date().getMonth() + 1);
   const [yearMonth, setYearMonth] = useState(dayjs(new Date()));
+  const [selectedYear, setSelectedYear] = useState(currentYear.current);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth.current);
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [barChartCategories, setBarChartCategories] = useState([]);
+
   const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
     getValues,
     control,
     watch,
     formState: { errors },
   } = useForm({ week: "" });
+
   // Call API count number of student accounts
   useEffect(() => {
     dashboardService.getStudentAccounts().then((response) => {
@@ -99,6 +102,7 @@ const Dashboard = () => {
       dashboardService.getCancelTickets(),
     ]).then((values) => {
       const data = [];
+      let calculatedMaxYAxis = maxYAxisLine;
       values.forEach((response, index) => {
         let result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         if (response.data.body && Object.keys(response.data.body).length > 0) {
@@ -108,6 +112,9 @@ const Dashboard = () => {
             }
           );
         }
+
+        calculatedMaxYAxis = Math.max(...result, maxYAxisLine);
+
         switch (index) {
           case 0:
             data.push({
@@ -136,62 +143,101 @@ const Dashboard = () => {
       });
 
       setLineChartData(data);
+      setMaxYAcisLine(calculatedMaxYAxis);
     });
   }, []);
 
   useEffect(() => {
-    dashboardService.getNumberOfTicketsByDay().then((response) => {
-      if (response.data.body && Object.keys(response.data.body).length) {
-        const data = [];
-        let calculatedMaxYAxis;
-        Object.keys(response.data.body).forEach((item) => {
-          let result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-          result = Object.keys(response.data.body[item]).map((item1) => {
-            return response.data.body[item][item1];
-          });
-
-          calculatedMaxYAxis = Math.max(...result, maxYAxisBar);
-
-          switch (item) {
-            case TicketID.booking:
-              data.push({
-                name: TicketName.booking,
-                data: result.slice(20, 27),
-              });
+    dashboardService
+      .getNumberOfTicketsByDay(selectedYear, selectedMonth)
+      .then((response) => {
+        if (response.data.body && Object.keys(response.data.body).length) {
+          const data = [];
+          let calculatedMaxYAxis;
+          let start = 1;
+          let end = new Date(selectedYear, selectedMonth, 0).getDate();
+          switch (selectedWeek) {
+            case 1:
+              start = 1;
+              end = 7;
               break;
-            case TicketID.completed:
-              data.push({
-                name: TicketName.completed,
-                data: result.slice(0, 7),
-              });
+            case 2:
+              start = 8;
+              end = 14;
               break;
-            case TicketID.canceled:
-              data.push({
-                name: TicketName.canceled,
-                data: result.slice(0, 7),
-              });
+            case 3:
+              start = 15;
+              end = 21;
+              break;
+            case 4:
+              start = 22;
+              end = 28;
+              break;
+            case 5:
+              start = end === 28 ? 22 : 29;
               break;
             default:
+              end = 7;
               break;
           }
-        });
 
-        setMaxYAcisBar(calculatedMaxYAxis);
-        setBarChartData(data);
-      }
-    });
-  }, []);
+          const barcate = [];
+          for (var i = start; i <= end; i++) {
+            barcate.push(`${i}-${selectedMonth}`);
+          }
+          setBarChartCategories(barcate);
+
+          Object.keys(response.data.body).forEach((item) => {
+            let result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            result = Object.keys(response.data.body[item]).map((item1) => {
+              return response.data.body[item][item1];
+            });
+
+            calculatedMaxYAxis = Math.max(...result, maxYAxisBar);
+
+            switch (item) {
+              case TicketID.booking:
+                data.push({
+                  name: TicketName.booking,
+                  data: result.slice(start - 1, end),
+                });
+                break;
+              case TicketID.completed:
+                data.push({
+                  name: TicketName.completed,
+                  data: result.slice(start - 1, end),
+                });
+                break;
+              case TicketID.canceled:
+                data.push({
+                  name: TicketName.canceled,
+                  data: result.slice(start - 1, end),
+                });
+                break;
+              default:
+                break;
+            }
+          });
+
+          setMaxYAcisBar(calculatedMaxYAxis);
+          setBarChartData(data);
+        }
+      });
+  }, [selectedWeek, selectedMonth, selectedYear]);
 
   useEffect(() => {
     const payload = {
-      week: getValues("week"),
+      week: getValues("week") || 1,
       date: {
-        month: dayjs(yearMonth).get("month"),
+        month: dayjs(yearMonth).get("month") + 1,
         year: dayjs(yearMonth).get("year"),
       },
     };
-    console.log(payload);
+    setSelectedWeek(payload.week);
+    setSelectedMonth(payload.date.month);
+    setSelectedYear(payload.date.year);
   }, [watch("week"), yearMonth]);
+
   return (
     <div>
       <h2 className="page-header">Bảng điều khiển</h2>
@@ -218,6 +264,7 @@ const Dashboard = () => {
               maxYAxis={maxYAxisLine}
               data={lineChartData}
               height={"100%"}
+              currentYear={currentYear.current}
             />
           </div>
         </div>
@@ -252,6 +299,7 @@ const Dashboard = () => {
         <div className="col-12 mt-4">
           <BarChart
             data={barChartData}
+            categories={barChartCategories}
             height={"400"}
             currentYear={currentYear.current}
             maxYAxis={maxYAxisBar}
