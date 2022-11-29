@@ -130,7 +130,9 @@ const Buses = () => {
   const licensePlatesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="image-text">{rowData?.licensePlates}</span>
+        <span className="image-text">
+          <b>{rowData?.licensePlates}</b>
+        </span>
       </React.Fragment>
     );
   };
@@ -412,8 +414,8 @@ const Buses = () => {
                 errors.seat && errors.seat?.type === "required"
                   ? "Trường này là bắt buộc"
                   : errors.seat?.type === "pattern"
-                    ? "Trường này bắt buộc nhập số"
-                    : null
+                  ? "Trường này bắt buộc nhập số"
+                  : null
               }
             />
           </Grid>
