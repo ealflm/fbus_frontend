@@ -29,6 +29,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { getTimeForApi, mapTimeWithUI } from "../../utils/helper";
+import "./TripSchedule.css";
 
 export default function TripSchedule() {
   const [filters, setFilters] = useState({
@@ -415,13 +416,13 @@ export default function TripSchedule() {
               emptyMessage="Không tìm thấy dữ liệu."
               currentPageReportTemplate="Đang xem {first} đến {last} của {totalRecords} thư mục"
             >
-              <Column
+              {/* <Column
                 header="Hành động"
                 headerStyle={{ width: "8rem", textAlign: "center" }}
                 bodyStyle={{ textAlign: "start", overflow: "visible" }}
                 style={{ minWidth: "8rem" }}
                 body={actionBodyTemplate}
-              />
+              /> */}
               <Column
                 field="driver.fullName"
                 header="Tên tài xế"
@@ -445,21 +446,21 @@ export default function TripSchedule() {
                 style={{ minWidth: "10rem" }}
                 body={licensePlatesBodyTemplate}
               />
-              <Column
+              {/* <Column
                 field="bus.color"
                 header="Màu xe"
                 sortable
                 filterField="color"
                 style={{ minWidth: "8rem" }}
                 body={colorBodyTemplate}
-              />
+              /> */}
               <Column
                 field="bus.seat"
                 header="Số chỗ"
                 sortable
                 sortField="seat"
                 filterField="seat"
-                style={{ minWidth: "8rem" }}
+                style={{ minWidth: "7rem" }}
                 body={seatsBodyTemplate}
               />
 
@@ -487,7 +488,6 @@ export default function TripSchedule() {
                 style={{ minWidth: "14rem", textAlign: "center" }}
                 body={timeEndBodyTemplete}
               />
-
               <Column
                 field="status"
                 header="Trạng thái"
@@ -495,6 +495,13 @@ export default function TripSchedule() {
                 filterMenuStyle={{ width: "14rem" }}
                 style={{ minWidth: "10rem" }}
                 body={statusBodyTemplate}
+              />
+              <Column
+                header=""
+                headerStyle={{ width: "8rem", textAlign: "center" }}
+                bodyStyle={{ textAlign: "start", overflow: "visible" }}
+                style={{ minWidth: "8rem" }}
+                body={actionBodyTemplate}
               />
             </DataTable>
           </div>

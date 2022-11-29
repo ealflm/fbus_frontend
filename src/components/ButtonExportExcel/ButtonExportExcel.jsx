@@ -2,8 +2,9 @@ import React from 'react';
 import * as FileSaver from 'file-saver';
 import XLSX from 'sheetjs-style';
 import { Button } from 'primereact/button';
-import { createSvgIcon, Tooltip } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
+import { Tooltip } from '@mui/material';
+import "./style.css";
+
 export const ButtonExportExcel = (props) => {
   // const ExportIcon = createSvgIcon(
   //   <path d='M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z' />,
@@ -31,7 +32,7 @@ export const ButtonExportExcel = (props) => {
           onClick={(e) => {
             exportToExcel(fileName);
           }}
-          className='p-button-success mr-2'
+          className='mr-2'
           data-pr-tooltip='XLS'
         ></Button>
       </Tooltip>

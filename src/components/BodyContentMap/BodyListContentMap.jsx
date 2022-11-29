@@ -47,7 +47,7 @@ export default function BodyListContentMap(props) {
                     setDetailStation(item);
                   }}
                 >
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", cursor: "pointer", ":hover": { backgroundColor: "#f5f7fa" } }}>
                     <CardContent sx={{ flex: "1 0 auto" }}>
                       <Typography component="div" variant="subtitle1">
                         {item.name}

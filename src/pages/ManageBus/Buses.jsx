@@ -336,7 +336,7 @@ const Buses = () => {
                 body={statusBodyTemplate}
               />
               <Column
-                header="Hành động"
+                header=""
                 headerStyle={{ width: "8rem", textAlign: "center" }}
                 bodyStyle={{ textAlign: "start", overflow: "visible" }}
                 body={actionBodyTemplate}
@@ -410,8 +410,8 @@ const Buses = () => {
                 errors.seat && errors.seat?.type === "required"
                   ? "Trường này là bắt buộc"
                   : errors.seat?.type === "pattern"
-                  ? "Trường này bắt buộc nhập số"
-                  : null
+                    ? "Trường này bắt buộc nhập số"
+                    : null
               }
             />
           </Grid>
