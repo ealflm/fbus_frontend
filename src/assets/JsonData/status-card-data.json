@@ -1,26 +1,26 @@
 [
-    {
-        "id": "studentAccount",
-        "icon": "bx bx-user",
-        "count": "0",
-        "title": "Số lượng học sinh"
-    },
-    {
-        "id": "driverAccount",
-        "icon": "bx bx-user",
-        "count": "0",
-        "title": "Số lượng tài xế"
-    },
-    {
-        "id": "newStudentAccount",
-        "icon": "bx bx-calendar",
-        "count": "0",
-        "title": "Học sinh mới theo ngày"
-    },
-    {
-        "id": "busVehicle",
-        "icon": "bx bx-bus-school",
-        "count": "0",
-        "title": "Tổng xe buýt"
-    }
+  {
+    "id": "studentAccount",
+    "icon": "bx bx-user",
+    "count": "0",
+    "title": "Số lượng sinh viên"
+  },
+  {
+    "id": "driverAccount",
+    "icon": "bx bx-user",
+    "count": "0",
+    "title": "Số lượng tài xế"
+  },
+  {
+    "id": "newStudentAccount",
+    "icon": "bx bx-calendar",
+    "count": "0",
+    "title": "Học sinh mới theo ngày"
+  },
+  {
+    "id": "busVehicle",
+    "icon": "bx bx-bus-school",
+    "count": "0",
+    "title": "Tổng xe buýt"
+  }
 ]

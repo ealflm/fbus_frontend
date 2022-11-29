@@ -1,24 +1,30 @@
-import * as axios from 'axios';
-import { API_URL } from '../configs/baseURL';
+import * as axios from "axios";
+import { API_URL } from "../configs/baseURL";
 
 class DriverService {
   getListDrivers = () => {
     return axios({
       url: `${API_URL.BASE_URL}/driver`,
-      method: 'GET',
+      method: "GET",
+    });
+  };
+  getDriverById = (driverId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/driver/${driverId}`,
+      method: "GET",
     });
   };
   updateDriver = (driver, driverId) => {
     return axios({
       url: `${API_URL.BASE_URL}/driver/${driverId}`,
-      method: 'PUT',
+      method: "PUT",
       data: driver,
     });
   };
   createDriver = (driver) => {
     return axios({
       url: `${API_URL.BASE_URL}/driver`,
-      method: 'POST',
+      method: "POST",
       data: driver,
     });
   };

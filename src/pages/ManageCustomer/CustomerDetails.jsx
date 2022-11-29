@@ -56,7 +56,7 @@ export default function CustomerDetails() {
       <Grid container spacing={2}>
         <Grid item xs={4}>
           <Card style={{ textAlign: "center", padding: "15px" }}>
-            <Typography variant="h6">Thông tin khách hàng</Typography>
+            <Typography variant="h6">Thông tin sinh viên</Typography>
             <Box>
               <img
                 style={{
@@ -91,7 +91,7 @@ export default function CustomerDetails() {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary="Tên khách hàng"
+                  primary="Tên tên sinh"
                   secondary={studentDetail?.fullName}
                 />
               </ListItem>

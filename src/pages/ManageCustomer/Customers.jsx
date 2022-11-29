@@ -5,10 +5,8 @@ import React, { useEffect, useState } from "react";
 // import Badge from '../../components/badge/Badge';
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 
-import CustomersList from "../../assets/JsonData/customers-large.json";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { ProgressBar } from "primereact/progressbar";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { ButtonExportExcel } from "../../components/ButtonExportExcel/ButtonExportExcel";
@@ -320,7 +318,7 @@ const Customers = () => {
       <Dialog
         visible={studentDialog}
         style={{ width: "750px" }}
-        header="Cập nhật thông tin student"
+        header="Cập nhật thông tin sinh viên"
         modal
         className="p-fluid"
         footer={studentDialogFooter}

@@ -13,10 +13,10 @@ import { Grid } from "@mui/material";
 import InputTextField from "../../components/Input/InputTextFiled";
 import { setValueToForm } from "../../utils/helper";
 import { toast, ToastContainer } from "react-toastify";
-import { BUS_STATUS } from "../../constants/BusStatus";
+import { BUS_DROPDOWN_STATUS, BUS_STATUS } from "../../constants/BusStatus";
 import { Tag } from "primereact/tag";
 import { useNavigate } from "react-router-dom";
-
+import SelectForm from "../../components/SelectForm/SelectForm";
 const Buses = () => {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -45,7 +45,7 @@ const Buses = () => {
   });
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
-  let initBus = { licensePlates: "", color: "", seat: "" };
+  let initBus = { licensePlates: "", color: "", seat: "", status: "" };
   const {
     register,
     handleSubmit,
@@ -178,7 +178,7 @@ const Buses = () => {
     );
   };
   const createBus = () => {
-    setBus(initBus);
+    setBus(null);
     reset();
     setIsSubmit(false);
     setBusDialog(true);
@@ -189,6 +189,7 @@ const Buses = () => {
       color: data.color,
       licensePlates: data.licensePlates,
       seat: data.seat,
+      status: data.status,
     };
     if (data.busId) {
       busService
@@ -217,6 +218,7 @@ const Buses = () => {
   const editBus = (bus) => {
     setValueToForm(bus, setValue);
     setBusDialog(true);
+    setBus(bus);
   };
   const hideBusDialog = () => {
     setBusDialog(false);
@@ -415,6 +417,18 @@ const Buses = () => {
               }
             />
           </Grid>
+          {bus ? (
+            <Grid item xs={12}>
+              <SelectForm
+                label="Trạng thái"
+                name="status"
+                required
+                control={control}
+                options={BUS_DROPDOWN_STATUS}
+                errors={errors}
+              />
+            </Grid>
+          ) : null}
         </Grid>
       </Dialog>
       <Dialog
