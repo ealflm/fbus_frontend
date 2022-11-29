@@ -468,8 +468,8 @@ export default function TripSchedule() {
                 field="route.name"
                 header="Tuyến"
                 sortable
-                filterMenuStyle={{ width: "14rem" }}
-                style={{ minWidth: "10rem" }}
+                filterMenuStyle={{ minWidth: "17rem" }}
+                style={{ minWidth: "17rem" }}
                 body={routeBodyTemplate}
               />
               <Column
