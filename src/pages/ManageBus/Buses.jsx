@@ -17,6 +17,7 @@ import { BUS_DROPDOWN_STATUS, BUS_STATUS } from "../../constants/BusStatus";
 import { Tag } from "primereact/tag";
 import { useNavigate } from "react-router-dom";
 import SelectForm from "../../components/SelectForm/SelectForm";
+import { STATUS } from "../../constants/StatusEnum";
 const Buses = () => {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -168,7 +169,7 @@ const Buses = () => {
           onClick={() => editBus(rowData)}
         />
 
-        {rowData.status !== 0 ? (
+        {rowData.status !== STATUS.INACTVICE ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "
@@ -236,6 +237,8 @@ const Buses = () => {
       .deleteBus(bus.busId)
       .then((res) => {
         toast.success(res.data.message);
+        getListBus();
+        setDeleteBusDialog(false);
         setLoading(false);
       })
       .catch((error) => {
@@ -425,7 +428,7 @@ const Buses = () => {
                 label="Trạng thái"
                 name="status"
                 required
-                disabled={bus.status !== 0}
+                disabled={bus.status !== STATUS.INACTVICE}
                 control={control}
                 options={BUS_DROPDOWN_STATUS}
                 errors={errors}

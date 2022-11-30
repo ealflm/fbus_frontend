@@ -30,6 +30,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { getTimeForApi, mapTimeWithUI } from "../../utils/helper";
 import "./TripSchedule.css";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { STATUS } from "../../constants/StatusEnum";
 
 export default function TripSchedule() {
   const [filters, setFilters] = useState({
@@ -76,7 +78,8 @@ export default function TripSchedule() {
   const [routeList, setRouteList] = useState([]);
   const [busList, setBusList] = useState([]);
 
-  const [date, setDate] = useState([null, null]);
+  const [startDate, setStartDate] = useState(dayjs(new Date()));
+  const [endDate, setEndDate] = useState(dayjs(new Date()));
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
   const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
   //
@@ -127,8 +130,12 @@ export default function TripSchedule() {
     getInitDropDownList();
     getListTripShedule();
   }, []);
-  const handleChange = (newValue) => {
-    setDate(newValue);
+  const handleChangeStartDate = (newValue) => {
+    setStartDate(newValue);
+    console.log(newValue);
+  };
+  const handleChangeEndDate = (newValue) => {
+    setEndDate(newValue);
     console.log(newValue);
   };
   const handleChangeTimeStart = (newValue) => {
@@ -190,15 +197,22 @@ export default function TripSchedule() {
     setValue("driverId", trip.driver.driverId);
     setValue("routeId", trip.route.routeId);
     setValue("status", trip.status);
-    setDate(dayjs(trip.date));
+    setStartDate(dayjs(trip.startDate));
+    setEndDate(dayjs(trip.endDate));
     setTimeStart(mapTimeWithUI(trip.timeStart));
     setTimeEnd(mapTimeWithUI(trip.timeEnd));
   };
+
   const onSaveTripSchedule = handleSubmit((data) => {
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      toast.warn("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+      return;
+    }
     setLoading(true);
     const payload = {
       ...data,
-      date: date,
+      startDate: dayjs(startDate).toISOString(),
+      endDate: dayjs(endDate).toISOString(),
       timeStart: getTimeForApi(timeStart),
       timeEnd: getTimeForApi(timeEnd),
     };
@@ -321,14 +335,6 @@ export default function TripSchedule() {
     );
   };
 
-  const colorBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="image-text">{rowData?.bus.color}</span>
-      </React.Fragment>
-    );
-  };
-
   const licensePlatesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -375,7 +381,7 @@ export default function TripSchedule() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => editTripSchedule(rowData)}
         />
-        {rowData.status !== 0 ? (
+        {rowData.status !== STATUS.INACTVICE ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning"
@@ -550,37 +556,30 @@ export default function TripSchedule() {
             />
           </Grid>
           <Grid item xs={12}>
-            <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
-            >
-              <DateRangePicker
-                value={date}
-                inputFormat="MM/DD/YYYY"
-                onChange={handleChange}
-                renderInput={(startProps, endProps) => (
-                  <React.Fragment>
-                    <TextField style={{ width: "100%" }} {...startProps} />
-                    <Box sx={{ mx: 2 }}> to </Box>
-                    <TextField style={{ width: "100%" }} {...endProps} />
-                  </React.Fragment>
-                )}
-              />
-            </LocalizationProvider>
-            {/* <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
-            >
-              <DateRangePicker
-                label="Ngày"
-                inputFormat="MM/DD/YYYY"
-                value={date}
-                onChange={handleChange}
-                renderInput={(params) => (
-                  <TextField style={{ width: "100%" }} {...params} />
-                )}
-              />
-            </LocalizationProvider> */}
+            <Grid container>
+              <Grid xs={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                    label="Ngày bắt đầu"
+                    inputFormat="DD/MM/YYYY"
+                    value={startDate}
+                    onChange={handleChangeStartDate}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid xs={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                    label="Ngày kết thúc"
+                    inputFormat="DD/MM/YYYY"
+                    value={endDate}
+                    onChange={handleChangeEndDate}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>

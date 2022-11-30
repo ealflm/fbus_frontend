@@ -28,6 +28,7 @@ import CameraEnhanceIcon from "@mui/icons-material/CameraEnhance";
 import { driverService } from "../../services/DriverService";
 import { IMAGE_URL } from "../../configs/baseURL";
 import { useNavigate } from "react-router-dom";
+import { STATUS } from "../../constants/StatusEnum";
 export default function Drivers() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -134,7 +135,7 @@ export default function Drivers() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => showEditDriver(rowData)}
         />
-        {rowData.status !== 0 ? (
+        {rowData.status !== STATUS.INACTVICE ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "
@@ -482,7 +483,7 @@ export default function Drivers() {
                 label="Trạng thái"
                 name="status"
                 required
-                disabled={driver.status !== 0}
+                disabled={driver.status !== STATUS.INACTVICE}
                 control={control}
                 options={DRIVER_STATUS_DROPDOWN}
                 errors={errors}
