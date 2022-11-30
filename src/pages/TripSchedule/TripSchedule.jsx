@@ -216,8 +216,8 @@ export default function TripSchedule() {
     if (!trip) {
       const payload = {
         ...data,
-        startDate: dayjs(startDate).add(1, "day").toISOString(),
-        endDate: dayjs(endDate).add(1, "day").toISOString(),
+        startDate: dayjs(startDate).toISOString(),
+        endDate: dayjs(endDate).toISOString(),
         timeStart: getTimeForApi(timeStart),
         timeEnd: getTimeForApi(timeEnd),
       };

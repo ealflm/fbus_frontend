@@ -153,7 +153,7 @@ export default function DriverDetails() {
           xs={12}
           style={{ display: "flex", justifyContent: "center" }}
         >
-          <Card style={{ width: "80vh", height: "40vh" }}>
+          <Card style={{ width: "80vh", height: "30vh" }}>
             <Grid
               item
               xs={12}
@@ -226,6 +226,7 @@ export default function DriverDetails() {
             ]}
             emptyMessage="Không tìm thấy dữ liệu."
             currentPageReportTemplate="Đang xem {first} đến {last} của {totalRecords} thư mục"
+            scrollHeight="39vh"
           >
             <Column
               field="bus.licensePlates"

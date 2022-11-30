@@ -208,6 +208,7 @@ export default function BusDetails() {
             ]}
             emptyMessage="Không tìm thấy dữ liệu."
             currentPageReportTemplate="Đang xem {first} đến {last} của {totalRecords} thư mục"
+            scrollHeight="56vh"
           >
             <Column
               field="driver.fullName"
