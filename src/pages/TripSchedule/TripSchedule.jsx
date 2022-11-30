@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 import { busService } from "../../services/BusServices";
 import { routeService } from "../../services/RouteService";
 import { driverService } from "../../services/DriverService";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -76,7 +76,7 @@ export default function TripSchedule() {
   const [routeList, setRouteList] = useState([]);
   const [busList, setBusList] = useState([]);
 
-  const [date, setDate] = useState(dayjs(new Date()));
+  const [date, setDate] = useState([null, null]);
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
   const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
   //
@@ -129,6 +129,7 @@ export default function TripSchedule() {
   }, []);
   const handleChange = (newValue) => {
     setDate(newValue);
+    console.log(newValue);
   };
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
@@ -549,8 +550,28 @@ export default function TripSchedule() {
             />
           </Grid>
           <Grid item xs={12}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
+            >
+              <DateRangePicker
+                value={date}
+                inputFormat="MM/DD/YYYY"
+                onChange={handleChange}
+                renderInput={(startProps, endProps) => (
+                  <React.Fragment>
+                    <TextField style={{ width: "100%" }} {...startProps} />
+                    <Box sx={{ mx: 2 }}> to </Box>
+                    <TextField style={{ width: "100%" }} {...endProps} />
+                  </React.Fragment>
+                )}
+              />
+            </LocalizationProvider>
+            {/* <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
+            >
+              <DateRangePicker
                 label="Ngày"
                 inputFormat="MM/DD/YYYY"
                 value={date}
@@ -559,7 +580,7 @@ export default function TripSchedule() {
                   <TextField style={{ width: "100%" }} {...params} />
                 )}
               />
-            </LocalizationProvider>
+            </LocalizationProvider> */}
           </Grid>
           <Grid item xs={12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
