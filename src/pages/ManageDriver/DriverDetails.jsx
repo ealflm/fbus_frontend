@@ -143,7 +143,7 @@ export default function DriverDetails() {
         style={{
           width: "100%",
           maxHeight: "95vh",
-          height: "95vh",
+          height: "93vh",
           padding: "20px",
         }}
       >
