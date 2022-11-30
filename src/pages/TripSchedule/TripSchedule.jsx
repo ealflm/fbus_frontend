@@ -82,6 +82,7 @@ export default function TripSchedule() {
   const [endDate, setEndDate] = useState(dayjs(new Date()));
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
   const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
+  const [date, setDate] = useState(dayjs(new Date()));
   //
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -132,11 +133,12 @@ export default function TripSchedule() {
   }, []);
   const handleChangeStartDate = (newValue) => {
     setStartDate(newValue);
-    console.log(newValue);
   };
   const handleChangeEndDate = (newValue) => {
     setEndDate(newValue);
-    console.log(newValue);
+  };
+  const handleChangeDate = (newValue) => {
+    setDate(newValue);
   };
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
@@ -198,6 +200,7 @@ export default function TripSchedule() {
     setValue("routeId", trip.route.routeId);
     setValue("status", trip.status);
     setStartDate(dayjs(trip.startDate));
+    setDate(dayjs(trip.date));
     setEndDate(dayjs(trip.endDate));
     setTimeStart(mapTimeWithUI(trip.timeStart));
     setTimeEnd(mapTimeWithUI(trip.timeEnd));
@@ -209,14 +212,15 @@ export default function TripSchedule() {
       return;
     }
     setLoading(true);
-    const payload = {
-      ...data,
-      startDate: dayjs(startDate).toISOString(),
-      endDate: dayjs(endDate).toISOString(),
-      timeStart: getTimeForApi(timeStart),
-      timeEnd: getTimeForApi(timeEnd),
-    };
+
     if (!trip) {
+      const payload = {
+        ...data,
+        startDate: dayjs(startDate).add(1, "day").toISOString(),
+        endDate: dayjs(endDate).add(1, "day").toISOString(),
+        timeStart: getTimeForApi(timeStart),
+        timeEnd: getTimeForApi(timeEnd),
+      };
       tripScheduleService
         .createTripSchedule(payload)
         .then((res) => {
@@ -229,6 +233,12 @@ export default function TripSchedule() {
           setLoading(false);
         });
     } else if (trip) {
+      const payload = {
+        ...data,
+        date: dayjs(date).add(1, "day").toISOString(),
+        timeStart: getTimeForApi(timeStart),
+        timeEnd: getTimeForApi(timeEnd),
+      };
       tripScheduleService
         .updateTripSchedule(payload, trip.tripId)
         .then((res) => {
@@ -569,8 +579,8 @@ export default function TripSchedule() {
                   <DesktopDatePicker
                     label="Ngày"
                     inputFormat="DD/MM/YYYY"
-                    value={startDate}
-                    onChange={handleChangeStartDate}
+                    value={date}
+                    onChange={handleChangeDate}
                     renderInput={(params) => (
                       <TextField style={{ width: "100%" }} {...params} />
                     )}
