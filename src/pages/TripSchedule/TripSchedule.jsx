@@ -434,8 +434,8 @@ export default function TripSchedule() {
                 field="driver.fullName"
                 header="Tên tài xế"
                 sortable
-                filterMenuStyle={{ width: "14rem" }}
-                style={{ minWidth: "14rem" }}
+                filterMenuStyle={{ width: "15rem" }}
+                style={{ minWidth: "18rem" }}
                 body={driverNameBodyTemplate}
               />
               <Column
@@ -453,21 +453,14 @@ export default function TripSchedule() {
                 style={{ minWidth: "10rem" }}
                 body={licensePlatesBodyTemplate}
               />
-              {/* <Column
-                field="bus.color"
-                header="Màu xe"
-                sortable
-                filterField="color"
-                style={{ minWidth: "8rem" }}
-                body={colorBodyTemplate}
-              /> */}
+
               <Column
                 field="bus.seat"
                 header="Số chỗ"
                 sortable
                 sortField="seat"
                 filterField="seat"
-                style={{ minWidth: "7rem" }}
+                style={{ minWidth: "7rem", textAlign: "center" }}
                 body={seatsBodyTemplate}
               />
 

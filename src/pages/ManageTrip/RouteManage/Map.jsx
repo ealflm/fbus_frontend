@@ -148,7 +148,7 @@ export default function Map(props) {
               "line-cap": "round",
             },
             paint: {
-              "line-color": "#30a4f1",
+              "line-color": "#475ffd",
               "line-width": 8,
             },
           });
@@ -167,7 +167,7 @@ export default function Map(props) {
             "line-cap": "round",
           },
           paint: {
-            "line-color": "#30a4f1",
+            "line-color": "#475ffd",
             "line-width": 8,
           },
         });
