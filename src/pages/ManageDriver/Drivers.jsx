@@ -379,7 +379,7 @@ export default function Drivers() {
               />
               <Column
                 field="status"
-                header="Status"
+                header="Trạng thái"
                 sortable
                 filterMenuStyle={{ width: "14rem" }}
                 style={{ minWidth: "10rem" }}

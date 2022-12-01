@@ -336,7 +336,7 @@ const Buses = () => {
               />
               <Column
                 field="status"
-                header="Status"
+                header="Trạng thái"
                 sortable
                 filterMenuStyle={{ width: "14rem" }}
                 style={{ minWidth: "10rem" }}
@@ -417,8 +417,8 @@ const Buses = () => {
                 errors.seat && errors.seat?.type === "required"
                   ? "Trường này là bắt buộc"
                   : errors.seat?.type === "pattern"
-                  ? "Trường này bắt buộc nhập số"
-                  : null
+                    ? "Trường này bắt buộc nhập số"
+                    : null
               }
             />
           </Grid>
