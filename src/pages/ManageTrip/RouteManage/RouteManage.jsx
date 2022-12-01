@@ -34,7 +34,7 @@ export default function RouteManage() {
   const [listStationSelected, setListStationSelected] = useState();
   const [routeLine, setRouteLine] = useState();
   const [distanceList, setDistanceList] = useState([]);
-  const [distance, setDistance] = useState();
+  const [distance, setDistance] = useState(0);
   const navigate = useNavigate();
   useEffect(() => {
     getListStation();

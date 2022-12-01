@@ -7,6 +7,12 @@ class BusService {
       method: "GET",
     });
   };
+  getDetailsBus = (busId) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/bus/${busId}`,
+      method: "GET",
+    });
+  };
   createBusVehicle = (busVehicle) => {
     return axios({
       url: `${API_URL.BASE_URL}/bus`,

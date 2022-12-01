@@ -28,8 +28,10 @@ import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { getTimeForApi, mapTimeWithUI } from "../../utils/helper";
+import { formatDate, getTimeForApi, mapTimeWithUI } from "../../utils/helper";
 import "./TripSchedule.css";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { STATUS } from "../../constants/StatusEnum";
 
 export default function TripSchedule() {
   const [filters, setFilters] = useState({
@@ -76,9 +78,11 @@ export default function TripSchedule() {
   const [routeList, setRouteList] = useState([]);
   const [busList, setBusList] = useState([]);
 
-  const [date, setDate] = useState([null, null]);
+  const [startDate, setStartDate] = useState(dayjs(new Date()));
+  const [endDate, setEndDate] = useState(dayjs(new Date()));
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
   const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
+  const [date, setDate] = useState(dayjs(new Date()));
   //
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -127,9 +131,14 @@ export default function TripSchedule() {
     getInitDropDownList();
     getListTripShedule();
   }, []);
-  const handleChange = (newValue) => {
+  const handleChangeStartDate = (newValue) => {
+    setStartDate(newValue);
+  };
+  const handleChangeEndDate = (newValue) => {
+    setEndDate(newValue);
+  };
+  const handleChangeDate = (newValue) => {
     setDate(newValue);
-    console.log(newValue);
   };
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
@@ -190,19 +199,28 @@ export default function TripSchedule() {
     setValue("driverId", trip.driver.driverId);
     setValue("routeId", trip.route.routeId);
     setValue("status", trip.status);
+    setStartDate(dayjs(trip.startDate));
     setDate(dayjs(trip.date));
+    setEndDate(dayjs(trip.endDate));
     setTimeStart(mapTimeWithUI(trip.timeStart));
     setTimeEnd(mapTimeWithUI(trip.timeEnd));
   };
+
   const onSaveTripSchedule = handleSubmit((data) => {
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      toast.warn("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+      return;
+    }
     setLoading(true);
-    const payload = {
-      ...data,
-      date: date,
-      timeStart: getTimeForApi(timeStart),
-      timeEnd: getTimeForApi(timeEnd),
-    };
+
     if (!trip) {
+      const payload = {
+        ...data,
+        startDate: dayjs(startDate).toISOString(),
+        endDate: dayjs(endDate).toISOString(),
+        timeStart: getTimeForApi(timeStart),
+        timeEnd: getTimeForApi(timeEnd),
+      };
       tripScheduleService
         .createTripSchedule(payload)
         .then((res) => {
@@ -215,6 +233,12 @@ export default function TripSchedule() {
           setLoading(false);
         });
     } else if (trip) {
+      const payload = {
+        ...data,
+        date: dayjs(date).add(1, "day").toISOString(),
+        timeStart: getTimeForApi(timeStart),
+        timeEnd: getTimeForApi(timeEnd),
+      };
       tripScheduleService
         .updateTripSchedule(payload, trip.tripId)
         .then((res) => {
@@ -321,14 +345,6 @@ export default function TripSchedule() {
     );
   };
 
-  const colorBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="image-text">{rowData?.bus.color}</span>
-      </React.Fragment>
-    );
-  };
-
   const licensePlatesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -365,6 +381,13 @@ export default function TripSchedule() {
       </React.Fragment>
     );
   };
+  const dateBodyTemplete = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">{formatDate(rowData?.date)}</span>
+      </React.Fragment>
+    );
+  };
 
   const actionBodyTemplate = (rowData) => {
     return (
@@ -375,7 +398,7 @@ export default function TripSchedule() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => editTripSchedule(rowData)}
         />
-        {rowData.status !== 0 ? (
+        {rowData.status !== STATUS.INACTVICE ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning"
@@ -428,8 +451,8 @@ export default function TripSchedule() {
                 field="driver.fullName"
                 header="Tên tài xế"
                 sortable
-                filterMenuStyle={{ width: "14rem" }}
-                style={{ minWidth: "14rem" }}
+                filterMenuStyle={{ width: "15rem" }}
+                style={{ minWidth: "18rem" }}
                 body={driverNameBodyTemplate}
               />
               <Column
@@ -447,21 +470,14 @@ export default function TripSchedule() {
                 style={{ minWidth: "10rem" }}
                 body={licensePlatesBodyTemplate}
               />
-              {/* <Column
-                field="bus.color"
-                header="Màu xe"
-                sortable
-                filterField="color"
-                style={{ minWidth: "8rem" }}
-                body={colorBodyTemplate}
-              /> */}
+
               <Column
                 field="bus.seat"
                 header="Số chỗ"
                 sortable
                 sortField="seat"
                 filterField="seat"
-                style={{ minWidth: "7rem" }}
+                style={{ minWidth: "7rem", textAlign: "center" }}
                 body={seatsBodyTemplate}
               />
 
@@ -469,9 +485,16 @@ export default function TripSchedule() {
                 field="route.name"
                 header="Tuyến"
                 sortable
-                filterMenuStyle={{ minWidth: "17rem" }}
-                style={{ minWidth: "17rem" }}
+                style={{ minWidth: "20rem" }}
                 body={routeBodyTemplate}
+              />
+              <Column
+                field="date"
+                header="Ngày chạy"
+                sortable
+                filterMenuStyle={{ width: "10rem" }}
+                style={{ minWidth: "10rem", textAlign: "center" }}
+                body={dateBodyTemplete}
               />
               <Column
                 field="timeStart"
@@ -550,37 +573,46 @@ export default function TripSchedule() {
             />
           </Grid>
           <Grid item xs={12}>
-            <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
-            >
-              <DateRangePicker
-                value={date}
-                inputFormat="MM/DD/YYYY"
-                onChange={handleChange}
-                renderInput={(startProps, endProps) => (
-                  <React.Fragment>
-                    <TextField style={{ width: "100%" }} {...startProps} />
-                    <Box sx={{ mx: 2 }}> to </Box>
-                    <TextField style={{ width: "100%" }} {...endProps} />
-                  </React.Fragment>
-                )}
-              />
-            </LocalizationProvider>
-            {/* <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              localeText={{ start: "Ngày bắt đầu", end: "Ngày kết thúc" }}
-            >
-              <DateRangePicker
-                label="Ngày"
-                inputFormat="MM/DD/YYYY"
-                value={date}
-                onChange={handleChange}
-                renderInput={(params) => (
-                  <TextField style={{ width: "100%" }} {...params} />
-                )}
-              />
-            </LocalizationProvider> */}
+            {trip ? (
+              <Grid xs={12}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                    label="Ngày"
+                    inputFormat="DD/MM/YYYY"
+                    value={date}
+                    onChange={handleChangeDate}
+                    renderInput={(params) => (
+                      <TextField style={{ width: "100%" }} {...params} />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+            ) : (
+              <Grid container>
+                <Grid xs={6}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DesktopDatePicker
+                      label="Ngày bắt đầu"
+                      inputFormat="DD/MM/YYYY"
+                      value={startDate}
+                      onChange={handleChangeStartDate}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid xs={6}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DesktopDatePicker
+                      label="Ngày kết thúc"
+                      inputFormat="DD/MM/YYYY"
+                      value={endDate}
+                      onChange={handleChangeEndDate}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
           <Grid item xs={12}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
