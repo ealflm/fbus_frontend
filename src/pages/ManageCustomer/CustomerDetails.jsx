@@ -91,7 +91,7 @@ export default function CustomerDetails() {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary="Tên tên sinh"
+                  primary="Tên sinh viên"
                   secondary={studentDetail?.fullName}
                 />
               </ListItem>
