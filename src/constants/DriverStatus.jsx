@@ -7,6 +7,10 @@ export const DRIVER_STATUS = {
     label: "Vô hiệu hóa",
     severity: "danger",
   },
+  2: {
+    label: "Đang hoạt động",
+    severity: "success",
+  }
 };
 
 export const DRIVER_STATUS_DROPDOWN = [
