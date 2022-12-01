@@ -64,6 +64,14 @@ const Customers = () => {
   const classes = useCustomerStyles();
   const navigate = useNavigate();
   //
+  const checkPhoneFormat = (value) => {
+    const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
+    if (!value.match(regexPhoneNumber)) {
+      setError("errorPhone", { type: "focus" }, { shouldFocus: true });
+    } else {
+      clearErrors('errorPhone');
+    }
+  }
 
   const initStudent = {
     studentId: "",
@@ -78,9 +86,10 @@ const Customers = () => {
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     control,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm(initStudent);
   // popup modal
@@ -372,8 +381,9 @@ const Customers = () => {
                 required: true,
               }}
               register={register}
-              error={errors.phone}
-              errorMessage={errors.phone ? "Trường này là bắt buộc" : null}
+              error={errors.phone || errors.errorPhone}
+              errorMessage={errors.phone ? "Trường này là bắt buộc" : errors.errorPhone ? 'Số điện thoại không hợp lệ' : null}
+              onChange={(e) => checkPhoneFormat(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>

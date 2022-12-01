@@ -10,7 +10,7 @@ import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 
 import React, { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import InputTextField from "../../components/Input/InputTextFiled";
 import Loading from "../../components/Loading/Loading";
@@ -58,6 +58,16 @@ export default function Drivers() {
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const classes = useDriverFormStyles();
   const navigate = useNavigate();
+
+  const checkPhoneFormat = (value) => {
+    const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
+    if (!value.match(regexPhoneNumber)) {
+      setError("errorPhone", { type: "focus" }, { shouldFocus: true });
+    } else {
+      clearErrors('errorPhone');
+    }
+  }
+
   const renderHeader = () => {
     return (
       <div className="flex justify-content-between align-items-center">
@@ -169,6 +179,8 @@ export default function Drivers() {
     reset,
     setValue,
     control,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm(initDriver);
   //
@@ -455,8 +467,9 @@ export default function Drivers() {
                 required: true,
               }}
               register={register}
-              error={errors.phone}
-              errorMessage={errors.phone ? "Trường này là bắt buộc" : null}
+              error={errors.phone || errors.errorPhone}
+              errorMessage={errors.phone ? "Trường này là bắt buộc" : errors.errorPhone ? 'Số điện thoại không hợp lệ' : null}
+              onChange={(e) => checkPhoneFormat(e.target.value)}
             />
           </Grid>
 
