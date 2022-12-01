@@ -185,7 +185,7 @@ const Customers = () => {
           icon="pi pi-eye"
           className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
-          onClick={() => navigate(`/customers/view/${rowData.studentId}`)}
+          onClick={() => navigate(`/students/view/${rowData.studentId}`)}
         />
         <Button
           icon="pi pi-pencil"

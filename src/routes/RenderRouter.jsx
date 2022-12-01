@@ -25,12 +25,12 @@ const RouterList = [
   },
   {
     exact: true,
-    path: "/customers",
+    path: "/students",
     element: <Customers />,
   },
   {
     exact: true,
-    path: "/customers/view/:id",
+    path: "/students/view/:id",
     element: <CustomerDetails />,
   },
   // DRIVER

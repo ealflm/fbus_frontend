@@ -7,7 +7,7 @@ const sidebarNav = [
   },
   {
     text: "Sinh viên",
-    link: "/customers",
+    link: "/students",
     icon: <i className="bx bx-user-pin"></i>,
     section: "students",
   },
