@@ -97,3 +97,6 @@ input {
 .card.full-height {
   height: calc(100% - 30px);
 }
+.p-scrollpanel-content {
+  padding-bottom: 0 !important;
+}

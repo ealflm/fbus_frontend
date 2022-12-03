@@ -9,7 +9,7 @@ import {
 } from "../../components/Chart/models/chart.model";
 import LineChart from "../../components/Chart/Linechart";
 import BarChart from "../../components/Chart/BarChart";
-import { Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -239,8 +239,7 @@ const Dashboard = () => {
   }, [watch("week"), yearMonth]);
 
   return (
-    <div>
-      <h2 className="page-header">Bảng điều khiển</h2>
+    <Box style={{ paddingTop: 10 }}>
       <div className="row">
         <div className="col-6">
           <div className="row">
@@ -296,7 +295,7 @@ const Dashboard = () => {
             </LocalizationProvider>
           </Grid>
         </Grid>
-        <div className="col-12 mt-4">
+        <div className="col-12 mt-2">
           <BarChart
             data={barChartData}
             categories={barChartCategories}
@@ -306,7 +305,7 @@ const Dashboard = () => {
           />
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 

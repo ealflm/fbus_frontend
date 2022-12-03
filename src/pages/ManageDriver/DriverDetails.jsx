@@ -51,7 +51,6 @@ export default function DriverDetails() {
       .getDriverById(id)
       .then((res) => {
         setDriverDetails(res.data.body);
-        console.log(res.data.body);
       })
       .catch((error) => toast.error(error.message));
   };

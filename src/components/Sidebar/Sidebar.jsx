@@ -31,7 +31,7 @@ const Sidebar = () => {
             <div className="sidebar__menu__item__txt">{nav.text}</div>
           </NavLink>
         ))}
-        <NavLink
+        {/* <NavLink
           to="/login"
           className="sidebar__item-inner"
           onClick={() => {
@@ -42,7 +42,7 @@ const Sidebar = () => {
             <i className="bx bx-log-out"></i>
           </div>
           <div className="sidebar__menu__item__txt">Đăng xuất</div>
-        </NavLink>
+        </NavLink> */}
       </div>
     </div>
   );
