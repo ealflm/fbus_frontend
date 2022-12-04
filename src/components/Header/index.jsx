@@ -47,11 +47,38 @@ export default function Header() {
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  const Title = styled(Paper)(({ theme }) => ({
+    backgroundColor: "#fff",
+    width: '100%',
+    height: 42,
+    fontWeight: 'bolder',
+    maxWidth: 400,
+    boxShadow: 'none',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: 7,
+    paddingRight: 7,
+    borderBottom: '1px solid #b3b1ab',
+    borderRadius: 0,
+    marginBottom: 15
+  }));
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
-    textAlign: "end",
-    width: "110%",
+    maxWidth: 400,
+    minHeight: 40,
+    width: '100%',
     cursor: "pointer",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingLeft: 7,
+    paddingRight: 7,
+    paddingTop: 15,
+    paddingBottom: 15,
+    border: 0,
+    boxShadow: 'none',
     "&:hover": {
       backgroundColor: "#f9f9fa",
     },
@@ -102,7 +129,9 @@ export default function Header() {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <Box sx={{ color: "action.active" }}>
+            <Box sx={{
+              color: "action.active",
+            }}>
               <Tooltip title="Thông báo">
                 <IconButton onClick={handleClick}>
                   <Badge badgeContent={4} color="success">
@@ -123,50 +152,77 @@ export default function Header() {
                   vertical: "top",
                   horizontal: "center",
                 }}
+                sx={{
+                  paddingLeft: 2
+                }}
               >
-                <ScrollPanel
-                  style={{
-                    maxHeight: 350,
-                    overflowX: "hidden",
-                    overflowY: "hidden",
-                  }}
+                {/* <ScrollPanel
+                > */}
+                <Stack
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={0.5}
                 >
-                  <Stack
-                    direction="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    spacing={0.5}
+                  <Title>
+                    <Typography
+                      sx={{
+                        paddingTop: 1,
+                        fontWeight: 'bolder',
+                      }}
+                    >
+                      Thông báo
+                    </Typography>
+                  </Title>
+
+                  <Item
+                    onClick={() => {
+                      handleOpenSwarp();
+                    }}
                   >
-                    <Item
-                      onClick={() => {
-                        handleOpenSwarp();
+                    <Typography
+                      sx={{
+                        width: '100%',
+                        textAlign: 'start'
                       }}
                     >
-                      <Typography
-                        sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}
-                      >
-                        Yêu cầu đổi tài xế cho DanhNLC
-                      </Typography>
-                      <Typography variant="caption">
-                        12:00 PM 02/12/2022.
-                      </Typography>
-                    </Item>
-                    <Item
-                      onClick={() => {
-                        handleOpenSwarp();
+                      Yêu cầu đổi tài xế cho DanhNLC
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        paddingTop: 0.5,
+                        width: '100%',
+                        textAlign: 'end'
+                      }}>
+                      12:00 PM 02/12/2022.
+                    </Typography>
+                  </Item>
+                  <Item
+                    onClick={() => {
+                      handleOpenSwarp();
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        width: '100%',
+                        textAlign: 'start'
                       }}
                     >
-                      <Typography
-                        sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}
-                      >
-                        Yêu cầu đổi tài xế cho SangDT
-                      </Typography>
-                      <Typography variant="caption">
-                        12:00 PM 02/12/2022.
-                      </Typography>
-                    </Item>
-                  </Stack>
-                </ScrollPanel>
+                      Yêu cầu đổi tài xế cho DanhNLC
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        paddingTop: 0.5,
+                        width: '100%',
+                        textAlign: 'end'
+                      }}>
+                      12:00 PM 02/12/2022.
+                    </Typography>
+                  </Item>
+                </Stack>
+                {/* </ScrollPanel> */}
               </Popover>
             </Box>
             <Box>
