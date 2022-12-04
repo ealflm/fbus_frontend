@@ -13,6 +13,7 @@ import { formatDate } from "../../utils/helper";
 import { IMAGE_URL } from "../../configs/baseURL";
 import { STUDENT_STATUS } from "../../constants/StudentStatus";
 import { Tag } from "primereact/tag";
+import { DRIVER_STATUS } from "../../constants/DriverStatus";
 export default function DriverDetails() {
   const { id } = useParams();
   const [filters, setFilters] = useState({
@@ -172,10 +173,10 @@ export default function DriverDetails() {
                 <Box mt={2}></Box>
                 <Tag
                   severity={
-                    STUDENT_STATUS[driverDetails?.driver?.status]?.severity
+                    DRIVER_STATUS[driverDetails?.driver?.status]?.severity
                   }
                 >
-                  {STUDENT_STATUS[driverDetails?.driver?.status]?.label}
+                  {DRIVER_STATUS[driverDetails?.driver?.status]?.label}
                 </Tag>
               </Box>
               <Box style={{ width: "50%" }}>
