@@ -7,6 +7,10 @@ export const STUDENT_STATUS = {
     label: "Vô hiệu hóa",
     severity: "danger",
   },
+  2: {
+    label: "Đã có chuyến",
+    severity: "info",
+  },
 };
 
 export const STUDENT_STATUS_DROPDOWN = [
@@ -17,5 +21,9 @@ export const STUDENT_STATUS_DROPDOWN = [
   {
     value: 1,
     label: "Vô hiệu hóa",
+  },
+  {
+    value: 3,
+    label: "Đã có chuyến",
   },
 ];
