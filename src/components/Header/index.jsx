@@ -8,12 +8,13 @@ import {
   Paper,
   Popover,
   Stack,
+  Tab,
+  Tabs,
   Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
-import { NavLink } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import styled from "styled-components";
 import { ScrollPanel } from "primereact/scrollpanel";
@@ -22,11 +23,46 @@ import { Dialog } from "primereact/dialog";
 import SelectForm from "../SelectForm/SelectForm";
 import { useForm } from "react-hook-form";
 import DefaultAvatar from "../../assets/images/default-avatar.png";
+import PropTypes from "prop-types";
+import { useStyles } from "./HeaderStyles";
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 export default function Header() {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [swrapDriverDialog, setSwrapDriverDialog] = useState(false);
+  const classes = useStyles();
   const [idDriver, setIdDriver] = useState();
   const {
     register,
@@ -38,6 +74,8 @@ export default function Header() {
     clearErrors,
     formState: { errors },
   } = useForm({ driverId: "" });
+  const [panelIndex, setPanelIndex] = React.useState(0);
+
   //
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -50,7 +88,7 @@ export default function Header() {
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
     textAlign: "end",
-    width: "110%",
+    width: "100%",
     cursor: "pointer",
     "&:hover": {
       backgroundColor: "#f9f9fa",
@@ -84,7 +122,9 @@ export default function Header() {
       />
     </React.Fragment>
   );
-
+  const handleChange = (event, newValue) => {
+    setPanelIndex(newValue);
+  };
   return (
     <>
       <Card style={{ width: "100%", height: "50px" }}>
@@ -126,46 +166,293 @@ export default function Header() {
               >
                 <ScrollPanel
                   style={{
-                    maxHeight: 350,
+                    maxHeight: "100vh",
+                    width: "100%",
                     overflowX: "hidden",
-                    overflowY: "hidden",
+                    overflowY: "scroll",
                   }}
+                  className={classes.scrollPanel}
                 >
-                  <Stack
-                    direction="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    spacing={0.5}
-                  >
-                    <Item
-                      onClick={() => {
-                        handleOpenSwarp();
+                  <Box sx={{ width: "100%" }}>
+                    <Box
+                      sx={{
+                        borderBottom: 1,
+                        borderColor: "divider",
+                        display: "flex",
+                        justifyContent: "center",
                       }}
                     >
-                      <Typography
-                        sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}
+                      <Tabs
+                        value={panelIndex}
+                        onChange={handleChange}
+                        aria-label="basic tabs example"
+                        TabIndicatorProps={{
+                          sx: {
+                            height: 0,
+                          },
+                        }}
+                        className={classes.tabHeader}
                       >
-                        Yêu cầu đổi tài xế cho DanhNLC
-                      </Typography>
-                      <Typography variant="caption">
-                        12:00 PM 02/12/2022.
-                      </Typography>
-                    </Item>
-                    <Item
-                      onClick={() => {
-                        handleOpenSwarp();
-                      }}
+                        <Tab label="Tất cả" {...a11yProps(0)} />
+                        <Tab label="Chưa đọc" {...a11yProps(1)} />
+                        <Tab label="Thông báo nghỉ" {...a11yProps(2)} />
+                        <Tab label="Thông báo đổi" {...a11yProps(2)} />
+                      </Tabs>
+                    </Box>
+                    <TabPanel
+                      value={panelIndex}
+                      index={0}
+                      className={classes.notifiBody}
                     >
-                      <Typography
-                        sx={{ paddingTop: 2, paddingLeft: 2, paddingRight: 2 }}
+                      <Stack
+                        direction="column"
+                        justifyContent="center"
+                        alignItems="center"
+                        spacing={0.5}
                       >
-                        Yêu cầu đổi tài xế cho SangDT
-                      </Typography>
-                      <Typography variant="caption">
-                        12:00 PM 02/12/2022.
-                      </Typography>
-                    </Item>
-                  </Stack>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho DanhNLC
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho DanhNLC
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho DanhNLC
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho DanhNLC
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                        <Item
+                          onClick={() => {
+                            handleOpenSwarp();
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              paddingTop: 2,
+                              paddingLeft: 2,
+                              paddingRight: 2,
+                            }}
+                          >
+                            Yêu cầu đổi tài xế cho SangDT
+                          </Typography>
+                          <Typography variant="caption">
+                            12:00 PM 02/12/2022.
+                          </Typography>
+                        </Item>
+                      </Stack>
+                    </TabPanel>
+                    <TabPanel value={panelIndex} index={1}>
+                      Item Two
+                    </TabPanel>
+                    <TabPanel value={panelIndex} index={2}>
+                      Item Three
+                    </TabPanel>
+                  </Box>
                 </ScrollPanel>
               </Popover>
             </Box>
