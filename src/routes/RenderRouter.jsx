@@ -11,6 +11,7 @@ import TripSchedule from "../pages/TripSchedule/TripSchedule";
 import DriverDetails from "../pages/ManageDriver/DriverDetails";
 import BusDetails from "../pages/ManageBus/BusDetails";
 import CustomerDetails from "../pages/ManageCustomer/CustomerDetails";
+import StationManage from "../pages/ManageTrip/StationManage/StationManage";
 
 const RouterList = [
   {
@@ -80,6 +81,11 @@ const RouterList = [
     exact: true,
     path: "/maps",
     element: <Trips />,
+  },
+  {
+    exact: true,
+    path: "/maps/create-station",
+    element: <StationManage />,
   },
   {
     exact: true,

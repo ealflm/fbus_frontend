@@ -147,9 +147,9 @@ const Trips = () => {
                   >
                     Trạm xe buýt
                   </Button>
-                  <IconButton onClick={showCreateStation}>
+                  {/* <IconButton onClick={showCreateStation}>
                     <Icon color="primary">add_circle</Icon>
-                  </IconButton>
+                  </IconButton> */}
                 </div>
                 <div
                   style={{
@@ -161,7 +161,7 @@ const Trips = () => {
                   <Button variant="text" onClick={() => showLayoutListRoute()}>
                     Tuyến xe buýt
                   </Button>
-                  <IconButton>
+                  {/* <IconButton>
                     <Icon
                       color="primary"
                       onClick={() => {
@@ -170,7 +170,7 @@ const Trips = () => {
                     >
                       add_circle
                     </Icon>
-                  </IconButton>
+                  </IconButton> */}
                 </div>
               </FormGroup>
             </FormControl>
@@ -206,12 +206,12 @@ const Trips = () => {
           refereshData={refereshData}
           routeLine={routeLine}
         />
-        <StationManage
+        {/* <StationManage
           showStationDialog={showStationDialog}
           setShowStationDialog={setShowStationDialog}
           setRefereshData={setRefereshData}
           refereshData={refereshData}
-        />
+        /> */}
       </div>
     </>
   );

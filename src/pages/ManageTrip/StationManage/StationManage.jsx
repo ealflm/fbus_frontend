@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import React, { useEffect } from "react";
@@ -10,6 +10,9 @@ import { toast, ToastContainer } from "react-toastify";
 import ADDRESS_VN from "../../../assets/masterData/Address.json";
 import { useState } from "react";
 import SelectForm from "../../../components/SelectForm/SelectForm";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../../components/Loading/Loading";
+import { Box } from "@mui/system";
 
 export default function StationManage(props) {
   const {
@@ -41,6 +44,8 @@ export default function StationManage(props) {
   const [district, setDistrict] = useState([]);
   const [currentDistrict, setCurrentDistrict] = useState([]);
   const [ward, setWard] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   //
   useEffect(() => {
     reset();
@@ -85,8 +90,9 @@ export default function StationManage(props) {
     );
   }, [watch("district")]);
   const hideStationDialog = () => {
-    setShowStationDialog(false);
+    // setShowStationDialog(false);
     reset();
+    navigate("/maps");
   };
   const getCoordinates = (data) => {
     setValue("longitude", data.lng);
@@ -120,43 +126,26 @@ export default function StationManage(props) {
       ...data,
       address,
     };
+    setLoading(true);
     stationService
       .createStation(payload)
       .then((res) => {
+        setLoading(false);
         toast.success(res.data.message);
         reset();
-        setShowStationDialog(false);
+        navigate("/maps");
         setRefereshData(new Date().getTime());
       })
       .catch((error) => {
+        setLoading(false);
         toast.error(error.message);
       });
   });
 
-  const stationDialogFooter = (
-    <React.Fragment>
-      <Button
-        label="Hủy"
-        icon="pi pi-times"
-        className="p-button-text"
-        onClick={() => {
-          hideStationDialog();
-        }}
-      />
-      <Button
-        label="Lưu"
-        icon="pi pi-check"
-        className="p-button-text"
-        onClick={() => {
-          onSaveStation();
-        }}
-      />
-    </React.Fragment>
-  );
   return (
     <div>
       <ToastContainer></ToastContainer>
-      <Dialog
+      {/* <Dialog
         visible={showStationDialog}
         style={{ width: "90%", height: "90%" }}
         header="Thông tin trạm"
@@ -164,134 +153,152 @@ export default function StationManage(props) {
         className="p-fluid"
         footer={stationDialogFooter}
         onHide={hideStationDialog}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={9} mb={2} style={{ height: "70vh" }}>
-            <MiniMap setValue={setValue} getCoordinates={getCoordinates} />
-          </Grid>
-          <Grid item xs={3} mt={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <InputTextField
-                  label={
-                    <span>
-                      Tên trạm{" "}
-                      <span className={errors.name ? "required" : null}>*</span>
-                    </span>
-                  }
-                  name="name"
-                  control={control}
-                  registerProps={{
-                    required: true,
-                  }}
-                  register={register}
-                  error={errors.name}
-                  errorMessage={errors.name ? "Trường này là bắt buộc" : null}
-                />
-              </Grid>
+      > */}
+      <Loading isLoading={loading} />
 
-              <Grid item xs={12}>
-                <InputTextField
-                  label={
-                    <span>
-                      Kinh độ{" "}
-                      <span className={errors.longitude ? "required" : null}>
-                        *
-                      </span>
+      <Typography variant="h5">Tạo trạm xe buýt</Typography>
+      <Box mt={2}></Box>
+      <Grid container spacing={2}>
+        <Grid item xs={9} mb={2} style={{ height: "80vh" }}>
+          <MiniMap setValue={setValue} getCoordinates={getCoordinates} />
+        </Grid>
+        <Grid item xs={3} mt={2} sx={{ position: "relative" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <InputTextField
+                label={
+                  <span>
+                    Tên trạm{" "}
+                    <span className={errors.name ? "required" : null}>*</span>
+                  </span>
+                }
+                name="name"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                register={register}
+                error={errors.name}
+                errorMessage={errors.name ? "Trường này là bắt buộc" : null}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <InputTextField
+                label={
+                  <span>
+                    Kinh độ{" "}
+                    <span className={errors.longitude ? "required" : null}>
+                      *
                     </span>
-                  }
-                  name="longitude"
-                  control={control}
-                  registerProps={{
-                    required: true,
-                  }}
-                  disabled
-                  register={register}
-                  error={errors.longitude}
-                  errorMessage={
-                    errors.longitude ? "Trường này là bắt buộc" : null
-                  }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputTextField
-                  label={
-                    <span>
-                      Vĩ độ{" "}
-                      <span className={errors.latitude ? "required" : null}>
-                        *
-                      </span>
+                  </span>
+                }
+                name="longitude"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                disabled
+                register={register}
+                error={errors.longitude}
+                errorMessage={
+                  errors.longitude ? "Trường này là bắt buộc" : null
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputTextField
+                label={
+                  <span>
+                    Vĩ độ{" "}
+                    <span className={errors.latitude ? "required" : null}>
+                      *
                     </span>
-                  }
-                  name="latitude"
-                  control={control}
-                  registerProps={{
-                    required: true,
-                  }}
-                  disabled
-                  register={register}
-                  error={errors.latitude}
-                  errorMessage={
-                    errors.latitude ? "Trường này là bắt buộc" : null
-                  }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <SelectForm
-                  label="Tỉnh/Thành phố"
-                  name="province"
-                  required
-                  control={control}
-                  options={province}
-                  errors={errors}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <SelectForm
-                  label="Quận/Huyện"
-                  name="district"
-                  required
-                  control={control}
-                  options={district}
-                  errors={errors}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <SelectForm
-                  label="Xã/Phường"
-                  name="ward"
-                  required
-                  control={control}
-                  options={ward}
-                  errors={errors}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputTextField
-                  label={
-                    <span>
-                      Địa chỉ{" "}
-                      <span className={errors.address ? "required" : null}>
-                        *
-                      </span>
+                  </span>
+                }
+                name="latitude"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                disabled
+                register={register}
+                error={errors.latitude}
+                errorMessage={errors.latitude ? "Trường này là bắt buộc" : null}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SelectForm
+                label="Tỉnh/Thành phố"
+                name="province"
+                required
+                control={control}
+                options={province}
+                errors={errors}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SelectForm
+                label="Quận/Huyện"
+                name="district"
+                required
+                control={control}
+                options={district}
+                errors={errors}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SelectForm
+                label="Xã/Phường"
+                name="ward"
+                required
+                control={control}
+                options={ward}
+                errors={errors}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputTextField
+                label={
+                  <span>
+                    Địa chỉ{" "}
+                    <span className={errors.address ? "required" : null}>
+                      *
                     </span>
-                  }
-                  name="address"
-                  control={control}
-                  registerProps={{
-                    required: true,
-                  }}
-                  register={register}
-                  error={errors.address}
-                  errorMessage={
-                    errors.address ? "Trường này là bắt buộc" : null
-                  }
-                />
-              </Grid>
+                  </span>
+                }
+                name="address"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                register={register}
+                error={errors.address}
+                errorMessage={errors.address ? "Trường này là bắt buộc" : null}
+              />
             </Grid>
           </Grid>
+          <Box sx={{ position: "absolute", right: 0, bottom: 0 }}>
+            <Button
+              label="Hủy"
+              icon="pi pi-times"
+              className="p-button-text"
+              onClick={() => {
+                hideStationDialog();
+              }}
+            />
+            <Button
+              label="Lưu"
+              icon="pi pi-check"
+              className="p-button-text"
+              onClick={() => {
+                onSaveStation();
+              }}
+            />
+          </Box>
         </Grid>
-      </Dialog>
+      </Grid>
+      {/* </Dialog> */}
     </div>
   );
 }

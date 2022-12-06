@@ -28,6 +28,21 @@ const sidebarNav = [
     link: "/maps",
     icon: <i className="bx bx-map-alt"></i>,
     section: "maps",
+    showSubMenu: true,
+  },
+  {
+    text: "Tạo trạm",
+    link: "/maps/create-station",
+    icon: <i className="bx bx-map-alt"></i>,
+    section: "maps",
+    subMenu: true,
+  },
+  {
+    text: "Tạo tuyến",
+    link: "/maps/create-route",
+    icon: <i className="bx bx-map-alt"></i>,
+    section: "maps",
+    subMenu: true,
   },
   {
     text: "Chuyến đi",
