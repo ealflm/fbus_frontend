@@ -145,7 +145,8 @@ export default function Drivers() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => showEditDriver(rowData)}
         />
-        {rowData.status !== STATUS.INACTVICE ? (
+        {rowData.status !== STATUS.INACTVICE &&
+        rowData.status !== STATUS.ASSIGN ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "
@@ -490,7 +491,7 @@ export default function Drivers() {
               errorMessage={errors.address ? "Trường này là bắt buộc" : null}
             />
           </Grid>
-          {driver?.driverId && (
+          {driver?.driverId && driver?.status !== STATUS.ASSIGN && (
             <Grid item xs={12}>
               <SelectForm
                 label="Trạng thái"

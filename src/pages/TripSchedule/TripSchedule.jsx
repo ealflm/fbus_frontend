@@ -79,9 +79,9 @@ export default function TripSchedule() {
   const [busList, setBusList] = useState([]);
 
   const [startDate, setStartDate] = useState(dayjs(new Date()));
-  const [endDate, setEndDate] = useState(dayjs(new Date()));
+  const [endDate, setEndDate] = useState(dayjs(new Date()).add(7, "day"));
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
-  const [timeEnd, setTimeEnd] = useState(dayjs(new Date()));
+  const [timeEnd, setTimeEnd] = useState(dayjs(new Date()).add(30, "minute"));
   const [date, setDate] = useState(dayjs(new Date()));
   //
   const onGlobalFilterChange = (e) => {
@@ -133,6 +133,7 @@ export default function TripSchedule() {
   }, []);
   const handleChangeStartDate = (newValue) => {
     setStartDate(newValue);
+    setEndDate(dayjs(newValue).add(7, "day"));
   };
   const handleChangeEndDate = (newValue) => {
     setEndDate(newValue);
@@ -142,6 +143,7 @@ export default function TripSchedule() {
   };
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
+    setTimeEnd(dayjs(newValue).add(30, "minute"));
   };
   const handleChangeTimeEnd = (newValue) => {
     setTimeEnd(newValue);
