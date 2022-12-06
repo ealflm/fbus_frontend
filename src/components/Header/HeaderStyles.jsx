@@ -5,6 +5,7 @@ export const useStyles = makeStyles(() =>
     notifiBody: {
       "& >div": {
         padding: 5,
+        maxHeight: '80vh',
       },
     },
     scrollPanel: {
