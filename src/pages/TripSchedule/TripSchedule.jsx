@@ -161,7 +161,7 @@ export default function TripSchedule() {
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
 
-    setTimeEnd(dayjs(newValue).add(durationTime, "minute"));
+    setTimeEnd(dayjs(newValue).add(durationTime ? durationTime : 30, "minute"));
   };
   const handleChangeTimeEnd = (newValue) => {
     setTimeEnd(newValue);
