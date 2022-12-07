@@ -65,6 +65,8 @@ export default function TripSchedule() {
     handleSubmit,
     reset,
     setValue,
+    getValues,
+    watch,
     control,
     formState: { errors },
   } = useForm(initBus);
@@ -83,6 +85,8 @@ export default function TripSchedule() {
   const [timeStart, setTimeStart] = useState(dayjs(new Date()));
   const [timeEnd, setTimeEnd] = useState(dayjs(new Date()).add(30, "minute"));
   const [date, setDate] = useState(dayjs(new Date()));
+  const [durationTime, setDurationTime] = useState(30);
+  const [routeInfor, setRouteInfor] = useState([]);
   //
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
@@ -101,6 +105,7 @@ export default function TripSchedule() {
     ])
       .then((values) => {
         // eslint-disable-next-line array-callback-return
+        setRouteInfor(values[1].data.body);
         const busListMapDropdown = values[0].data.body
           .filter((item) => item.status !== STATUS.INACTVICE)
           .map((item) => {
@@ -136,6 +141,13 @@ export default function TripSchedule() {
     getInitDropDownList();
     getListTripShedule();
   }, []);
+  useEffect(() => {
+    getValues("routeId");
+    const routeResult = routeInfor.find(
+      (item) => item.routeId === getValues("routeId")
+    );
+    setDurationTime(routeResult?.estimatedTime);
+  }, [watch("routeId")]);
   const handleChangeStartDate = (newValue) => {
     setStartDate(newValue);
     setEndDate(dayjs(newValue).add(7, "day"));
@@ -148,7 +160,8 @@ export default function TripSchedule() {
   };
   const handleChangeTimeStart = (newValue) => {
     setTimeStart(newValue);
-    setTimeEnd(dayjs(newValue).add(30, "minute"));
+
+    setTimeEnd(dayjs(newValue).add(durationTime, "minute"));
   };
   const handleChangeTimeEnd = (newValue) => {
     setTimeEnd(newValue);

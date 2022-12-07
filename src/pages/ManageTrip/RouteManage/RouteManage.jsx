@@ -36,6 +36,7 @@ export default function RouteManage() {
   const [distanceList, setDistanceList] = useState([]);
   const [distance, setDistance] = useState(0);
   const navigate = useNavigate();
+  const [estimatedTime, setEstimatedTime] = useState(0);
   useEffect(() => {
     getListStation();
   }, []);
@@ -95,6 +96,11 @@ export default function RouteManage() {
             legs[index].distance.value += legs[index - 1]?.distance.value;
             distanceArr = [...distanceArr, legs[index].distance.value];
           }
+          let durationTime = 0;
+          for (let index = 0; index <= legs.length - 1; index++) {
+            durationTime += legs[index]?.duration.value;
+          }
+          setEstimatedTime(Math.round(durationTime / 60));
           setDistance(distanceArr[distanceArr.length - 1]);
           setDistanceList(distanceArr);
         }
@@ -108,18 +114,21 @@ export default function RouteManage() {
       const listStation = listStationSelected.map((item) => {
         return item.stationId;
       });
+      setLoading(true);
       const payload = {
         name: data.name,
         distance: distance,
         totalStation: listStationSelected.length,
         stationList: listStation,
         distanceList: distanceList,
+        estimatedTime: estimatedTime,
       };
       routeService
         .createRoute(payload)
         .then((res) => {
           toast.success("Tạo tuyến thành công");
           navigate("/maps");
+          setLoading(true);
         })
         .catch((error) => {
           toast.error("Tạo tuyến thất bại");
