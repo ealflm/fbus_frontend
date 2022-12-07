@@ -1,6 +1,6 @@
 export const TRIP_STATUS = {
   1: {
-    label: "Đang hoạt động",
+    label: "Đang chờ",
     value: "",
     severity: "success",
   },
@@ -8,6 +8,16 @@ export const TRIP_STATUS = {
     label: "Ngừng hoạt động",
     value: "",
     severity: "danger",
+  },
+  2: {
+    label: "Chưa có tài xế",
+    value: "",
+    severity: "warning",
+  },
+  3: {
+    label: "Hoàn thành",
+    value: "",
+    severity: "info",
   },
 };
 export const TRIP_STATUS_DROPDOWN = [

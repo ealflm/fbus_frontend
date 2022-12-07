@@ -100,24 +100,29 @@ export default function TripSchedule() {
       driverService.getListDrivers(),
     ])
       .then((values) => {
-        const busListMapDropdown = values[0].data.body.map((item) => {
-          return {
-            value: item.busId,
-            label: item.licensePlates,
-          };
-        });
+        // eslint-disable-next-line array-callback-return
+        const busListMapDropdown = values[0].data.body
+          .filter((item) => item.status !== STATUS.INACTVICE)
+          .map((item) => {
+            return {
+              value: item.busId,
+              label: item.licensePlates,
+            };
+          });
         const routeListMapDropdown = values[1].data.body.map((item) => {
           return {
             value: item.routeId,
             label: item.name,
           };
         });
-        const driverListMapDropdown = values[2].data.body.map((item) => {
-          return {
-            value: item.driverId,
-            label: item.fullName,
-          };
-        });
+        const driverListMapDropdown = values[2].data.body
+          .filter((item) => item.status !== STATUS.INACTVICE)
+          .map((item) => {
+            return {
+              value: item.driverId,
+              label: item.fullName,
+            };
+          });
         setBusList(busListMapDropdown);
         setRouteList(routeListMapDropdown);
         setDriverList(driverListMapDropdown);

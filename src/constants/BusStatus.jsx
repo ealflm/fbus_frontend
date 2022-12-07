@@ -1,4 +1,9 @@
 export const BUS_STATUS = {
+  2: {
+    label: "Đang chạy",
+    value: "",
+    severity: "warning",
+  },
   1: {
     label: "Đang hoạt động",
     value: "",
