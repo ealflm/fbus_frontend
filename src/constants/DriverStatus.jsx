@@ -1,5 +1,5 @@
 export const DRIVER_STATUS = {
-  1: {
+  2: {
     label: "Đang hoạt động",
     severity: "success",
   },
@@ -7,9 +7,13 @@ export const DRIVER_STATUS = {
     label: "Vô hiệu hóa",
     severity: "danger",
   },
-  2: {
-    label: "Đã có chuyến",
-    severity: "info",
+  1: {
+    label: "Chưa chuyến",
+    severity: "warning",
+  },
+  3: {
+    label: "Đang chạy",
+    severity: "warning",
   },
 };
 
@@ -19,7 +23,7 @@ export const DRIVER_STATUS_DROPDOWN = [
   //   label: "Đã có chuyến",
   // },
   {
-    value: 1,
+    value: 2,
     label: "Đang hoạt động",
   },
   {

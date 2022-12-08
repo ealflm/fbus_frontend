@@ -19,10 +19,20 @@ export const TRIP_STATUS = {
     value: "",
     severity: "info",
   },
+  4: {
+    label: "Đang hoạt động",
+    value: "",
+    severity: "success",
+  },
+  5: {
+    label: "Không sử dụng",
+    value: "",
+    severity: "warning",
+  },
 };
 export const TRIP_STATUS_DROPDOWN = [
   {
-    value: 1,
+    value: 4,
     label: "Đang hoạt động",
   },
   {

@@ -382,8 +382,8 @@ export default function TripSchedule() {
   };
   const statusBodyTemplate = (rowData) => {
     return (
-      <Tag severity={TRIP_STATUS[rowData.status].severity}>
-        {TRIP_STATUS[rowData.status].label}
+      <Tag severity={TRIP_STATUS[rowData.status]?.severity}>
+        {TRIP_STATUS[rowData.status]?.label}
       </Tag>
     );
   };
