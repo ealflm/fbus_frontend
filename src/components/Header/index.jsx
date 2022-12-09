@@ -90,9 +90,7 @@ export default function Header() {
       firebaseService.registrationToken(model).then((data) => {
         console.log('clear notify token successful');
 
-        delete registrationToken.statusCode;
-        delete registrationToken.token;
-        delete registrationToken.error;
+        registrationToken.statusCode = 400;
 
         resolve(data);
 

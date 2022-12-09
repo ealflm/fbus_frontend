@@ -23,6 +23,8 @@ export const Login = () => {
   const { register, handleSubmit, formState: { errors }, } = useForm({ username: '', password: '', });
 
   const handleRegistrationToken = (token) => {
+    console.log('token -> ', token);
+
     let decoded = jwt_decode(token);
 
     // Define model save noti token
@@ -30,6 +32,8 @@ export const Login = () => {
       id: decoded.AdminId,
       notificationToken: registrationToken.token
     }
+
+    console.log('saveNotifyTokenModel -> ', saveNotifyTokenModel);
 
     // Save Notify token to db
     firebaseService.registrationToken(saveNotifyTokenModel).then((data) => {

@@ -12,29 +12,31 @@ const firebaseConfig = {
     measurementId: "G-M14KZGCX2K"
 };
 
-export const registrationToken = {};
+export let registrationToken = {};
 export const firebaseApp = initializeApp(firebaseConfig);
 export const messaging = getMessaging(firebaseApp);
 
 export function requestPermission() {
     console.log('call requestPermission');
     Notification.requestPermission().then((permission) => {
+        const deviceToken = {};
         if (permission === "granted") {
             getToken(messaging, { vapidKey: FIREBASE_WEB_PUBLIC_VAPID_KEY }).then((currentToken) => {
                 if (currentToken) {
-                    registrationToken.statusCode = 200;
-                    registrationToken.token = currentToken;
+                    deviceToken.statusCode = 200;
+                    deviceToken.token = currentToken;
                 } else {
-                    registrationToken.statusCode = 400;
-                    registrationToken.error = 'No registration token available. Request permission to generate one.';
+                    deviceToken.statusCode = 400;
+                    deviceToken.error = 'No registration token available. Request permission to generate one.';
                 }
             }).catch((err) => {
-                registrationToken.statusCode = 501;
-                registrationToken.error = `An error occurred while retrieving token. ${err}`;
+                deviceToken.statusCode = 501;
+                deviceToken.error = `An error occurred while retrieving token. ${err}`;
             });
         } else if (permission === 'denied') {
             alert('You need to turn on receiving notification from your browser');
         }
+        registrationToken = deviceToken;
     });
 }
 requestPermission();
