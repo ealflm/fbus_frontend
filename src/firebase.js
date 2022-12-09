@@ -36,7 +36,9 @@ export function requestPermission() {
         } else if (permission === 'denied') {
             alert('You need to turn on receiving notification from your browser');
         }
+        console.log('deviceToken -> ', deviceToken);
         registrationToken = deviceToken;
+        console.log('registrationToken -> ', registrationToken);
     });
 }
 requestPermission();

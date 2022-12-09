@@ -92,6 +92,8 @@ export default function Header() {
 
         registrationToken.statusCode = 400;
 
+        console.log('clearNotifyToken registrationToken -> ', registrationToken);
+
         resolve(data);
 
       }).catch(err => {
