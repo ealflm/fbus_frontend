@@ -25,8 +25,8 @@ import DefaultAvatar from "../../assets/images/default-avatar.png";
 import PropTypes from "prop-types";
 import { useStyles } from "./HeaderStyles";
 import { notificationData, notificationData1 } from "./Mock";
-import { useEffect } from "react";
-import { useRef } from "react";
+import { firebaseService } from "../../services/FirebaseService";
+import jwt_decode from "jwt-decode";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -62,7 +62,7 @@ function a11yProps(index) {
 }
 
 export default function Header() {
-  const { logout } = useAuth();
+  const { logout, token } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [swrapDriverDialog, setSwrapDriverDialog] = useState(false);
   const classes = useStyles();
@@ -78,6 +78,22 @@ export default function Header() {
     formState: { errors },
   } = useForm({ driverId: "" });
   const [panelIndex, setPanelIndex] = React.useState(0);
+
+  const clearNotifyToken = () => {
+    return new Promise(resolve => {
+      var decoded = jwt_decode(token);
+      const model = {
+        id: decoded.AdminId,
+        notificationToken: null
+      }
+      firebaseService.registrationToken(model).then((data) => {
+        console.log('clear notify token successful');
+        resolve(data);
+      }).catch(err => {
+        console.log('Error clear notify token -> ', err);
+      })
+    })
+  }
 
   //
   function handleClick(event) {
@@ -377,7 +393,11 @@ export default function Header() {
               <Tooltip title="Đăng xuất">
                 <IconButton
                   onClick={() => {
-                    logout();
+                    clearNotifyToken().then(data => {
+                      logout();
+                    }).catch(error => {
+                      console.log(error);
+                    });
                   }}
                 >
                   <i className="bx bx-log-out" style={{ rotate: "180deg" }}></i>

@@ -6,6 +6,8 @@ export const useStyles = makeStyles(() =>
       "& >div": {
         padding: 5,
         maxHeight: '80vh',
+        minWidth: '400px',
+        width: '400px'
       },
     },
     scrollPanel: {

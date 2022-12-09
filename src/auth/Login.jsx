@@ -2,52 +2,68 @@ import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { authService } from '../services/Authorization';
 import Loading from '../components/Loading/Loading';
-import CustomAlertError from '../components/CustomAlert/CustomAlertError';
-import { Alert } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from 'react-hook-form';
+import { firebaseService } from '../services/FirebaseService';
+import jwt_decode from "jwt-decode";
+import { getRegistrationToken } from '../firebase';
+
 export const Login = () => {
   const { setLocalStoragelogin } = useAuth();
   const [isLoading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm({
-    username: '',
-    password: '',
-  });
+  const { register, handleSubmit, formState: { errors }, } = useForm({ username: '', password: '', });
+
   const onSubmit = handleSubmit((data) => {
     setLoading(true);
     authService
-      .login(data.username, data.password)
-      .then((res) => {
+      .login(data.username, data.password).then((res) => {
         console.log(res);
         if (res.data.body) {
+          // Save auth token in Local Storage
           setLocalStoragelogin(res.data.body);
+
+          if (getRegistrationToken && getRegistrationToken.statusCode === 200) {
+
+            // decode token
+            var decoded = jwt_decode(res.data.body);
+
+            // Define model save noti token
+            const saveNotifyTokenModel = {
+              id: decoded.AdminId,
+              notificationToken: getRegistrationToken.token
+            }
+
+            // Save Notify token to db
+            firebaseService.registrationToken(saveNotifyTokenModel).then((data) => {
+              console.log("registrationToken successful!", data);
+            }).catch(err => {
+              console.log("registrationToken failed!", err);
+            });
+
+          } else { // Failed to get registration token
+            toast.error(getRegistrationToken.error);
+          }
+
         } else {
           toast.error(res.data.message);
         }
+
         setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
+
+      }).catch((error) => {
+
         toast.error(error.response.data.message);
         setLoading(false);
+
       });
   });
 
