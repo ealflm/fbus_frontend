@@ -12,7 +12,7 @@ const firebaseConfig = {
     measurementId: "G-M14KZGCX2K"
 };
 
-const registrationToken = {};
+export const registrationToken = {};
 export const firebaseApp = initializeApp(firebaseConfig);
 export const messaging = getMessaging(firebaseApp);
 
@@ -39,7 +39,6 @@ export function requestPermission() {
 }
 requestPermission();
 
-export const getRegistrationToken = registrationToken;
 export const onMessageListener = () => {
     return new Promise((resolve) => {
         onMessage(messaging, (payload) => {

@@ -15,12 +15,29 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from 'react-hook-form';
 import { firebaseService } from '../services/FirebaseService';
 import jwt_decode from "jwt-decode";
-import { getRegistrationToken } from '../firebase';
+import { registrationToken, requestPermission } from '../firebase';
 
 export const Login = () => {
   const { setLocalStoragelogin } = useAuth();
   const [isLoading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors }, } = useForm({ username: '', password: '', });
+
+  const handleRegistrationToken = (token) => {
+    let decoded = jwt_decode(token);
+
+    // Define model save noti token
+    const saveNotifyTokenModel = {
+      id: decoded.AdminId,
+      notificationToken: registrationToken.token
+    }
+
+    // Save Notify token to db
+    firebaseService.registrationToken(saveNotifyTokenModel).then((data) => {
+      console.log("registrationToken successful!", data);
+    }).catch(err => {
+      console.log("registrationToken failed!", err);
+    });
+  }
 
   const onSubmit = handleSubmit((data) => {
     setLoading(true);
@@ -31,26 +48,17 @@ export const Login = () => {
           // Save auth token in Local Storage
           setLocalStoragelogin(res.data.body);
 
-          if (getRegistrationToken && getRegistrationToken.statusCode === 200) {
+          if (registrationToken && registrationToken.statusCode === 200) {
 
-            // decode token
-            var decoded = jwt_decode(res.data.body);
-
-            // Define model save noti token
-            const saveNotifyTokenModel = {
-              id: decoded.AdminId,
-              notificationToken: getRegistrationToken.token
-            }
-
-            // Save Notify token to db
-            firebaseService.registrationToken(saveNotifyTokenModel).then((data) => {
-              console.log("registrationToken successful!", data);
-            }).catch(err => {
-              console.log("registrationToken failed!", err);
-            });
+            console.log('registrationToken with status 200')
+            handleRegistrationToken(res.data.body);
 
           } else { // Failed to get registration token
-            toast.error(getRegistrationToken.error);
+
+            console.log('recall requestPermission');
+            requestPermission();
+            handleRegistrationToken(res.data.body);
+
           }
 
         } else {

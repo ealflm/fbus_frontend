@@ -27,6 +27,7 @@ import { useStyles } from "./HeaderStyles";
 import { notificationData, notificationData1 } from "./Mock";
 import { firebaseService } from "../../services/FirebaseService";
 import jwt_decode from "jwt-decode";
+import { registrationToken } from "../../firebase";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -88,7 +89,13 @@ export default function Header() {
       }
       firebaseService.registrationToken(model).then((data) => {
         console.log('clear notify token successful');
+
+        delete registrationToken.statusCode;
+        delete registrationToken.token;
+        delete registrationToken.error;
+
         resolve(data);
+
       }).catch(err => {
         console.log('Error clear notify token -> ', err);
       })
