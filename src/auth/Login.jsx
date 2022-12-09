@@ -22,15 +22,15 @@ export const Login = () => {
   const [isLoading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors }, } = useForm({ username: '', password: '', });
 
-  const handleRegistrationToken = (token) => {
-    console.log('token -> ', token);
+  const handleRegistrationToken = (authToken, deviceToken) => {
+    console.log('token -> ', authToken);
 
-    let decoded = jwt_decode(token);
+    let decoded = jwt_decode(authToken);
 
     // Define model save noti token
     const saveNotifyTokenModel = {
       id: decoded.AdminId,
-      notificationToken: registrationToken.token
+      notificationToken: deviceToken
     }
 
     console.log('saveNotifyTokenModel -> ', saveNotifyTokenModel);
@@ -55,13 +55,14 @@ export const Login = () => {
           if (registrationToken && registrationToken.statusCode === 200) {
 
             console.log('registrationToken with status 200')
-            handleRegistrationToken(res.data.body);
+            handleRegistrationToken(res.data.body, registrationToken.token);
 
           } else { // Failed to get registration token
 
             console.log('recall requestPermission');
-            requestPermission();
-            handleRegistrationToken(res.data.body);
+            requestPermission().then(data => {
+              handleRegistrationToken(res.data.body, data.token);
+            });
 
           }
 

@@ -17,31 +17,41 @@ export const firebaseApp = initializeApp(firebaseConfig);
 export const messaging = getMessaging(firebaseApp);
 
 export function requestPermission() {
-    console.log('call requestPermission');
-    Notification.requestPermission().then((permission) => {
-        const deviceToken = {};
-        if (permission === "granted") {
-            getToken(messaging, { vapidKey: FIREBASE_WEB_PUBLIC_VAPID_KEY }).then((currentToken) => {
-                if (currentToken) {
-                    deviceToken.statusCode = 200;
-                    deviceToken.token = currentToken;
-                } else {
-                    deviceToken.statusCode = 400;
-                    deviceToken.error = 'No registration token available. Request permission to generate one.';
-                }
-            }).catch((err) => {
-                deviceToken.statusCode = 501;
-                deviceToken.error = `An error occurred while retrieving token. ${err}`;
-            });
-        } else if (permission === 'denied') {
-            alert('You need to turn on receiving notification from your browser');
-        }
-        console.log('deviceToken -> ', deviceToken);
-        registrationToken = deviceToken;
-        console.log('registrationToken -> ', registrationToken);
-    });
+    return new Promise(resolve => {
+        console.log('call requestPermission');
+        Notification.requestPermission().then((permission) => {
+            const deviceToken = {};
+            if (permission === "granted") {
+                getToken(messaging, { vapidKey: FIREBASE_WEB_PUBLIC_VAPID_KEY }).then((currentToken) => {
+                    if (currentToken) {
+                        console.log('currentToken -> ', currentToken);
+                        deviceToken.statusCode = 200;
+                        deviceToken.token = currentToken;
+                    } else {
+                        deviceToken.statusCode = 400;
+                        deviceToken.error = 'No registration token available. Request permission to generate one.';
+                    }
+                    resolve(deviceToken);
+                }).catch((err) => {
+                    deviceToken.statusCode = 501;
+                    deviceToken.error = `An error occurred while retrieving token. ${err}`;
+                    resolve(deviceToken);
+                });
+
+
+            } else if (permission === 'denied') {
+                alert('You need to turn on receiving notification from your browser');
+            }
+        });
+    })
 }
-requestPermission();
+
+requestPermission().then(data => {
+    console.log('Initial call to registration token', data);
+    registrationToken = data;
+}).catch(err => {
+    console.log('Initial call to registration token Error -> ', err);
+});
 
 export const onMessageListener = () => {
     return new Promise((resolve) => {

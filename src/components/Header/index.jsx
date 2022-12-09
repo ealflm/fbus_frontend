@@ -91,6 +91,7 @@ export default function Header() {
         console.log('clear notify token successful');
 
         registrationToken.statusCode = 400;
+        registrationToken.token = null;
 
         console.log('clearNotifyToken registrationToken -> ', registrationToken);
 
