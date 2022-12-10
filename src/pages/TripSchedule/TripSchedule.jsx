@@ -410,15 +410,18 @@ export default function TripSchedule() {
   };
 
   const actionBodyTemplate = (rowData) => {
+    const checkDate = new Date().getTime() > new Date(rowData?.date).getTime();
     return (
       <React.Fragment>
-        <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success mr-2"
-          style={{ width: "30px", height: "30px" }}
-          onClick={() => editTripSchedule(rowData)}
-        />
-        {rowData.status !== STATUS.INACTVICE ? (
+        {!checkDate ? (
+          <Button
+            icon="pi pi-pencil"
+            className="p-button-rounded p-button-success mr-2"
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => editTripSchedule(rowData)}
+          />
+        ) : null}
+        {(rowData.status !== STATUS.INACTVICE) | !checkDate ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning"
