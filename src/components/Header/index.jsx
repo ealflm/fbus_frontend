@@ -28,6 +28,9 @@ import { notificationData, notificationData1 } from "./Mock";
 import { firebaseService } from "../../services/FirebaseService";
 import jwt_decode from "jwt-decode";
 import { registrationToken } from "../../firebase";
+import { useEffect } from "react";
+import { notificationService } from "../../services/NotificationService";
+import { NotifyStatus, NotifyType } from "../../constants/NotifyStatus";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -79,6 +82,69 @@ export default function Header() {
     formState: { errors },
   } = useForm({ driverId: "" });
   const [panelIndex, setPanelIndex] = React.useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState([]);
+  const [readNotifications, setReadNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    // initial call
+    handleNotification();
+
+    const handleEventListener = (e) => {
+      console.log(e);
+      handleNotification();
+    }
+
+    window.addEventListener('notification', handleEventListener);
+
+  }, []);
+
+  const handleNotification = () => {
+    notificationService.getNotification().then(res => {
+      console.log('response -> ', res);
+      res.data.body.forEach(item => {
+        if (item.status === NotifyStatus.unread.value) {
+          setUnreadNotifications(prev => {
+            return [
+              ...prev,
+              {
+                id: item.shiftId,
+                title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
+                content: item.content,
+                photo: '',
+                createdDate: item.requestTime
+              }
+            ]
+          })
+        } else {
+          setReadNotifications(prev => {
+            return [
+              ...prev,
+              {
+                id: item.shiftId,
+                title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
+                content: item.content,
+                photo: '',
+                createdDate: item.requestTime
+              }
+            ]
+          })
+        }
+        setNotifications(prev => {
+          return [
+            ...prev,
+            {
+              id: item.shiftId,
+              title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
+              content: item.content,
+              photo: '',
+              createdDate: item.requestTime
+            }
+          ]
+        })
+      });
+    });
+  }
 
   const clearNotifyToken = () => {
     return new Promise(resolve => {
@@ -242,8 +308,8 @@ export default function Header() {
                     >
                       <Tab label="Tất cả" {...a11yProps(0)} />
                       <Tab label="Chưa đọc" {...a11yProps(1)} />
-                      <Tab label="Thông báo nghỉ" {...a11yProps(2)} />
-                      <Tab label="Thông báo đổi" {...a11yProps(3)} />
+                      <Tab label="Đã đọc" {...a11yProps(2)} />
+                      <Tab label="Thông báo nghỉ" {...a11yProps(3)} />
                     </Tabs>
                   </Box>
                   <TabPanel
@@ -257,7 +323,7 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {notificationData.map(noti => (
+                      {notifications.map(noti => (
                         <Item
                           key={noti.id}
                           onClick={() => {
@@ -293,7 +359,7 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {notificationData1.map(noti => (
+                      {unreadNotifications.map(noti => (
                         <Item
                           key={noti.id}
                           onClick={() => {
@@ -329,7 +395,7 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {notificationData1.map(noti => (
+                      {readNotifications.map(noti => (
                         <Item
                           key={noti.id}
                           onClick={() => {

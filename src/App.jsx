@@ -7,6 +7,7 @@ import { AuthProvider } from './auth/useAuth';
 import Interceptor from './interceptor/Interceptor';
 import { useEffect } from 'react';
 import { onMessageListener } from './firebase';
+import { ToastContainer, toast } from 'react-toastify';
 
 Interceptor();
 
@@ -14,8 +15,16 @@ function App() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      onMessageListener().then(data => {
-        console.log('Message received. ', data);
+      onMessageListener().then(payload => {
+        console.log('Message received. ', payload);
+        if (payload && payload.messageId) {
+          toast.success(`${payload.notification.title} - ${payload.notification.body}`);
+          window.dispatchEvent(
+            new CustomEvent('notification', {
+              detail: payload.notification
+            })
+          );
+        }
       });
     }, 500);
 
@@ -26,6 +35,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <ToastContainer />
       <Routes>
         <Route path='*' element={<PageNotFound />} />
         <Route path='/login' element={<Login />} />
