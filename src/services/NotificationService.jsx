@@ -8,6 +8,12 @@ class NotificationService {
             method: "GET",
         });
     }
+    makeRequestDone = (id) => {
+        return axios({
+            url: `${API_URL.BASE_URL}/notification/${id}`,
+            method: "PATCH",
+        });
+    }
 }
 
 export const notificationService = new NotificationService();

@@ -24,13 +24,16 @@ import { useForm } from "react-hook-form";
 import DefaultAvatar from "../../assets/images/default-avatar.png";
 import PropTypes from "prop-types";
 import { useStyles } from "./HeaderStyles";
-import { notificationData, notificationData1 } from "./Mock";
+// import { notificationData1 } from "./Mock";
 import { firebaseService } from "../../services/FirebaseService";
 import jwt_decode from "jwt-decode";
 import { registrationToken } from "../../firebase";
 import { useEffect } from "react";
 import { notificationService } from "../../services/NotificationService";
 import { NotifyStatus, NotifyType } from "../../constants/NotifyStatus";
+import { driverService } from "../../services/DriverService";
+import { tripService } from "../../services/TripService";
+import Loading from "../Loading/Loading";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -70,7 +73,9 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [swrapDriverDialog, setSwrapDriverDialog] = useState(false);
   const classes = useStyles();
-  const [idDriver, setIdDriver] = useState();
+  const [currentRequest, setCurrentRequest] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+  const [initalLoading, setInitalLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -82,67 +87,59 @@ export default function Header() {
     formState: { errors },
   } = useForm({ driverId: "" });
   const [panelIndex, setPanelIndex] = React.useState(0);
-  const [unreadNotifications, setUnreadNotifications] = useState([]);
-  const [readNotifications, setReadNotifications] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState({});
 
   useEffect(() => {
-    // initial call
+    setInitalLoading(false);
     handleNotification();
-
-    const handleEventListener = (e) => {
-      console.log(e);
-      handleNotification();
-    }
-
-    window.addEventListener('notification', handleEventListener);
-
   }, []);
 
+  useEffect(() => {
+    const handleEventListener = (e) => {
+      handleNotification();
+    }
+    window.addEventListener('notification', handleEventListener);
+  }, []);
+
+  useEffect(() => {
+    if (currentRequest && !initalLoading) {
+      setLoading(false);
+      setAnchorEl(null);
+      setSwrapDriverDialog(true);
+    }
+  }, [currentRequest, initalLoading]);
+
   const handleNotification = () => {
+
     notificationService.getNotification().then(res => {
-      console.log('response -> ', res);
+      const notis = [];
+      const unreads = [];
+      const reads = [];
+      let unreadItems = 0;
+
       res.data.body.forEach(item => {
-        if (item.status === NotifyStatus.unread.value) {
-          setUnreadNotifications(prev => {
-            return [
-              ...prev,
-              {
-                id: item.shiftId,
-                title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
-                content: item.content,
-                photo: '',
-                createdDate: item.requestTime
-              }
-            ]
-          })
-        } else {
-          setReadNotifications(prev => {
-            return [
-              ...prev,
-              {
-                id: item.shiftId,
-                title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
-                content: item.content,
-                photo: '',
-                createdDate: item.requestTime
-              }
-            ]
-          })
+        const noti = {
+          id: item.shiftId,
+          driverId: item.driverId,
+          tripId: item.tripId,
+          title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
+          content: item.content,
+          photo: '',
+          createdDate: item.requestTime,
+          status: item.status
         }
-        setNotifications(prev => {
-          return [
-            ...prev,
-            {
-              id: item.shiftId,
-              title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
-              content: item.content,
-              photo: '',
-              createdDate: item.requestTime
-            }
-          ]
-        })
+
+        if (item.status === NotifyStatus.unread.value) {
+          unreads.push(noti);
+          unreadItems += 1;
+        } else {
+          reads.push(noti);
+        }
+        notis.push(noti);
       });
+
+      // set state
+      setNotifications({ all: notis, unread: unreads, read: reads, unreadCount: unreadItems });
     });
   }
 
@@ -169,17 +166,21 @@ export default function Header() {
     })
   }
 
-  //
+  // Click on icon noti
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
+    handleNotification();
   }
+
   const handleClose = () => {
     setAnchorEl(null);
+    setCurrentRequest(null);
   };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: "#fff",
+  const Item = styled(Paper)(({ backgroundColor, hoverBackgroundColor }) => ({
+    backgroundColor: backgroundColor,
     maxWidth: 400,
     minHeight: 40,
     width: "100%",
@@ -196,21 +197,55 @@ export default function Header() {
     borderRadius: 9,
     boxShadow: "none",
     "&:hover": {
-      backgroundColor: "#eaeaec",
+      // backgroundColor: "#eaeaec",
+      backgroundColor: hoverBackgroundColor,
     },
   }));
-  const handleOpenSwarp = () => {
-    setAnchorEl(null);
-    setSwrapDriverDialog(true);
-    setIdDriver();
+
+  const handleOpenSwarp = async (noti) => {
+
+    const normalizeData = {
+      request: {
+        ...noti
+      },
+    }
+
+    const driverRes = await driverService.getDriverById(noti.driverId);
+    normalizeData.driver = driverRes.data.body.driver
+
+    const tripRes = await tripService.getTripById(noti.tripId);
+    normalizeData.trip = tripRes.data.body;
+
+    const availableDrivers = await tripService.getAvailableDrivers(noti.driverId, noti.tripId);
+    const hasNoTrip = availableDrivers.data.body.hasNoTrip.map(item => {
+      return {
+        label: `${item.fullName} - ${item.phone}`,
+        value: item.driverId
+      }
+    });
+    const hasTrip = availableDrivers.data.body.hasTrip.map(item => {
+      return {
+        label: `${item.fullName} - ${item.phone}`,
+        value: item.driverId
+      }
+    });
+    normalizeData.availableDrivers = [...hasNoTrip, ...hasTrip]
+    setCurrentRequest(normalizeData);
   };
-  const onSave = handleSubmit((data) => {
-    console.log(data);
+
+  const onSave = handleSubmit(async (data) => {
+    await notificationService.makeRequestDone(currentRequest.request.id);
+    handleNotification();
+    // clear and close dialog
+    hideSwarpDriverDialog();
   });
+
   const hideSwarpDriverDialog = () => {
     setSwrapDriverDialog(false);
+    setCurrentRequest(null);
     reset();
   };
+
   const swarpDriverFooter = (
     <React.Fragment>
       <Button
@@ -233,6 +268,7 @@ export default function Header() {
 
   return (
     <>
+      <Loading isLoading={isLoading}></Loading>
       <Card style={{ width: "100%", height: "50px" }}>
         <Grid
           container
@@ -255,7 +291,7 @@ export default function Header() {
             >
               <Tooltip title="Thông báo">
                 <IconButton onClick={handleClick}>
-                  <Badge badgeContent={4} color="success">
+                  <Badge badgeContent={notifications?.unreadCount || 0} color="error" max={999}>
                     <CircleNotificationsIcon color="action" />
                   </Badge>
                 </IconButton>
@@ -307,8 +343,8 @@ export default function Header() {
                       className={classes.tabHeader}
                     >
                       <Tab label="Tất cả" {...a11yProps(0)} />
-                      <Tab label="Chưa đọc" {...a11yProps(1)} />
-                      <Tab label="Đã đọc" {...a11yProps(2)} />
+                      <Tab label="Chưa duyệt" {...a11yProps(1)} />
+                      <Tab label="Đã duyệt" {...a11yProps(2)} />
                       <Tab label="Thông báo nghỉ" {...a11yProps(3)} />
                     </Tabs>
                   </Box>
@@ -323,17 +359,21 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {notifications.map(noti => (
+                      {(notifications?.all || []).map(noti => (
                         <Item
+                          backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
+                          hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#a5ccff" : "#eaeaec"}
                           key={noti.id}
                           onClick={() => {
-                            handleOpenSwarp();
+                            handleOpenSwarp(noti);
                           }}
                         >
                           <Typography
                             sx={{
                               width: "100%",
                               textAlign: "start",
+                              color: `${noti.status === NotifyStatus.unread.value ? "#333" : ""}`,
+                              // fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
                             }}
                           >
                             {noti.content}
@@ -359,17 +399,21 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {unreadNotifications.map(noti => (
+                      {(notifications?.unread || []).map(noti => (
                         <Item
+                          backgroundColor={"#91c1ff"}
+                          hoverBackgroundColor={"#a5ccff"}
                           key={noti.id}
                           onClick={() => {
-                            handleOpenSwarp();
+                            handleOpenSwarp(noti);
                           }}
                         >
                           <Typography
                             sx={{
                               width: "100%",
                               textAlign: "start",
+                              color: '#333',
+                              // fontWeight: "bolder"
                             }}
                           >
                             {noti.content}
@@ -395,11 +439,12 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {readNotifications.map(noti => (
+                      {(notifications?.read || []).map(noti => (
                         <Item
                           key={noti.id}
+                          hoverBackgroundColor={"#eaeaec"}
                           onClick={() => {
-                            handleOpenSwarp();
+                            handleOpenSwarp(noti);
                           }}
                         >
                           <Typography
@@ -431,11 +476,11 @@ export default function Header() {
                       alignItems="center"
                       spacing={0.5}
                     >
-                      {notificationData1.map(noti => (
+                      {[].map(noti => (
                         <Item
                           key={noti.id}
                           onClick={() => {
-                            handleOpenSwarp();
+                            handleOpenSwarp(noti);
                           }}
                         >
                           <Typography
@@ -500,31 +545,31 @@ export default function Header() {
                       Thông tin tài xế yêu cầu
                     </Typography>
                     <Typography variant="body1">
-                      <b>Họ và tên:</b> Nguyễn Văn Toang
+                      <b>Họ và tên:</b> {currentRequest?.driver?.fullName}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Số điện thoại:</b> 0982354441
+                      <b>Số điện thoại:</b> {currentRequest?.driver?.phone}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Địa chỉ:</b> 123 Huỳnh Tấn Phát
+                      <b>Địa chỉ:</b> {currentRequest?.driver?.address}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Đang chạy chuyến:</b> Đại Học FPT
+                      <b>Đang chạy chuyến:</b> {currentRequest?.trip?.route.name}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Ngày chạy:</b> 02/12/2022
+                      <b>Ngày chạy:</b> {currentRequest?.trip?.date}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Thời gian bắt đầu:</b> 12:00 PM
+                      <b>Thời gian bắt đầu:</b> {currentRequest?.trip?.timeStart}
                     </Typography>
                     <Typography variant="body1">
-                      <b>Thời gian kết thúc:</b> 13:00 PM
+                      <b>Thời gian kết thúc:</b> {currentRequest?.trip?.timeEnd}
                     </Typography>
                   </Box>
                 </Grid>
                 <Grid xs={4} textAlign={"center"}>
                   <Avatar
-                    alt="Avaatr"
+                    alt="Avatar"
                     src={DefaultAvatar}
                     sx={{ width: 200, height: 200 }}
                   />
@@ -533,16 +578,27 @@ export default function Header() {
             </Card>
           </Grid>
 
-          <Grid item xs={12}>
-            <SelectForm
-              label="Chọn tài xế"
-              name="driverId"
-              required
-              control={control}
-              // options={}
-              errors={errors}
-            />
-          </Grid>
+          {currentRequest?.request.status === NotifyStatus.unread.value &&
+            <Grid item xs={12}>
+              <SelectForm
+                label="Chọn tài xế mới cho tuyến"
+                name="driverId"
+                required
+                control={control}
+                options={currentRequest.availableDrivers}
+                errors={errors}
+              />
+            </Grid>}
+          {currentRequest?.request.status === NotifyStatus.read.value &&
+            <Typography
+              sx={{
+                color: 'red',
+                paddingLeft: 2
+              }}
+            >
+              <b>Yêu cầu của bạn đã được duyệt</b>
+            </Typography>
+          }
         </Grid>
       </Dialog>
     </>
