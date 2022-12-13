@@ -134,7 +134,7 @@ export default function StationManage(props) {
         toast.success(res.data.message);
         reset();
         navigate("/maps");
-        setRefereshData(new Date().getTime());
+        // setRefereshData(new Date().getTime());
       })
       .catch((error) => {
         setLoading(false);
