@@ -34,6 +34,8 @@ import { NotifyStatus, NotifyType } from "../../constants/NotifyStatus";
 import { driverService } from "../../services/DriverService";
 import { tripService } from "../../services/TripService";
 import Loading from "../Loading/Loading";
+import moment from "moment/moment";
+import { toast } from "react-toastify";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -96,14 +98,15 @@ export default function Header() {
 
   useEffect(() => {
     const handleEventListener = (e) => {
-      handleNotification();
+      if (e.detail && e.detail.title && e.detail.body) {
+        handleNotification();
+      }
     }
     window.addEventListener('notification', handleEventListener);
   }, []);
 
   useEffect(() => {
     if (currentRequest && !initalLoading) {
-      setLoading(false);
       setAnchorEl(null);
       setSwrapDriverDialog(true);
     }
@@ -125,7 +128,7 @@ export default function Header() {
           title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
           content: item.content,
           photo: '',
-          createdDate: item.requestTime,
+          createdDate: moment(item.requestTime).format('DD-MM-YYYY HH:mm:ss'),
           status: item.status
         }
 
@@ -204,6 +207,8 @@ export default function Header() {
 
   const handleOpenSwarp = async (noti) => {
 
+    setLoading(true);
+
     const normalizeData = {
       request: {
         ...noti
@@ -233,9 +238,27 @@ export default function Header() {
     setCurrentRequest(normalizeData);
   };
 
-  const onSave = handleSubmit(async (data) => {
-    await notificationService.makeRequestDone(currentRequest.request.id);
-    handleNotification();
+  const onSave = handleSubmit((data) => {
+
+    setLoading(true);
+
+    // Call api DoSwapDriver
+    const swapDriverModel = {
+      requestDriverId: currentRequest.driver.driverId,
+      swappedDriverId: data.driverId,
+      tripId: currentRequest.trip.tripId
+    }
+    tripService.doSwappedDriver(swapDriverModel).then(async () => {
+
+      setLoading(false);
+      toast.success('Duyệt đơn thành công');
+      await notificationService.makeRequestDone(currentRequest.request.id);
+      handleNotification();
+
+    }).catch(error => {
+      console.log('doSwappedDriver error -> ', error);
+    });
+
     // clear and close dialog
     hideSwarpDriverDialog();
   });
@@ -532,8 +555,9 @@ export default function Header() {
         header="Yêu cầu đổi tài xế"
         modal
         className="p-fluid"
-        footer={swarpDriverFooter}
+        footer={currentRequest?.request.status !== NotifyStatus.read.value && swarpDriverFooter}
         onHide={hideSwarpDriverDialog}
+        onShow={() => setLoading(false)}
       >
         <Grid container spacing={2}>
           <Grid item xs={12} mb={2}>

@@ -14,6 +14,13 @@ class TripService {
             method: "GET",
         });
     }
+    doSwappedDriver = (swapDriver) => {
+        return axios({
+            url: `${API_URL.BASE_URL}/swap-driver`,
+            method: "POST",
+            data: swapDriver
+        });
+    }
 }
 
 export const tripService = new TripService();
