@@ -7,7 +7,7 @@ export const MAPBOX_STYLE_URL_DEVELOPMENT = `mapbox://styles/mapbox/streets-v11?
 export const FIREBASE_WEB_PUBLIC_VAPID_KEY = 'BCVhJfbiZmBLJt5VfbKCYnTIigwZpf6ZdsKYjW4VGJet03NxKKI1fj03nDYqJx49laSQ1yXIqvEXRDjDzrEUZyw';
 
 export const API_URL = {
-  BASE_URL: "https://localhost:5001/api/v1.0/admin",
+  BASE_URL: "https://fbus-api.azurewebsites.net/api/v1.0/admin",
   MAP_BOX_DIRECTION: `https://api.mapbox.com/directions/v5/mapbox/driving-traffic`,
   GOONG_MAP_DIRECTION: `https://rsapi.goong.io`,
 };
