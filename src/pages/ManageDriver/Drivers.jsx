@@ -146,7 +146,8 @@ export default function Drivers() {
           onClick={() => showEditDriver(rowData)}
         />
         {rowData.status !== STATUS.INACTVICE &&
-        rowData.status !== STATUS.RUNING ? (
+        rowData.status !== STATUS.RUNING &&
+        rowData.status !== STATUS.ASSIGN ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "

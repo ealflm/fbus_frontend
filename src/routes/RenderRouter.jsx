@@ -89,7 +89,7 @@ const RouterList = [
   },
   {
     exact: true,
-    path: "maps/create-route",
+    path: "/maps/create-route",
     element: <RouteManage />,
   },
   {
