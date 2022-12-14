@@ -6,11 +6,12 @@ const sidebarNav = [
     section: "home",
   },
   {
-    text: "Sinh viên",
-    link: "/students",
-    icon: <i className="bx bx-user-pin"></i>,
-    section: "students",
+    text: "Chuyến đi",
+    link: "/trip-schedule",
+    icon: <i className="bx bx-trip"></i>,
+    section: "trips schedule",
   },
+
   {
     text: "Tài xế",
     link: "/drivers",
@@ -24,7 +25,13 @@ const sidebarNav = [
     section: "buses",
   },
   {
-    text: "Bản đồ",
+    text: "Sinh viên",
+    link: "/students",
+    icon: <i className="bx bx-user-pin"></i>,
+    section: "students",
+  },
+  {
+    text: "Quản lý tuyến/trạm",
     link: "/maps",
     icon: <i className="bx bx-map-alt"></i>,
     section: "maps",
@@ -44,12 +51,7 @@ const sidebarNav = [
     section: "maps",
     subMenu: true,
   },
-  {
-    text: "Chuyến đi",
-    link: "/trip-schedule",
-    icon: <i className="bx bx-trip"></i>,
-    section: "trips schedule",
-  },
+
   // {
   //   text: 'Đánh giá',
   //   link: '/reports',
