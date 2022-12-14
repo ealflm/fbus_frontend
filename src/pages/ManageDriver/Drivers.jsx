@@ -145,7 +145,8 @@ export default function Drivers() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => showEditDriver(rowData)}
         />
-        {rowData.status !== STATUS.INACTVICE && rowData.status !== 3 ? (
+        {rowData.status !== STATUS.INACTVICE &&
+        rowData.status !== STATUS.RUNING ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "
