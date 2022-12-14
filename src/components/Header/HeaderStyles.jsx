@@ -35,5 +35,10 @@ export const useStyles = makeStyles(() =>
         minHeight: "28px",
       },
     },
+    avatar: {
+      width: "50px",
+      height: "50px",
+      borderRadius: '100%'
+    }
   })
 );

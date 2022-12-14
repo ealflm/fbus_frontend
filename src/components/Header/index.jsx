@@ -36,6 +36,7 @@ import { tripService } from "../../services/TripService";
 import Loading from "../Loading/Loading";
 import moment from "moment/moment";
 import { toast } from "react-toastify";
+import { IMAGE_URL } from "../../configs/baseURL";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -127,7 +128,7 @@ export default function Header() {
           tripId: item.tripId,
           title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
           content: item.content,
-          photo: '',
+          driverPhoto: item.driverPhoto,
           createdDate: moment(item.requestTime).format('DD-MM-YYYY HH:mm:ss'),
           status: item.status
         }
@@ -182,27 +183,96 @@ export default function Header() {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const Item = styled(Paper)(({ backgroundColor, hoverBackgroundColor }) => ({
-    backgroundColor: backgroundColor,
+  // const Item = styled(Paper)(({ backgroundColor, hoverBackgroundColor }) => ({
+  //   backgroundColor: backgroundColor,
+  //   maxWidth: 400,
+  //   minHeight: 40,
+  //   width: "100%",
+  //   textAlign: "end",
+  //   cursor: "pointer",
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   justifyContent: "flex-start",
+  //   alignItems: "flex-start",
+  //   paddingLeft: 7,
+  //   paddingRight: 7,
+  //   paddingTop: 15,
+  //   paddingBottom: 15,
+  //   borderRadius: 9,
+  //   boxShadow: "none",
+  //   "&:hover": {
+  //     // backgroundColor: "#eaeaec",
+  //     backgroundColor: hoverBackgroundColor,
+  //   },
+  // }));
+
+  const ItemContainer = styled(Paper)(() => ({
     maxWidth: 400,
-    minHeight: 40,
     width: "100%",
-    textAlign: "end",
     cursor: "pointer",
     display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "flex-start",
-    paddingLeft: 7,
-    paddingRight: 7,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginBottom: '10px !important',
     borderRadius: 9,
     boxShadow: "none",
+    padding: 8,
     "&:hover": {
-      // backgroundColor: "#eaeaec",
-      backgroundColor: hoverBackgroundColor,
+      backgroundColor: "#eaeaec",
     },
+  }));
+
+  const ItemFirstChild = styled(Paper)(({ hoverBackgroundColor }) => ({
+    width: '20%',
+    height: '100%',
+    borderRadius: 0,
+    boxShadow: 'none',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    backgroundColor: 'transparent'
+  }));
+
+  const ItemSecondChild = styled(Paper)(({ hoverBackgroundColor }) => ({
+    width: '80%',
+    height: '100%',
+    borderRadius: 0,
+    boxShadow: 'none',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
+  }));
+
+  const ItemSecondChildLeft = styled(Paper)(({ theme }) => ({
+    width: '92%',
+    minHeight: 60,
+    height: '100%',
+    borderRadius: 0,
+    boxShadow: 'none',
+    backgroundColor: 'transparent'
+  }));
+
+  const ItemSecondChildRight = styled(Paper)(({ theme }) => ({
+    width: '5%',
+    height: '100%',
+    borderRadius: 0,
+    boxShadow: 'none',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
+  }));
+
+  const ItemStatus = styled(Paper)(({ theme }) => ({
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    backgroundColor: '#2e89ff'
   }));
 
   const handleOpenSwarp = async (noti) => {
@@ -383,35 +453,55 @@ export default function Header() {
                       spacing={0.5}
                     >
                       {(notifications?.all || []).map(noti => (
-                        <Item
-                          backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
-                          hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#a5ccff" : "#eaeaec"}
+                        <ItemContainer
+                          // backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
+                          // hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : "#eaeaec"}
                           key={noti.id}
                           onClick={() => {
                             handleOpenSwarp(noti);
                           }}
                         >
-                          <Typography
-                            sx={{
-                              width: "100%",
-                              textAlign: "start",
-                              color: `${noti.status === NotifyStatus.unread.value ? "#333" : ""}`,
-                              // fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
-                            }}
+                          <ItemFirstChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.content}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              paddingTop: 0.5,
-                              width: "100%",
-                              textAlign: "end",
-                            }}
+                            <img className={classes.avatar} src={noti.driverPhoto ? (IMAGE_URL.DRIVER_IMAGE + noti.driverPhoto) : DefaultAvatar} alt="" />
+                          </ItemFirstChild>
+
+                          <ItemSecondChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.createdDate}
-                          </Typography>
-                        </Item>
+                            {/* Child Left */}
+                            <ItemSecondChildLeft>
+                              <Typography
+                                sx={{
+                                  width: "100%",
+                                  textAlign: "start",
+                                  color: `${noti.status === NotifyStatus.unread.value ? "#555" : "#666"}`,
+                                  fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
+                                }}
+                              >
+                                {noti.content}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  paddingTop: 0.5,
+                                  width: "100%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                {noti.createdDate}
+                              </Typography>
+                            </ItemSecondChildLeft>
+
+                            {/* Child Right */}
+                            {noti.status === NotifyStatus.unread.value && <ItemSecondChildRight>
+                              <ItemStatus />
+                            </ItemSecondChildRight>}
+
+                          </ItemSecondChild>
+
+                        </ItemContainer>
                       ))}
                     </Stack>
                   </TabPanel>
@@ -423,35 +513,55 @@ export default function Header() {
                       spacing={0.5}
                     >
                       {(notifications?.unread || []).map(noti => (
-                        <Item
-                          backgroundColor={"#91c1ff"}
-                          hoverBackgroundColor={"#a5ccff"}
+                        <ItemContainer
+                          // backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
+                          // hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : "#eaeaec"}
                           key={noti.id}
                           onClick={() => {
                             handleOpenSwarp(noti);
                           }}
                         >
-                          <Typography
-                            sx={{
-                              width: "100%",
-                              textAlign: "start",
-                              color: '#333',
-                              // fontWeight: "bolder"
-                            }}
+                          <ItemFirstChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.content}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              paddingTop: 0.5,
-                              width: "100%",
-                              textAlign: "end",
-                            }}
+                            <img className={classes.avatar} src={noti.driverPhoto ? (IMAGE_URL.DRIVER_IMAGE + noti.driverPhoto) : DefaultAvatar} alt="" />
+                          </ItemFirstChild>
+
+                          <ItemSecondChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.createdDate}
-                          </Typography>
-                        </Item>
+                            {/* Child Left */}
+                            <ItemSecondChildLeft>
+                              <Typography
+                                sx={{
+                                  width: "100%",
+                                  textAlign: "start",
+                                  color: `${noti.status === NotifyStatus.unread.value ? "#555" : "#666"}`,
+                                  fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
+                                }}
+                              >
+                                {noti.content}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  paddingTop: 0.5,
+                                  width: "100%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                {noti.createdDate}
+                              </Typography>
+                            </ItemSecondChildLeft>
+
+                            {/* Child Right */}
+                            {noti.status === NotifyStatus.unread.value && <ItemSecondChildRight>
+                              <ItemStatus />
+                            </ItemSecondChildRight>}
+
+                          </ItemSecondChild>
+
+                        </ItemContainer>
                       ))}
                     </Stack>
                   </TabPanel>
@@ -463,32 +573,55 @@ export default function Header() {
                       spacing={0.5}
                     >
                       {(notifications?.read || []).map(noti => (
-                        <Item
+                        <ItemContainer
+                          // backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
+                          // hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : "#eaeaec"}
                           key={noti.id}
-                          hoverBackgroundColor={"#eaeaec"}
                           onClick={() => {
                             handleOpenSwarp(noti);
                           }}
                         >
-                          <Typography
-                            sx={{
-                              width: "100%",
-                              textAlign: "start",
-                            }}
+                          <ItemFirstChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.content}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              paddingTop: 0.5,
-                              width: "100%",
-                              textAlign: "end",
-                            }}
+                            <img className={classes.avatar} src={noti.driverPhoto ? (IMAGE_URL.DRIVER_IMAGE + noti.driverPhoto) : DefaultAvatar} alt="" />
+                          </ItemFirstChild>
+
+                          <ItemSecondChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.createdDate}
-                          </Typography>
-                        </Item>
+                            {/* Child Left */}
+                            <ItemSecondChildLeft>
+                              <Typography
+                                sx={{
+                                  width: "100%",
+                                  textAlign: "start",
+                                  color: `${noti.status === NotifyStatus.unread.value ? "#555" : "#666"}`,
+                                  fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
+                                }}
+                              >
+                                {noti.content}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  paddingTop: 0.5,
+                                  width: "100%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                {noti.createdDate}
+                              </Typography>
+                            </ItemSecondChildLeft>
+
+                            {/* Child Right */}
+                            {noti.status === NotifyStatus.unread.value && <ItemSecondChildRight>
+                              <ItemStatus />
+                            </ItemSecondChildRight>}
+
+                          </ItemSecondChild>
+
+                        </ItemContainer>
                       ))}
                     </Stack>
                   </TabPanel>
@@ -500,31 +633,55 @@ export default function Header() {
                       spacing={0.5}
                     >
                       {[].map(noti => (
-                        <Item
+                        <ItemContainer
+                          // backgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : ""}
+                          // hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#91c1ff" : "#eaeaec"}
                           key={noti.id}
                           onClick={() => {
                             handleOpenSwarp(noti);
                           }}
                         >
-                          <Typography
-                            sx={{
-                              width: "100%",
-                              textAlign: "start",
-                            }}
+                          <ItemFirstChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.content}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              paddingTop: 0.5,
-                              width: "100%",
-                              textAlign: "end",
-                            }}
+                            <img className={classes.avatar} src={noti.driverPhoto ? (IMAGE_URL.DRIVER_IMAGE + noti.driverPhoto) : DefaultAvatar} alt="" />
+                          </ItemFirstChild>
+
+                          <ItemSecondChild
+                            hoverBackgroundColor={noti.status === NotifyStatus.unread.value ? "#eaeaec" : ""}
                           >
-                            {noti.createdDate}
-                          </Typography>
-                        </Item>
+                            {/* Child Left */}
+                            <ItemSecondChildLeft>
+                              <Typography
+                                sx={{
+                                  width: "100%",
+                                  textAlign: "start",
+                                  color: `${noti.status === NotifyStatus.unread.value ? "#000" : ""}`,
+                                  fontWeight: `${noti.status === NotifyStatus.unread.value ? "bolder" : ""}`
+                                }}
+                              >
+                                {noti.content}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  paddingTop: 0.5,
+                                  width: "100%",
+                                  textAlign: "end",
+                                }}
+                              >
+                                {noti.createdDate}
+                              </Typography>
+                            </ItemSecondChildLeft>
+
+                            {/* Child Right */}
+                            {noti.status === NotifyStatus.unread.value && <ItemSecondChildRight>
+                              <ItemStatus />
+                            </ItemSecondChildRight>}
+
+                          </ItemSecondChild>
+
+                        </ItemContainer>
                       ))}
                     </Stack>
                   </TabPanel>
@@ -594,7 +751,7 @@ export default function Header() {
                 <Grid xs={4} textAlign={"center"}>
                   <Avatar
                     alt="Avatar"
-                    src={DefaultAvatar}
+                    src={currentRequest?.driver.photoUrl ? (IMAGE_URL.DRIVER_IMAGE + currentRequest?.driver.photoUrl) : DefaultAvatar}
                     sx={{ width: 200, height: 200 }}
                   />
                 </Grid>
@@ -620,7 +777,7 @@ export default function Header() {
                 paddingLeft: 2
               }}
             >
-              <b>Yêu cầu của bạn đã được duyệt</b>
+              <b>Yêu cầu của tài xế đã được duyệt</b>
             </Typography>
           }
         </Grid>
