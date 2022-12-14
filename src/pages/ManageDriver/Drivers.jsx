@@ -64,9 +64,9 @@ export default function Drivers() {
     if (!value.match(regexPhoneNumber)) {
       setError("errorPhone", { type: "focus" }, { shouldFocus: true });
     } else {
-      clearErrors('errorPhone');
+      clearErrors("errorPhone");
     }
-  }
+  };
 
   const renderHeader = () => {
     return (
@@ -145,8 +145,7 @@ export default function Drivers() {
           style={{ width: "30px", height: "30px" }}
           onClick={() => showEditDriver(rowData)}
         />
-        {rowData.status !== STATUS.INACTVICE &&
-        rowData.status !== STATUS.ASSIGN ? (
+        {rowData.status !== STATUS.INACTVICE && rowData.status !== 3 ? (
           <Button
             icon="pi pi-trash"
             className="p-button-rounded p-button-warning "
@@ -469,7 +468,13 @@ export default function Drivers() {
               }}
               register={register}
               error={errors.phone || errors.errorPhone}
-              errorMessage={errors.phone ? "Trường này là bắt buộc" : errors.errorPhone ? 'Số điện thoại không hợp lệ' : null}
+              errorMessage={
+                errors.phone
+                  ? "Trường này là bắt buộc"
+                  : errors.errorPhone
+                  ? "Số điện thoại không hợp lệ"
+                  : null
+              }
               onChange={(e) => checkPhoneFormat(e.target.value)}
             />
           </Grid>
