@@ -106,12 +106,13 @@ export default function Header() {
     window.addEventListener('notification', handleEventListener);
   }, []);
 
-  useEffect(() => {
-    if (currentRequest && !initalLoading) {
-      setAnchorEl(null);
-      setSwrapDriverDialog(true);
-    }
-  }, [currentRequest, initalLoading]);
+  // useEffect(() => {
+  //   if (currentRequest && !initalLoading) {
+  //     console.log('render useEffect currentRequest initalLoading');
+  //     setAnchorEl(null);
+  //     setSwrapDriverDialog(true);
+  //   }
+  // }, [currentRequest, initalLoading]);
 
   const handleNotification = () => {
 
@@ -305,7 +306,10 @@ export default function Header() {
       }
     });
     normalizeData.availableDrivers = [...hasNoTrip, ...hasTrip]
+
     setCurrentRequest(normalizeData);
+    setAnchorEl(null);
+    setSwrapDriverDialog(true);
   };
 
   const onSave = handleSubmit((data) => {
