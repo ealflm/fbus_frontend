@@ -12,6 +12,8 @@ import DriverDetails from "../pages/ManageDriver/DriverDetails";
 import BusDetails from "../pages/ManageBus/BusDetails";
 import CustomerDetails from "../pages/ManageCustomer/CustomerDetails";
 import StationManage from "../pages/ManageTrip/StationManage/StationManage";
+import ManageStation from "../pages/ManageStation/ManageStation";
+import ManageRoute from "../pages/ManageRoute/ManageRoute";
 
 const RouterList = [
   {
@@ -75,6 +77,18 @@ const RouterList = [
     exact: true,
     path: "/buses/create",
     element: <CreateBus type="CREATE" />,
+  },
+
+  //
+  {
+    exact: true,
+    path: "/station",
+    element: <ManageStation />,
+  },
+  {
+    exact: true,
+    path: "/route",
+    element: <ManageRoute />,
   },
   // TRIPS
   {

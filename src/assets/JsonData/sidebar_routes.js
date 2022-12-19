@@ -31,7 +31,19 @@ const sidebarNav = [
     section: "students",
   },
   {
-    text: "Quản lý tuyến/trạm",
+    text: "Quản lý trạm",
+    link: "/station",
+    icon: <i className="bx bx-station"></i>,
+    section: "stations",
+  },
+  {
+    text: "Quản lý tuyến",
+    link: "/route",
+    icon: <i className="bx bx-stats"></i>,
+    section: "route",
+  },
+  {
+    text: "Bản đồ",
     link: "/maps",
     icon: <i className="bx bx-map-alt"></i>,
     section: "maps",
