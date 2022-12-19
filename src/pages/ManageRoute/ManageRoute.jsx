@@ -80,7 +80,7 @@ export default function ManageRoute() {
             icon="pi pi-plus"
             className="p-button-success mr-2"
             onClick={() => {
-              navigate("/maps/create-station");
+              navigate("/maps/create-route");
             }}
           />
 
@@ -192,7 +192,7 @@ export default function ManageRoute() {
           icon="pi pi-eye"
           className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
-          onClick={() => navigate(`/stations/view/${rowData.routeId}`)}
+          onClick={() => navigate(`/routes/view/${rowData.routeId}`)}
         />
         {rowData.status !== STATUS.INACTVICE ? (
           <Button
