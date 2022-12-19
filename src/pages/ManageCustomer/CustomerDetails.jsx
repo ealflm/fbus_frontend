@@ -29,7 +29,37 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import EmailIcon from "@mui/icons-material/Email";
 import { ScrollPanel } from "primereact/scrollpanel";
+import { DataTable } from "primereact/datatable";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { InputText } from "primereact/inputtext";
+import { Column } from "primereact/column";
 export default function CustomerDetails() {
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    "country.name": {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    date: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
+    },
+    balance: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+    status: {
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+    activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
   const { id } = useParams();
   const [loading, setLoading] = useState();
   const [studentDetail, setStudentDetail] = useState();
@@ -48,105 +78,189 @@ export default function CustomerDetails() {
         setLoading(false);
       });
   };
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-between align-items-center">
+        <span className="p-input-icon-left ml-2">
+          <i className="pi pi-search" />
+          <InputText
+            size={40}
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Tìm kiếm..."
+          />
+        </span>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "end", marginRight: "25px" }}
+        >
+          Lịch sử chuyến đi
+        </Typography>
+      </div>
+    );
+  };
+  const routeNameBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">{rowData?.routeInfo.name}</span>
+      </React.Fragment>
+    );
+  };
+  const distanceBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">
+          {rowData?.routeInfo?.distance / 1000}/Km
+        </span>
+      </React.Fragment>
+    );
+  };
+  const startedStationInfoBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">{rowData?.startedStationInfo?.name}</span>
+      </React.Fragment>
+    );
+  };
+  const busVehicleInfoLicensePlatesBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">
+          {rowData?.busVehicleInfo?.licensePlates}
+        </span>
+      </React.Fragment>
+    );
+  };
+  const driverInfoFullNameBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">{rowData?.driverInfo?.fullName}</span>
+      </React.Fragment>
+    );
+  };
+  const ratingBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <Rating
+          name="read-only"
+          value={
+            rowData?.studentTripInfo.rate ? rowData?.studentTripInfo.rate : 0
+          }
+          readOnly
+        ></Rating>
+      </React.Fragment>
+    );
+  };
 
   return (
     <>
       <Loading isLoading={loading}></Loading>
       <ToastContainer />
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={12}>
           <Card style={{ textAlign: "center", padding: "15px" }}>
-            <Typography variant="h6">Thông tin sinh viên</Typography>
-            <Box>
-              <img
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  borderRadius: "50%",
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "cover",
-                }}
-                src={
-                  studentDetail?.photoUrl
-                    ? IMAGE_URL.DRIVER_IMAGE + studentDetail?.photoUrl
-                    : AvatarImgae
-                }
-                alt=""
-                onError={(e) => {
-                  e.currentTarget.src = DefaultAvatar;
-                }}
-              />
-            </Box>
-            <List
-              sx={{
-                width: "100%",
-                maxWidth: 360,
-                bgcolor: "background.paper",
-              }}
-            >
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <BadgeIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Tên sinh viên"
-                  secondary={studentDetail?.fullName}
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <WorkIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Địa chỉ"
-                  secondary={studentDetail?.address}
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <ContactPhoneIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Số điện thoại"
-                  secondary={studentDetail?.phone}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <EmailIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Email"
-                  secondary={studentDetail?.email}
-                />
-              </ListItem>
-            </List>
+            <Grid container>
+              <Grid item xs={6}>
+                <Typography variant="h6">Thông tin sinh viên</Typography>
+                <Box>
+                  <img
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      borderRadius: "50%",
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                    }}
+                    src={
+                      studentDetail?.photoUrl
+                        ? IMAGE_URL.DRIVER_IMAGE + studentDetail?.photoUrl
+                        : AvatarImgae
+                    }
+                    alt=""
+                    onError={(e) => {
+                      e.currentTarget.src = DefaultAvatar;
+                    }}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <List
+                  sx={{
+                    width: "100%",
+                    maxWidth: 360,
+                    bgcolor: "background.paper",
+                  }}
+                >
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <BadgeIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Tên sinh viên"
+                      secondary={studentDetail?.fullName}
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <WorkIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Địa chỉ"
+                      secondary={studentDetail?.address}
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <ContactPhoneIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Số điện thoại"
+                      secondary={studentDetail?.phone}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <EmailIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Email"
+                      secondary={studentDetail?.email}
+                    />
+                  </ListItem>
+                </List>
+              </Grid>
+            </Grid>
           </Card>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <Card style={{ textAlign: "start", padding: "15px" }}>
             <Typography variant="h6">
               Số chuyến đã đi: {studentDetail?.data?.length}
             </Typography>
             <Divider variant="fullWidth" />
-            <Typography
-              variant="h6"
-              style={{ textAlign: "end", marginRight: "25px" }}
-            >
-              Lịch sử chuyến đi
-            </Typography>
-            <ScrollPanel
-              style={{ width: "100%", maxHeight: "80vh", height: "80vh" }}
+
+            {/*  */}
+
+            {/* <ScrollPanel
+              style={{ width: "100%", maxHeight: "40vh", height: "80vh" }}
             >
               {studentDetail?.data?.map((item) => {
                 return (
@@ -223,7 +337,80 @@ export default function CustomerDetails() {
                   </Card>
                 );
               })}
-            </ScrollPanel>
+            </ScrollPanel> */}
+            <DataTable
+              header={renderHeader}
+              value={studentDetail?.data}
+              paginator
+              size="small"
+              className="p-datatable-customers"
+              rows={10}
+              paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+              rowsPerPageOptions={[10, 25, 50]}
+              dataKey="id"
+              rowHover
+              filters={filters}
+              filterDisplay="menu"
+              responsiveLayout="scroll"
+              globalFilterFields={[
+                "rating",
+                "driverInfo.fullName",
+                "busVehicleInfo.licensePlates",
+                "startedStationInfo.name",
+                "routeInfo.distance",
+                "routeInfo.name",
+              ]}
+              emptyMessage="Không tìm thấy dữ liệu."
+              currentPageReportTemplate="Đang xem {first} đến {last} của {totalRecords} thư mục"
+            >
+              <Column
+                field="routeInfo.name"
+                header="Tên tuyến"
+                sortable
+                style={{ minWidth: "14rem" }}
+                body={routeNameBodyTemplate}
+              />
+              <Column
+                field="routeInfo.distance"
+                header="Khoảng cách"
+                sortable
+                style={{ minWidth: "14rem" }}
+                body={distanceBodyTemplate}
+              />
+
+              <Column
+                field="startedStationInfo.name"
+                header="Lên tại trạm"
+                sortable
+                filterField="address"
+                style={{ minWidth: "14rem" }}
+                body={startedStationInfoBodyTemplate}
+              />
+              <Column
+                field="busVehicleInfo.licensePlates"
+                header="Biển số xe"
+                sortable
+                filterMenuStyle={{ width: "14rem" }}
+                style={{ minWidth: "10rem" }}
+                body={busVehicleInfoLicensePlatesBodyTemplate}
+              />
+              <Column
+                field="driverInfo.fullName"
+                header="Tên tài xế"
+                sortable
+                filterMenuStyle={{ width: "14rem" }}
+                style={{ minWidth: "10rem" }}
+                body={driverInfoFullNameBodyTemplate}
+              />
+              <Column
+                field="rating"
+                header="Đánh giá"
+                sortable
+                filterMenuStyle={{ width: "14rem" }}
+                style={{ minWidth: "10rem" }}
+                body={ratingBodyTemplate}
+              />
+            </DataTable>
           </Card>
         </Grid>
       </Grid>
