@@ -192,7 +192,7 @@ export default function ManageRoute() {
           icon="pi pi-eye"
           className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
-          onClick={() => navigate(`/routes/view/${rowData.routeId}`)}
+          onClick={() => navigate(`/route/view/${rowData.routeId}`)}
         />
         {rowData.status !== STATUS.INACTVICE ? (
           <Button

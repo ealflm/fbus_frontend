@@ -14,6 +14,8 @@ import CustomerDetails from "../pages/ManageCustomer/CustomerDetails";
 import StationManage from "../pages/ManageTrip/StationManage/StationManage";
 import ManageStation from "../pages/ManageStation/ManageStation";
 import ManageRoute from "../pages/ManageRoute/ManageRoute";
+import StationDetails from "../pages/ManageStation/StationDetails";
+import RouteDetails from "../pages/ManageRoute/RouteDetails";
 
 const RouterList = [
   {
@@ -87,8 +89,18 @@ const RouterList = [
   },
   {
     exact: true,
+    path: "/station/view/:id",
+    element: <StationDetails />,
+  },
+  {
+    exact: true,
     path: "/route",
     element: <ManageRoute />,
+  },
+  {
+    exact: true,
+    path: "/route/view/:id",
+    element: <RouteDetails />,
   },
   // TRIPS
   {

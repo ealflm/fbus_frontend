@@ -142,7 +142,7 @@ export default function ManageStation() {
           icon="pi pi-eye"
           className="p-button-rounded p-button-info mr-2"
           style={{ width: "30px", height: "30px" }}
-          onClick={() => navigate(`/stations/view/${rowData.stationId}`)}
+          onClick={() => navigate(`/station/view/${rowData.stationId}`)}
         />
         {rowData.status !== STATUS.INACTVICE ? (
           <Button

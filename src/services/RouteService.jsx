@@ -8,6 +8,12 @@ class RouteService {
       method: "GET",
     });
   };
+  getRouteDetail = (id) => {
+    return axios({
+      url: `${API_URL.BASE_URL}/route/${id}`,
+      method: "GET",
+    });
+  };
   updateRoute = (route, routeId) => {
     return axios({
       url: `${API_URL.BASE_URL}/route/${routeId}`,
