@@ -76,7 +76,7 @@ export default function StationDetails() {
     if (map) {
       getStationDetails();
     }
-  }, [map, id]);
+  }, [map]);
   return (
     <Grid container spacing={2}>
       <Typography variant="h4" sx={{ marginTop: 2 }}>
