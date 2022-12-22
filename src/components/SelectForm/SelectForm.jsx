@@ -13,6 +13,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 const SelectForm = ({
   label,
   value,
+  defaultValue,
   options,
   props,
   disabled,
@@ -106,7 +107,7 @@ const SelectForm = ({
                   // handleOnChange(e);
                 }}
                 onBlur={onBlur}
-                value={value}
+                value={value || defaultValue}
                 disabled={disabled}
                 label={label}
                 error={
@@ -138,8 +139,8 @@ const SelectForm = ({
         {handleErrors && !data && handleErrors.some((e) => e?.path === name)
           ? handleErrors.find((e) => e?.path === name).message
           : helperText
-          ? helperText
-          : ""}
+            ? helperText
+            : ""}
       </FormHelperText>
     </FormControl>
   );

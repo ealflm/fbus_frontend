@@ -29,10 +29,11 @@ const Dashboard = () => {
   const [maxYAxisBar, setMaxYAcisBar] = useState(10);
   const currentYear = useRef(new Date().getFullYear());
   const currentMonth = useRef(new Date().getMonth() + 1);
+  const currentWeek = useRef(Math.ceil(new Date().getDate() / 7));
   const [yearMonth, setYearMonth] = useState(dayjs(new Date()));
   const [selectedYear, setSelectedYear] = useState(currentYear.current);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth.current);
-  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek.current);
   const [barChartCategories, setBarChartCategories] = useState([]);
 
   const {
@@ -145,6 +146,7 @@ const Dashboard = () => {
       setLineChartData(data);
       setMaxYAcisLine(calculatedMaxYAxis);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -223,11 +225,12 @@ const Dashboard = () => {
           setBarChartData(data);
         }
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWeek, selectedMonth, selectedYear]);
 
   useEffect(() => {
     const payload = {
-      week: getValues("week") || 1,
+      week: getValues("week") || currentWeek.current,
       date: {
         month: dayjs(yearMonth).get("month") + 1,
         year: dayjs(yearMonth).get("year"),
@@ -236,6 +239,7 @@ const Dashboard = () => {
     setSelectedWeek(payload.week);
     setSelectedMonth(payload.date.month);
     setSelectedYear(payload.date.year);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch("week"), yearMonth]);
 
   return (
@@ -271,6 +275,7 @@ const Dashboard = () => {
           <Grid item xs={2}>
             <SelectForm
               label="Tuần"
+              defaultValue={currentWeek.current}
               name="week"
               required
               control={control}

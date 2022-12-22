@@ -27,7 +27,7 @@ function LineChart(props) {
             },
         ],
         options: {
-            color: ['#6ab04c', '#2980b9'],
+            // color: ['#6ab04c', '#2980b9'],
             chart: {
                 background: 'transparent',
             },

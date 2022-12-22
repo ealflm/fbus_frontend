@@ -104,6 +104,10 @@ export default function Header() {
       }
     }
     window.addEventListener('notification', handleEventListener);
+
+    return () => {
+      window.removeEventListener('notification');
+    }
   }, []);
 
   // useEffect(() => {
