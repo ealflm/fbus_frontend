@@ -84,6 +84,10 @@ function BarChart(props) {
                 ...options,
                 xaxis: {
                     categories: [...categories]
+                },
+                yaxis: {
+                    min: 0,
+                    max: maxYAxis <= 30 ? Math.ceil(maxYAxis / 10) * 10 : Math.ceil(maxYAxis / 10) * 10 + 10
                 }
             }
 

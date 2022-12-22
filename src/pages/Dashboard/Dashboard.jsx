@@ -25,8 +25,8 @@ const Dashboard = () => {
   const [busVehicle, setBusVehicle] = useState(0);
   const [lineChartData, setLineChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
-  const [maxYAxisLine, setMaxYAcisLine] = useState(10);
-  const [maxYAxisBar, setMaxYAcisBar] = useState(10);
+  const [maxYAxisLine, setMaxYAxisLine] = useState(10);
+  const [maxYAxisBar, setMaxYAxisBar] = useState(10);
   const currentYear = useRef(new Date().getFullYear());
   const currentMonth = useRef(new Date().getMonth() + 1);
   const currentWeek = useRef(Math.ceil(new Date().getDate() / 7));
@@ -114,7 +114,7 @@ const Dashboard = () => {
           );
         }
 
-        calculatedMaxYAxis = Math.max(...result, maxYAxisLine);
+        calculatedMaxYAxis = Math.max(...result, calculatedMaxYAxis, maxYAxisLine);
 
         switch (index) {
           case 0:
@@ -144,7 +144,7 @@ const Dashboard = () => {
       });
 
       setLineChartData(data);
-      setMaxYAcisLine(calculatedMaxYAxis);
+      setMaxYAxisLine(calculatedMaxYAxis);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -155,7 +155,7 @@ const Dashboard = () => {
       .then((response) => {
         if (response.data.body && Object.keys(response.data.body).length) {
           const data = [];
-          let calculatedMaxYAxis;
+          let calculatedMaxYAxis = maxYAxisBar;
           let start = 1;
           let end = new Date(selectedYear, selectedMonth, 0).getDate();
           switch (selectedWeek) {
@@ -195,7 +195,7 @@ const Dashboard = () => {
               return response.data.body[item][item1];
             });
 
-            calculatedMaxYAxis = Math.max(...result, maxYAxisBar);
+            calculatedMaxYAxis = Math.max(...result, calculatedMaxYAxis, maxYAxisBar);
 
             switch (item) {
               case TicketID.booking:
@@ -221,7 +221,7 @@ const Dashboard = () => {
             }
           });
 
-          setMaxYAcisBar(calculatedMaxYAxis);
+          setMaxYAxisBar(calculatedMaxYAxis);
           setBarChartData(data);
         }
       });
@@ -236,6 +236,7 @@ const Dashboard = () => {
         year: dayjs(yearMonth).get("year"),
       },
     };
+
     setSelectedWeek(payload.week);
     setSelectedMonth(payload.date.month);
     setSelectedYear(payload.date.year);
