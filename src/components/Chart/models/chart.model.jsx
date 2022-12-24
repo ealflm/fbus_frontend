@@ -5,7 +5,7 @@ export const TicketName = {
 }
 
 export const TicketID = {
-    booking: "booking",
-    completed: "completed",
-    canceled: "canceled"
+    booking: { id: 0, name: "booking" },
+    completed: { id: 1, name: "completed" },
+    canceled: { id: 2, name: "canceled" }
 }

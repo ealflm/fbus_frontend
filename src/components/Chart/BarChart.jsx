@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { TicketName } from "./models/chart.model";
+import { TicketID, TicketName } from "./models/chart.model";
 import Chart from 'react-apexcharts';
 
 function BarChart(props) {
@@ -38,7 +38,8 @@ function BarChart(props) {
             max: maxYAxis
         },
         fill: {
-            opacity: 1
+            opacity: 1,
+            colors: ['#008ffb', '#00e396', '#feb019']
         },
         tooltip: {
             y: {
@@ -55,23 +56,28 @@ function BarChart(props) {
             style: {
                 color: '#455560'
             }
+        },
+        legend: {
+            markers: {
+                fillColors: ['#008ffb', '#00e396', '#feb019'],
+            },
         }
     });
     const [chart, setChart] = useState({
         series: [
             {
+                id: TicketID.booking,
                 name: TicketName.booking,
-                // data: [44, 55, 57, 56, 61, 58, 63,]
                 data: [0, 0, 0, 0, 0, 0, 0,]
             },
             {
+                id: TicketID.completed,
                 name: TicketName.completed,
-                // data: [76, 85, 101, 98, 87, 105, 91,]
                 data: [0, 0, 0, 0, 0, 0, 0,]
             },
             {
+                id: TicketID.canceled,
                 name: TicketName.canceled,
-                // data: [35, 41, 36, 26, 45, 48, 52,]
                 data: [0, 0, 0, 0, 0, 0, 0,]
             }
         ],

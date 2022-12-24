@@ -117,21 +117,21 @@ const Dashboard = () => {
         calculatedMaxYAxis = Math.max(...result, calculatedMaxYAxis, maxYAxisLine);
 
         switch (index) {
-          case 0:
+          case TicketID.booking.id:
             data.push({
               id: TicketID.booking,
               name: TicketName.booking,
               data: result,
             });
             break;
-          case 1:
+          case TicketID.completed.id:
             data.push({
               id: TicketID.completed,
               name: TicketName.completed,
               data: result,
             });
             break;
-          case 2:
+          case TicketID.canceled.id:
             data.push({
               id: TicketID.canceled,
               name: TicketName.canceled,
@@ -143,7 +143,7 @@ const Dashboard = () => {
         }
       });
 
-      setLineChartData(data);
+      setLineChartData(data.sort((a, b) => a.id.id - b.id.id));
       setMaxYAxisLine(calculatedMaxYAxis);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -198,20 +198,23 @@ const Dashboard = () => {
             calculatedMaxYAxis = Math.max(...result, calculatedMaxYAxis, maxYAxisBar);
 
             switch (item) {
-              case TicketID.booking:
+              case TicketID.booking.name:
                 data.push({
+                  id: TicketID.booking,
                   name: TicketName.booking,
                   data: result.slice(start - 1, end),
                 });
                 break;
-              case TicketID.completed:
+              case TicketID.completed.name:
                 data.push({
+                  id: TicketID.completed,
                   name: TicketName.completed,
                   data: result.slice(start - 1, end),
                 });
                 break;
-              case TicketID.canceled:
+              case TicketID.canceled.name:
                 data.push({
+                  id: TicketID.canceled,
                   name: TicketName.canceled,
                   data: result.slice(start - 1, end),
                 });
@@ -220,9 +223,8 @@ const Dashboard = () => {
                 break;
             }
           });
-
           setMaxYAxisBar(calculatedMaxYAxis);
-          setBarChartData(data);
+          setBarChartData(data.sort((a, b) => a.id.id - b.id.id));
         }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
