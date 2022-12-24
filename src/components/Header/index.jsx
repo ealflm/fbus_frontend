@@ -13,7 +13,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import { useAuth } from "../../auth/useAuth";
 import styled from "styled-components";
@@ -38,7 +38,7 @@ import moment from "moment/moment";
 import { toast } from "react-toastify";
 import { IMAGE_URL } from "../../configs/baseURL";
 
-function TabPanel(props) {
+const TabPanel = memo((props) => {
   const { children, value, index, ...other } = props;
 
   return (
@@ -56,7 +56,7 @@ function TabPanel(props) {
       )}
     </div>
   );
-}
+});
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -71,85 +71,84 @@ function a11yProps(index) {
   };
 }
 
-export default function Header() {
+function Header() {
   const { logout, token } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [swrapDriverDialog, setSwrapDriverDialog] = useState(false);
   const classes = useStyles();
   const [currentRequest, setCurrentRequest] = useState(null);
   const [isLoading, setLoading] = useState(false);
-  const [initalLoading, setInitalLoading] = useState(true);
   const {
-    register,
     handleSubmit,
     reset,
-    setValue,
     control,
-    setError,
-    clearErrors,
     formState: { errors },
   } = useForm({ driverId: "" });
   const [panelIndex, setPanelIndex] = React.useState(0);
   const [notifications, setNotifications] = useState({});
 
   useEffect(() => {
-    setInitalLoading(false);
-    handleNotification();
+
+    normalizeNotification().then(notification => {
+      setNotifications(notification);
+    }).catch(error => {
+      console.log(`normalizeNotification Error: ${error}`);
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+
     const handleEventListener = (e) => {
       if (e.detail && e.detail.title && e.detail.body) {
-        handleNotification();
+        normalizeNotification().then(notification => {
+          setNotifications(notification);
+        }).catch(error => {
+          console.log(`normalizeNotification Error: ${error}`);
+        })
       }
     }
+
     window.addEventListener('notification', handleEventListener);
 
     return () => {
-      window.removeEventListener('notification');
+      window.removeEventListener('notification', handleEventListener);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   if (currentRequest && !initalLoading) {
-  //     console.log('render useEffect currentRequest initalLoading');
-  //     setAnchorEl(null);
-  //     setSwrapDriverDialog(true);
-  //   }
-  // }, [currentRequest, initalLoading]);
+  const normalizeNotification = async () => {
+    const response = await notificationService.getNotification();
 
-  const handleNotification = () => {
+    const notis = [];
+    const unreads = [];
+    const reads = [];
+    let unreadItems = 0;
 
-    notificationService.getNotification().then(res => {
-      const notis = [];
-      const unreads = [];
-      const reads = [];
-      let unreadItems = 0;
+    response.data.body.forEach(item => {
+      const noti = {
+        id: item.shiftId,
+        driverId: item.driverId,
+        tripId: item.tripId,
+        title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
+        content: item.content,
+        driverPhoto: item.driverPhoto,
+        createdDate: moment(item.requestTime).format('DD-MM-YYYY HH:mm:ss'),
+        status: item.status
+      }
 
-      res.data.body.forEach(item => {
-        const noti = {
-          id: item.shiftId,
-          driverId: item.driverId,
-          tripId: item.tripId,
-          title: item.type === NotifyType.sendRequest.value ? NotifyType.sendRequest.label : 'Thông báo',
-          content: item.content,
-          driverPhoto: item.driverPhoto,
-          createdDate: moment(item.requestTime).format('DD-MM-YYYY HH:mm:ss'),
-          status: item.status
-        }
-
-        if (item.status === NotifyStatus.unread.value) {
-          unreads.push(noti);
-          unreadItems += 1;
-        } else {
-          reads.push(noti);
-        }
-        notis.push(noti);
-      });
-
-      // set state
-      setNotifications({ all: notis, unread: unreads, read: reads, unreadCount: unreadItems });
+      if (item.status === NotifyStatus.unread.value) {
+        unreads.push(noti);
+        unreadItems += 1;
+      } else {
+        reads.push(noti);
+      }
+      notis.push(noti);
     });
+
+    return { all: notis, unread: unreads, read: reads, unreadCount: unreadItems }
   }
 
   const clearNotifyToken = () => {
@@ -165,8 +164,6 @@ export default function Header() {
         registrationToken.statusCode = 400;
         registrationToken.token = null;
 
-        console.log('clearNotifyToken registrationToken -> ', registrationToken);
-
         resolve(data);
 
       }).catch(err => {
@@ -176,9 +173,11 @@ export default function Header() {
   }
 
   // Click on icon noti
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-    handleNotification();
+  async function handleClick(event) {
+    const anchorEl = event.currentTarget;
+    const notification = await normalizeNotification();
+    setAnchorEl(anchorEl);
+    setNotifications(notification);
   }
 
   const handleClose = () => {
@@ -188,28 +187,6 @@ export default function Header() {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  // const Item = styled(Paper)(({ backgroundColor, hoverBackgroundColor }) => ({
-  //   backgroundColor: backgroundColor,
-  //   maxWidth: 400,
-  //   minHeight: 40,
-  //   width: "100%",
-  //   textAlign: "end",
-  //   cursor: "pointer",
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   justifyContent: "flex-start",
-  //   alignItems: "flex-start",
-  //   paddingLeft: 7,
-  //   paddingRight: 7,
-  //   paddingTop: 15,
-  //   paddingBottom: 15,
-  //   borderRadius: 9,
-  //   boxShadow: "none",
-  //   "&:hover": {
-  //     // backgroundColor: "#eaeaec",
-  //     backgroundColor: hoverBackgroundColor,
-  //   },
-  // }));
 
   const ItemContainer = styled(Paper)(() => ({
     maxWidth: 400,
@@ -320,19 +297,19 @@ export default function Header() {
 
     setLoading(true);
 
-    // Call api DoSwapDriver
     const swapDriverModel = {
       requestDriverId: currentRequest.driver.driverId,
       swappedDriverId: data.driverId,
       tripId: currentRequest.trip.tripId
     }
-    tripService.doSwappedDriver(swapDriverModel).then(async () => {
 
+    // Call api DoSwapDriver
+    tripService.doSwappedDriver(swapDriverModel).then(async () => {
+      await notificationService.makeRequestDone(currentRequest.request.id);
+      const notification = await normalizeNotification();
       setLoading(false);
       toast.success('Duyệt đơn thành công');
-      await notificationService.makeRequestDone(currentRequest.request.id);
-      handleNotification();
-
+      setNotifications(notification);
     }).catch(error => {
       console.log('doSwappedDriver error -> ', error);
     });
@@ -793,3 +770,5 @@ export default function Header() {
     </>
   );
 }
+
+export default memo(Header);
