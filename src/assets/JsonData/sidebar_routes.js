@@ -11,7 +11,12 @@ const sidebarNav = [
     icon: <i className="bx bx-trip"></i>,
     section: "trips schedule",
   },
-
+  {
+    text: "Sinh viên",
+    link: "/students",
+    icon: <i className="bx bx-user-pin"></i>,
+    section: "students",
+  },
   {
     text: "Tài xế",
     link: "/drivers",
@@ -23,12 +28,6 @@ const sidebarNav = [
     link: "/buses",
     icon: <i className="bx bx-bus"></i>,
     section: "buses",
-  },
-  {
-    text: "Sinh viên",
-    link: "/students",
-    icon: <i className="bx bx-user-pin"></i>,
-    section: "students",
   },
   {
     text: "Quản lý trạm",
