@@ -1,5 +1,4 @@
 import { Grid, Typography } from "@mui/material";
-import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -47,48 +46,48 @@ export default function StationManage(props) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   //
-  useEffect(() => {
-    reset();
-    setProvince(
-      ADDRESS_VN.data.map((element) => {
-        return {
-          value: element.codename,
-          label: element.name,
-        };
-      })
-    );
-  }, []);
-  useEffect(() => {
-    setValue("district", "");
-    setValue("ward", "");
-    const itemFound = ADDRESS_VN?.data?.find(
-      (item) => item.codename === watch("province")
-    );
-    setCurrentDistrict(itemFound?.districts);
-    setWard();
-    setDistrict(
-      itemFound?.districts?.map((item) => {
-        return {
-          value: item.codename,
-          label: item.name,
-        };
-      })
-    );
-  }, [watch("province")]);
-  useEffect(() => {
-    setValue("ward", "");
-    const itemFound = currentDistrict?.find(
-      (item) => item.codename === watch("district")
-    );
-    setWard(
-      itemFound?.wards?.map((item) => {
-        return {
-          value: item.codename,
-          label: item.name,
-        };
-      })
-    );
-  }, [watch("district")]);
+  // useEffect(() => {
+  //   reset();
+  //   setProvince(
+  //     ADDRESS_VN.data.map((element) => {
+  //       return {
+  //         value: element.codename,
+  //         label: element.name,
+  //       };
+  //     })
+  //   );
+  // }, []);
+  // useEffect(() => {
+  //   setValue("district", "");
+  //   setValue("ward", "");
+  //   const itemFound = ADDRESS_VN?.data?.find(
+  //     (item) => item.codename === watch("province")
+  //   );
+  //   setCurrentDistrict(itemFound?.districts);
+  //   setWard();
+  //   setDistrict(
+  //     itemFound?.districts?.map((item) => {
+  //       return {
+  //         value: item.codename,
+  //         label: item.name,
+  //       };
+  //     })
+  //   );
+  // }, [watch("province")]);
+  // useEffect(() => {
+  //   setValue("ward", "");
+  //   const itemFound = currentDistrict?.find(
+  //     (item) => item.codename === watch("district")
+  //   );
+  //   setWard(
+  //     itemFound?.wards?.map((item) => {
+  //       return {
+  //         value: item.codename,
+  //         label: item.name,
+  //       };
+  //     })
+  //   );
+  // }, [watch("district")]);
   const hideStationDialog = () => {
     // setShowStationDialog(false);
     reset();
@@ -97,34 +96,45 @@ export default function StationManage(props) {
   const getCoordinates = (data) => {
     setValue("longitude", data.lng);
     setValue("latitude", data.lat);
+    stationService.getAddressRecommend(data.lat, data.lng).then((resp) => {
+      const resultAddress = resp.data.results[0].formatted_address.split(",");
+      setValue("province", resultAddress[resultAddress.length - 1]);
+      setValue("district", resultAddress[resultAddress.length - 2]);
+      setValue("ward", resultAddress[resultAddress.length - 3]);
+      setValue(
+        "address",
+        resultAddress[resultAddress.length - 4]
+          ? resultAddress[resultAddress.length - 4]
+          : ""
+      );
+    });
   };
 
   const onSaveStation = handleSubmit((data) => {
-    const provice = ADDRESS_VN?.data.find(
-      (item) => item.codename === data.province
-    );
-    let district;
-    if (provice) {
-      district = provice?.districts?.find(
-        (item) => item.codename === data.district
-      );
-    }
-    let ward;
-    if (district) {
-      ward = district?.wards?.find((item) => item.codename === data.ward);
-    }
-    let address =
+    // const provice = ADDRESS_VN?.data.find(
+    //   (item) => item.codename === data.province
+    // );
+    // let district;
+    // if (provice) {
+    //   district = provice?.districts?.find(
+    //     (item) => item.codename === data.district
+    //   );
+    // }
+    // let ward;
+    // if (district) {
+    //   ward = district?.wards?.find((item) => item.codename === data.ward);
+    // }
+    let addressResult =
       data?.address +
       " " +
-      ward.name +
+      data.ward +
       ", " +
-      district.name +
+      data.district +
       ", " +
-      provice.name;
-
+      data.province;
     const payload = {
       ...data,
-      address,
+      address: addressResult,
     };
     setLoading(true);
     stationService
@@ -228,34 +238,61 @@ export default function StationManage(props) {
               />
             </Grid>
             <Grid item xs={12}>
-              <SelectForm
+              <InputTextField
+                label={<span>Tỉnh/ Thành phố </span>}
+                name="province"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                register={register}
+              />
+              {/* <SelectForm
                 label="Tỉnh/Thành phố"
                 name="province"
                 required
                 control={control}
                 options={province}
                 errors={errors}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <SelectForm
+              <InputTextField
+                label={<span>Quận/Huyện </span>}
+                name="district"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                register={register}
+              />
+              {/* <SelectForm
                 label="Quận/Huyện"
                 name="district"
                 required
                 control={control}
                 options={district}
                 errors={errors}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <SelectForm
+              <InputTextField
+                label={<span>Xã/Phường </span>}
+                name="ward"
+                control={control}
+                registerProps={{
+                  required: true,
+                }}
+                register={register}
+              />
+              {/* <SelectForm
                 label="Xã/Phường"
                 name="ward"
                 required
                 control={control}
                 options={ward}
                 errors={errors}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
               <InputTextField

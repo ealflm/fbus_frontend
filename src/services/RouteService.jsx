@@ -1,5 +1,9 @@
 import * as axios from "axios";
-import { API_URL, MAPBOX_ACCESS_TOKEN } from "../configs/baseURL";
+import {
+  API_URL,
+  GOONG_MAP_KEY,
+  MAPBOX_ACCESS_TOKEN,
+} from "../configs/baseURL";
 
 class RouteService {
   getListRoutes = () => {
@@ -42,7 +46,7 @@ class RouteService {
   // };
   mapBoxRenderRoute = (origin, coordinate) => {
     return axios({
-      url: `${API_URL.GOONG_MAP_DIRECTION}/Direction?vehicle=car&alternatives=false&api_key=M0PyWun14QaD07fIAY0wnSON0dQtoIB694zOqdv2&origin=${origin}&destination=${coordinate}`,
+      url: `${API_URL.GOONG_MAP_DIRECTION}/Direction?vehicle=car&alternatives=false&api_key=${GOONG_MAP_KEY}&origin=${origin}&destination=${coordinate}`,
       method: "GET",
     });
   };
