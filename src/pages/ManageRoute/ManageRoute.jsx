@@ -205,6 +205,13 @@ export default function ManageRoute() {
       </React.Fragment>
     );
   };
+  const estimatedTimeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">{rowData?.estimatedTime}</span>
+      </React.Fragment>
+    );
+  };
   const confirmDeleteStation = () => {
     setLoading(true);
     routeService
@@ -241,7 +248,6 @@ export default function ManageRoute() {
       />
     </React.Fragment>
   );
-
   return (
     <div>
       <ToastContainer />
@@ -291,10 +297,17 @@ export default function ManageRoute() {
                 header="Tổng trạm"
                 sortable
                 filterField="address"
-                style={{ minWidth: "14rem" }}
+                style={{ minWidth: "14rem", textAlign: "center" }}
                 body={totalStationBodyTemplate}
               />
-
+              <Column
+                field="estimatedTime"
+                header="Thời gian (Phút)"
+                sortable
+                filterField="estimatedTime"
+                style={{ minWidth: "14rem", textAlign: "center" }}
+                body={estimatedTimeBodyTemplate}
+              />
               <Column
                 headerStyle={{ width: "6rem", textAlign: "center" }}
                 bodyStyle={{ textAlign: "start", overflow: "visible" }}
