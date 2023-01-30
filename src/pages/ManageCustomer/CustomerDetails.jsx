@@ -33,6 +33,8 @@ import { DataTable } from "primereact/datatable";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import { Column } from "primereact/column";
+import { formatDate } from "../../utils/helper";
+import moment from "moment/moment";
 export default function CustomerDetails() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -159,7 +161,15 @@ export default function CustomerDetails() {
       </React.Fragment>
     );
   };
-
+  const dateInfoBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="image-text">
+          {moment(rowData?.tripInfo?.date).format("DD/MM/YYYY, h:mm A")}
+        </span>
+      </React.Fragment>
+    );
+  };
   return (
     <>
       <Loading isLoading={loading}></Loading>
@@ -385,6 +395,13 @@ export default function CustomerDetails() {
                 filterField="address"
                 style={{ minWidth: "14rem" }}
                 body={startedStationInfoBodyTemplate}
+              />
+              <Column
+                field="tripInfor.date"
+                header="Ngày lên xe"
+                sortable
+                style={{ minWidth: "14rem" }}
+                body={dateInfoBodyTemplate}
               />
               <Column
                 field="busVehicleInfo.licensePlates"
